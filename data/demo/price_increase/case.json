@@ -1,0 +1,196 @@
+{
+  "manifest_version": 1,
+  "name": "price_increase",
+  "title": "Raise prices 8% across the board?",
+  "company": "Northbeam Home & Garden Supply (fictional)",
+  "description": "Northbeam Home & Garden Supply (fictional) sold 401,613 orders in the last 12 months at an average order value of $36.82 and a contribution margin of $9.06 per order before fulfilment. Supplier and inbound freight costs rise about 4.5% a year, and our list prices are 3.0% below the competitor basket. Management proposes raising all list prices by 8% from January 2027. Six past price changes (+4% to +6%) show implied volume elasticities between -1.45 and -0.57 (price-weighted mean -1.17). After the last across-the-board change (2025-10, +4%) monthly churn went from 3.38% to 3.86%. At the mean elasticity, +8% would cut order volume by about 8.6%, but the estimate is uncertain and competitors may or may not follow.",
+  "question": "Should we raise list prices by 8% across all categories from January 2027?",
+  "options": [
+    "raise_8pct_all",
+    "raise_selectively_pet_garden",
+    "hold_prices"
+  ],
+  "key_facts": {
+    "orders_last_12m": 401613.0,
+    "revenue_last_12m": 14786290.22,
+    "aov_last_12m": 36.82,
+    "margin_per_order_last_12m": 9.06,
+    "proposed_price_increase": 0.08,
+    "implied_elasticity_weighted": -1.17,
+    "implied_elasticity_min": -1.451,
+    "implied_elasticity_max": -0.572,
+    "churn_rate_last_12m": 0.0349,
+    "churn_rate_before_broad_change": 0.0338,
+    "churn_rate_after_broad_change": 0.0386,
+    "price_gap_vs_competitors": -0.0298,
+    "cost_inflation_yoy": 0.045
+  },
+  "seed": 42,
+  "period_start": "2023-11",
+  "period_end": "2026-10",
+  "tables": [
+    {
+      "name": "monthly_orders",
+      "file": "monthly_orders.csv",
+      "description": "Monthly orders, prices, revenue and cost of goods by region and product category. gross_margin = revenue - cogs, i.e. contribution before fulfilment and marketing.",
+      "columns": [
+        "month",
+        "region",
+        "category",
+        "orders",
+        "list_price_index",
+        "avg_order_value",
+        "revenue",
+        "cogs",
+        "gross_margin"
+      ],
+      "dtypes": {
+        "month": "str",
+        "region": "str",
+        "category": "str",
+        "orders": "int",
+        "list_price_index": "float",
+        "avg_order_value": "float",
+        "revenue": "float",
+        "cogs": "float",
+        "gross_margin": "float"
+      },
+      "units": {
+        "month": "YYYY-MM",
+        "orders": "orders/month",
+        "list_price_index": "index, 2023-11 = 1.0",
+        "avg_order_value": "USD/order",
+        "revenue": "USD",
+        "cogs": "USD",
+        "gross_margin": "USD"
+      },
+      "n_rows": 576
+    },
+    {
+      "name": "monthly_pnl",
+      "file": "monthly_pnl.csv",
+      "description": "Company-level monthly P&L and operating metrics. margin_per_order is the contribution margin before fulfilment; fulfilment_cost includes spot-3PL overflow; churn_rate is the monthly share of active customers lost.",
+      "columns": [
+        "month",
+        "orders",
+        "revenue",
+        "cogs",
+        "gross_margin",
+        "margin_per_order",
+        "fulfilment_cost",
+        "inhouse_cost_per_order",
+        "marketing_spend",
+        "active_customers",
+        "new_customers",
+        "churned_customers",
+        "churn_rate",
+        "warehouse_utilization"
+      ],
+      "dtypes": {
+        "month": "str",
+        "orders": "int",
+        "revenue": "float",
+        "cogs": "float",
+        "gross_margin": "float",
+        "margin_per_order": "float",
+        "fulfilment_cost": "float",
+        "inhouse_cost_per_order": "float",
+        "marketing_spend": "float",
+        "active_customers": "int",
+        "new_customers": "int",
+        "churned_customers": "int",
+        "churn_rate": "float",
+        "warehouse_utilization": "float"
+      },
+      "units": {
+        "month": "YYYY-MM",
+        "orders": "orders/month",
+        "revenue": "USD",
+        "cogs": "USD",
+        "gross_margin": "USD",
+        "margin_per_order": "USD/order",
+        "fulfilment_cost": "USD",
+        "inhouse_cost_per_order": "USD/order",
+        "marketing_spend": "USD",
+        "active_customers": "customers",
+        "new_customers": "customers/month",
+        "churned_customers": "customers/month",
+        "churn_rate": "share per month",
+        "warehouse_utilization": "share of monthly capacity"
+      },
+      "n_rows": 36
+    },
+    {
+      "name": "price_changes",
+      "file": "price_changes.csv",
+      "description": "Past list-price changes and the observed volume response over the following 3 months. baseline_orders_3m_after is the demand-model forecast without the change, re-estimated with the market-wide demand index; implied_elasticity = ln(actual / baseline) / ln(1 + price change).",
+      "columns": [
+        "change_id",
+        "effective_month",
+        "category",
+        "price_change_pct",
+        "orders_3m_before",
+        "baseline_orders_3m_after",
+        "actual_orders_3m_after",
+        "volume_change_vs_baseline_pct",
+        "implied_elasticity",
+        "churn_rate_before",
+        "churn_rate_after",
+        "competitor_response"
+      ],
+      "dtypes": {
+        "change_id": "str",
+        "effective_month": "str",
+        "category": "str",
+        "price_change_pct": "float",
+        "orders_3m_before": "int",
+        "baseline_orders_3m_after": "int",
+        "actual_orders_3m_after": "int",
+        "volume_change_vs_baseline_pct": "float",
+        "implied_elasticity": "float",
+        "churn_rate_before": "float",
+        "churn_rate_after": "float",
+        "competitor_response": "str"
+      },
+      "units": {
+        "effective_month": "YYYY-MM",
+        "category": "category or 'all'",
+        "price_change_pct": "share",
+        "orders_3m_before": "orders (3 months, affected categories)",
+        "baseline_orders_3m_after": "orders (3 months)",
+        "actual_orders_3m_after": "orders (3 months)",
+        "volume_change_vs_baseline_pct": "share",
+        "implied_elasticity": "%volume / %price",
+        "churn_rate_before": "share per month",
+        "churn_rate_after": "share per month"
+      },
+      "n_rows": 6
+    },
+    {
+      "name": "competitor_prices",
+      "file": "competitor_prices.csv",
+      "description": "Our list-price index vs. a basket of three online competitors (both 2023-11 = 1.0, same product basket). Negative price_gap_pct means we are cheaper.",
+      "columns": [
+        "month",
+        "category",
+        "our_price_index",
+        "competitor_price_index",
+        "price_gap_pct"
+      ],
+      "dtypes": {
+        "month": "str",
+        "category": "str",
+        "our_price_index": "float",
+        "competitor_price_index": "float",
+        "price_gap_pct": "float"
+      },
+      "units": {
+        "month": "YYYY-MM",
+        "our_price_index": "index, 2023-11 = 1.0",
+        "competitor_price_index": "index, 2023-11 = 1.0",
+        "price_gap_pct": "share"
+      },
+      "n_rows": 144
+    }
+  ]
+}

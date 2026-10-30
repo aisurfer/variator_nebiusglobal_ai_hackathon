@@ -1,0 +1,247 @@
+{
+  "manifest_version": 1,
+  "name": "warehouse",
+  "title": "Warehouse at capacity: build, expand or outsource?",
+  "company": "Northbeam Home & Garden Supply (fictional)",
+  "description": "Northbeam Home & Garden Supply (fictional) ships 401,613 orders a year (+11.8% year on year) from one distribution centre rated for 420,000 orders a year. Over the last 12 months the site ran at 94% average utilization and was full in 4 months (2026-04, 2026-05, 2026-06, 2026-10); 4,721 orders overflowed to a spot 3PL at about $4.65 per order, peaking in 2026-05. Contribution margin before fulfilment is $9.06 per order and in-house fulfilment costs $3.06. The south region is 26% of volume and growing 25% a year. At the current trend next year needs about 449,043 orders of capacity. Contract 3PL quotes range from $3.62 to $4.35 per order; a second warehouse is quoted at about $2.2M and expanding the current site at $900k for 90,000-130,000 extra orders a year.",
+  "question": "Open a second warehouse, expand the current one, or outsource to a 3PL?",
+  "options": [
+    "second_warehouse",
+    "expand_current",
+    "outsource_3pl"
+  ],
+  "key_facts": {
+    "base_orders": 401613.0,
+    "demand_growth_yoy": 0.1181,
+    "margin_per_order": 9.06,
+    "own_cost_per_order": 3.06,
+    "capacity_orders_per_year": 420000.0,
+    "avg_utilization_last_12m": 0.945,
+    "peak_utilization": 1.0,
+    "overflow_orders_last_12m": 4721.0,
+    "overflow_fee_per_order": 4.65,
+    "tpl_fee_min": 3.62,
+    "tpl_fee_median": 3.87,
+    "tpl_fee_max": 4.35,
+    "south_share_last_12m": 0.2617,
+    "south_orders_yoy_growth": 0.2521,
+    "second_warehouse_capex_likely": 2200000.0,
+    "expansion_capex_likely": 900000.0,
+    "expansion_capacity_low": 90000.0,
+    "expansion_capacity_high": 130000.0
+  },
+  "seed": 42,
+  "period_start": "2023-11",
+  "period_end": "2026-10",
+  "tables": [
+    {
+      "name": "monthly_orders",
+      "file": "monthly_orders.csv",
+      "description": "Monthly orders, prices, revenue and cost of goods by region and product category. gross_margin = revenue - cogs, i.e. contribution before fulfilment and marketing.",
+      "columns": [
+        "month",
+        "region",
+        "category",
+        "orders",
+        "list_price_index",
+        "avg_order_value",
+        "revenue",
+        "cogs",
+        "gross_margin"
+      ],
+      "dtypes": {
+        "month": "str",
+        "region": "str",
+        "category": "str",
+        "orders": "int",
+        "list_price_index": "float",
+        "avg_order_value": "float",
+        "revenue": "float",
+        "cogs": "float",
+        "gross_margin": "float"
+      },
+      "units": {
+        "month": "YYYY-MM",
+        "orders": "orders/month",
+        "list_price_index": "index, 2023-11 = 1.0",
+        "avg_order_value": "USD/order",
+        "revenue": "USD",
+        "cogs": "USD",
+        "gross_margin": "USD"
+      },
+      "n_rows": 576
+    },
+    {
+      "name": "monthly_pnl",
+      "file": "monthly_pnl.csv",
+      "description": "Company-level monthly P&L and operating metrics. margin_per_order is the contribution margin before fulfilment; fulfilment_cost includes spot-3PL overflow; churn_rate is the monthly share of active customers lost.",
+      "columns": [
+        "month",
+        "orders",
+        "revenue",
+        "cogs",
+        "gross_margin",
+        "margin_per_order",
+        "fulfilment_cost",
+        "inhouse_cost_per_order",
+        "marketing_spend",
+        "active_customers",
+        "new_customers",
+        "churned_customers",
+        "churn_rate",
+        "warehouse_utilization"
+      ],
+      "dtypes": {
+        "month": "str",
+        "orders": "int",
+        "revenue": "float",
+        "cogs": "float",
+        "gross_margin": "float",
+        "margin_per_order": "float",
+        "fulfilment_cost": "float",
+        "inhouse_cost_per_order": "float",
+        "marketing_spend": "float",
+        "active_customers": "int",
+        "new_customers": "int",
+        "churned_customers": "int",
+        "churn_rate": "float",
+        "warehouse_utilization": "float"
+      },
+      "units": {
+        "month": "YYYY-MM",
+        "orders": "orders/month",
+        "revenue": "USD",
+        "cogs": "USD",
+        "gross_margin": "USD",
+        "margin_per_order": "USD/order",
+        "fulfilment_cost": "USD",
+        "inhouse_cost_per_order": "USD/order",
+        "marketing_spend": "USD",
+        "active_customers": "customers",
+        "new_customers": "customers/month",
+        "churned_customers": "customers/month",
+        "churn_rate": "share per month",
+        "warehouse_utilization": "share of monthly capacity"
+      },
+      "n_rows": 36
+    },
+    {
+      "name": "warehouse_capacity",
+      "file": "warehouse_capacity.csv",
+      "description": "Current distribution centre: monthly capacity, volume, overflow sent to a spot 3PL, cost per order and service level. Capacity rose in 2024-07 after a racking upgrade.",
+      "columns": [
+        "month",
+        "capacity_orders",
+        "orders_received",
+        "orders_shipped_inhouse",
+        "overflow_orders_3pl",
+        "utilization",
+        "inhouse_cost_per_order",
+        "overflow_fee_per_order",
+        "overtime_hours",
+        "on_time_ship_rate"
+      ],
+      "dtypes": {
+        "month": "str",
+        "capacity_orders": "int",
+        "orders_received": "int",
+        "orders_shipped_inhouse": "int",
+        "overflow_orders_3pl": "int",
+        "utilization": "float",
+        "inhouse_cost_per_order": "float",
+        "overflow_fee_per_order": "float",
+        "overtime_hours": "int",
+        "on_time_ship_rate": "float"
+      },
+      "units": {
+        "month": "YYYY-MM",
+        "capacity_orders": "orders/month",
+        "orders_received": "orders/month",
+        "orders_shipped_inhouse": "orders/month",
+        "overflow_orders_3pl": "orders/month",
+        "utilization": "share of capacity",
+        "inhouse_cost_per_order": "USD/order",
+        "overflow_fee_per_order": "USD/order (spot rate)",
+        "overtime_hours": "hours/month",
+        "on_time_ship_rate": "share of orders"
+      },
+      "n_rows": 36
+    },
+    {
+      "name": "tpl_quotes",
+      "file": "tpl_quotes.csv",
+      "description": "Quotes from contract third-party logistics (3PL) providers for taking over growth volume. fee_per_order covers pick, pack and handover to carrier; vendor names are fictional.",
+      "columns": [
+        "vendor",
+        "quote_date",
+        "region_coverage",
+        "fee_per_order",
+        "setup_fee",
+        "minimum_monthly_orders",
+        "contract_months",
+        "annual_escalator_pct",
+        "peak_surcharge_per_order",
+        "on_time_sla_pct"
+      ],
+      "dtypes": {
+        "vendor": "str",
+        "quote_date": "str",
+        "region_coverage": "str",
+        "fee_per_order": "float",
+        "setup_fee": "int",
+        "minimum_monthly_orders": "int",
+        "contract_months": "int",
+        "annual_escalator_pct": "float",
+        "peak_surcharge_per_order": "float",
+        "on_time_sla_pct": "float"
+      },
+      "units": {
+        "quote_date": "YYYY-MM-DD",
+        "fee_per_order": "USD/order",
+        "setup_fee": "USD one-off",
+        "minimum_monthly_orders": "orders/month",
+        "contract_months": "months",
+        "annual_escalator_pct": "share per year",
+        "peak_surcharge_per_order": "USD/order in Nov-Dec",
+        "on_time_sla_pct": "share of orders"
+      },
+      "n_rows": 4
+    },
+    {
+      "name": "site_options",
+      "file": "site_options.csv",
+      "description": "Capex and capacity quotes for the three ways to handle growth.",
+      "columns": [
+        "option",
+        "description",
+        "capex_low",
+        "capex_likely",
+        "capex_high",
+        "added_capacity_low",
+        "added_capacity_high",
+        "lead_time_months",
+        "notes"
+      ],
+      "dtypes": {
+        "option": "str",
+        "description": "str",
+        "capex_low": "int",
+        "capex_likely": "int",
+        "capex_high": "int",
+        "added_capacity_low": "int",
+        "added_capacity_high": "int",
+        "lead_time_months": "int",
+        "notes": "str"
+      },
+      "units": {
+        "capex_low": "USD",
+        "capex_likely": "USD",
+        "capex_high": "USD",
+        "added_capacity_low": "orders/year",
+        "added_capacity_high": "orders/year",
+        "lead_time_months": "months"
+      },
+      "n_rows": 3
+    }
+  ]
+}

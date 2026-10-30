@@ -1,0 +1,5 @@
+{"id":"reddit-001","subreddit":"LocalLLaMA","title":"Serving models on an A100","body":"The vLLM endpoint is easy to operate.","created_utc":"2026-01-10T13:00:00Z","author":"community-user","thread_id":"thread-001","reply_to":null}
+{"id":"reddit-002","subreddit":"MachineLearning","title":"Latency measurements","body":"The service reports useful throughput metrics.","created_utc":"2026-01-11T13:00:00Z","author":"research-user","thread_id":"thread-002","reply_to":null}
+{"id":"reddit-003","subreddit":"MLOps","title":"GPU operations","body":"A100 capacity planning needs careful monitoring.","created_utc":"2026-01-12T13:00:00Z","author":"ops-user","thread_id":"thread-003","reply_to":null}
+{"id":"reddit-004","subreddit":"selfhosted","title":"Local deployment","body":"A private deployment keeps operational data close to the team.","created_utc":"2026-01-13T13:00:00Z","author":"builder-user","thread_id":"thread-004","reply_to":null}
+{"id":"reddit-005","subreddit":"llama","title":"Model serving discussion","body":"The project compares inference tools.","created_utc":"2026-01-14T13:00:00Z","author":"model-user","thread_id":"thread-005","reply_to":null}

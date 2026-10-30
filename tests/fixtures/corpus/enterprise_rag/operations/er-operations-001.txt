@@ -1,0 +1,2 @@
+The incident rate is 3 this week and the team is tracking the operational response.
+The deployment note links the incident to service quality.

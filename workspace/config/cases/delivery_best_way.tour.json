@@ -1,0 +1,119 @@
+{
+  "schema": "variator-tour/1",
+  "caseId": "delivery_best_way",
+  "minutes": 4,
+  "steps": [
+    {
+      "id": "request",
+      "anchor": "origin-button",
+      "title": "The request and the delivery forks",
+      "body": "Test a decision on a model of your own company before you make it: see which option wins, how sure that is, what can go wrong and what to do then. {author} asked how to deliver a new platform. From that request VARIATOR drafted {drafted.forks} delivery forks: {forkList}; {author} reviewed and froze them on {frozenOn}.",
+      "try": "In the request, the chip «criteria» jumps to the ranking.",
+      "action": {
+        "id": "origin.open",
+        "label": "Open «Your request»",
+        "then": {
+          "anchor": "origin-modal"
+        }
+      },
+      "help": []
+    },
+    {
+      "id": "priorities",
+      "anchor": "compare",
+      "focus": "priorities",
+      "title": "Priorities",
+      "body": "A preset weighs the criteria by what matters to you and re-ranks the forks at once, without a new simulation. Show me applies «{preset.low_effort}». Now {leader} leads, best in {pBest} of the scenarios ({pBestOf}).",
+      "try": "Move one weight, or set «How cautious?» to the worst case.",
+      "action": {
+        "id": "priority.apply",
+        "args": {
+          "preset": "low_effort"
+        },
+        "label": "Apply «{preset.low_effort}»",
+        "then": {
+          "anchor": "compare",
+          "focus": "ranking"
+        }
+      },
+      "help": [
+        "priorities",
+        "caution"
+      ]
+    },
+    {
+      "id": "timeline",
+      "anchor": "plan",
+      "focus": "plan-timeline",
+      "title": "The timeline",
+      "body": "The plan of {leader}: the beta, the load-test environment and the go-live, each with P(met), how often it is met. Show me starts «{item.env_work}» in {to} instead of {from}. «{milestone.load_test_env}» is met in {pmet.load_test_env.plan}, «{milestone.go_live}» in {pmet.go_live.plan}.",
+      "try": "Drag the extra people or the go-live target yourself. Esc during a drag puts it back.",
+      "action": {
+        "id": "timeline.move",
+        "args": {
+          "item": "env_work",
+          "by": 3
+        },
+        "label": "Start «{item.env_work}» in {to}"
+      },
+      "help": [
+        "pmet"
+      ]
+    },
+    {
+      "id": "answer",
+      "anchor": "answer",
+      "focus": [
+        "answer-verdict",
+        "answer-decision"
+      ],
+      "title": "The answer",
+      "body": "{answer}. It goes live around {month.time.p50} in the median, {stat.delay_months.p50} late against the target. And a risk has a date: the risk calendar shows when the budget or a milestone can fail.",
+      "try": "The ringed cell of the risk calendar: {cal.top.label} by {cal.top.month}.",
+      "see": {
+        "anchor": "overtime",
+        "focus": "risk-calendar",
+        "label": "See the risk calendar"
+      },
+      "help": [
+        "pBest",
+        "calendar"
+      ],
+      "more": {
+        "label": "Lever by lever",
+        "text": "{levers}."
+      }
+    },
+    {
+      "id": "why",
+      "anchor": "why",
+      "focus": "why-chain",
+      "title": "Why",
+      "body": "Why {leader} comes out ahead: the chain of causes from {chain.first} to {chain.last}, with the value of each link for the fork and its difference to the baseline.",
+      "try": "Select a link to read how it is computed and what it depends on.",
+      "help": [
+        "chain",
+        "drivers"
+      ]
+    },
+    {
+      "id": "decision",
+      "anchor": "decision",
+      "title": "Your decision: from analysis to action",
+      "body": "The tool does not stop at charts. Here you turn the analysis into a decision you can act on and check: commit the fork, keep the warning signs that tell you early that the future goes the bad way, the backup plans that are ready for that case, and the fixes with an owner. After the commit, the morning Brief checks each warning sign against the real numbers of the company.",
+      "try": "Open «Your decision»: commit the leading option, and add fixes from a bad day («Fix it»). Warning signs and backup plans come from the week tree when the actor simulation covers this case.",
+      "help": [],
+      "links": [
+        {
+          "label": "Same engine, another decision: the best year of the company",
+          "to": "/cases/company_best_year",
+          "tour": true
+        },
+        {
+          "label": "Ask the knowledge base why",
+          "to": "/ask"
+        }
+      ]
+    }
+  ]
+}

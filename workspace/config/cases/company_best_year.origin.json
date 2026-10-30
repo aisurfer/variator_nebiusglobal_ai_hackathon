@@ -1,0 +1,53 @@
+{
+  "schema": "variator-case-origin/1",
+  "caseId": "company_best_year",
+  "request": "We are an IT services company with about $12M in ARR and $2M in cash, and I have to choose our main move for the next twelve months. The options I see: keep the current plan, put part of engineering on technical debt, hire engineers, reserve GPU capacity on a second cloud, or raise list prices by 8%. I watch cash at year end, client churn, runway, availability against our SLA, and NPS. I worry about a price war, a GPU shortage, a big client leaving, clients changing their requirements, a hard hiring market, a cash squeeze, a market downturn and a payroll tax rise from July. Which move gives us the best year?",
+  "qa": [
+    {
+      "slot": "size",
+      "q": "How many engineers would you hire?",
+      "a": "Five."
+    },
+    {
+      "slot": "priority",
+      "q": "What matters most when you compare the moves?",
+      "a": "Cash at year end and client churn first, availability next, runway and NPS least."
+    }
+  ],
+  "author": "LW-E01",
+  "authorName": "Avery Collins",
+  "authorTitle": "Chief Executive Officer",
+  "requestedOn": "forkDate",
+  "frozenOn": "forkDate",
+  "drafted": {
+    "forks": [
+      "status_quo",
+      "pay_tech_debt",
+      "hire_5",
+      "reserve_gpu",
+      "raise_prices_8"
+    ],
+    "hypotheses": [
+      "price_war",
+      "gpu_crunch",
+      "big_client_leaves",
+      "client_requirements_churn",
+      "hiring_freeze",
+      "cash_squeeze",
+      "downturn",
+      "payroll_tax_july"
+    ],
+    "criteria": [
+      "cash",
+      "runway",
+      "churn",
+      "sla",
+      "nps"
+    ]
+  },
+  "reviewEdits": [
+    "Kept every lever start at the fork date, October 2026.",
+    "Chose to judge the forks on the average with a margin, not on the worst case.",
+    "Left the eight world hypotheses off: they are layers to switch on."
+  ]
+}

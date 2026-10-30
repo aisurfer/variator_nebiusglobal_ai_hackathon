@@ -1,0 +1,25 @@
+{"cause":"jira.ENG-1","effect":"gitlab.wp3sample-api.mr-1","explicit":true,"expressed_as":"mr_text","predicate":"closes","since":"2026-10-16T11:14:00+02:00"}
+{"cause":"mail.msg-000001","effect":"mail.msg-000002","explicit":true,"expressed_as":"reply","predicate":"replies_to","since":"2026-10-20T10:31:00+02:00"}
+{"cause":"jira.ENG-1","effect":"mail.msg-000002","explicit":false,"expressed_as":"text","predicate":"refers_to","quote":"the retry problem that Maya's team fixed","since":"2026-10-20T10:31:00+02:00"}
+{"cause":"sim.PROC-BILLING","effect":"sim.INC-0005","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-13T08:41:00+02:00"}
+{"cause":"sim.HAB-NW-ESCALATE","effect":"sim.SUP-0012","explicit":true,"expressed_as":"sim_cause","predicate":"motivated_by","since":"2026-10-13T09:11:00+02:00"}
+{"cause":"sim.INC-0005","effect":"sim.fix-billing-retries","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-13T09:31:00+02:00"}
+{"cause":"sim.usage-export-demand","effect":"sim.DEC-001","explicit":true,"expressed_as":"sim_cause","predicate":"based_on","since":"2026-10-13T11:01:00+02:00"}
+{"cause":"sim.DEC-001","effect":"sim.DEAL-001","explicit":true,"expressed_as":"sim_cause","predicate":"implements","since":"2026-10-14T11:01:00+02:00"}
+{"cause":"sim.usage-export-demand","effect":"sim.DEC-002","explicit":true,"expressed_as":"sim_cause","predicate":"based_on","since":"2026-10-15T10:01:00+02:00"}
+{"cause":"sim.DEC-001","effect":"sim.DEC-002","explicit":true,"expressed_as":"sim_field","predicate":"supersedes","since":"2026-10-15T10:01:00+02:00"}
+{"cause":"sim.DEC-002","effect":"sim.CTR-2026-014","explicit":true,"expressed_as":"sim_cause","predicate":"implements","since":"2026-10-16T15:01:00+02:00"}
+{"cause":"sim.POL-NET30","effect":"sim.CTR-2026-014","explicit":true,"expressed_as":"sim_cause","predicate":"governed_by","since":"2026-10-16T15:01:00+02:00"}
+{"cause":"sim.DEC-002","effect":"sim.DEAL-001","explicit":true,"expressed_as":"sim_cause","predicate":"implements","since":"2026-10-16T15:31:00+02:00"}
+{"cause":"sim.fix-billing-retries","effect":"sim.DEP-0019","explicit":true,"expressed_as":"sim_cause","predicate":"implements","since":"2026-10-19T10:31:00+02:00"}
+{"cause":"sim.EE-0007","effect":"sim.REQ-0003","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-19T14:01:00+02:00"}
+{"cause":"sim.PROC-BILLING","effect":"sim.INV-2026-0031","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-20T09:01:00+02:00"}
+{"cause":"sim.POL-NET30","effect":"sim.INV-2026-0031","explicit":true,"expressed_as":"sim_cause","predicate":"governed_by","since":"2026-10-20T09:01:00+02:00"}
+{"cause":"sim.INC-0005","effect":"sim.NPS-0001","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-20T15:01:00+02:00"}
+{"cause":"sim.PROC-PAYROLL","effect":"sim.PR-2026-10","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-21T09:01:00+02:00"}
+{"cause":"sim.POL-VAT-Q","effect":"sim.TAX-2026-Q3-VAT","explicit":true,"expressed_as":"sim_cause","predicate":"governed_by","since":"2026-10-21T10:56:00+02:00"}
+{"cause":"sim.vat-change","effect":"sim.TAX-2026-Q3-VAT","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-21T10:56:00+02:00"}
+{"cause":"sim.POL-VAT-Q","effect":"sim.BNK-0109","explicit":true,"expressed_as":"sim_cause","predicate":"governed_by","since":"2026-10-21T11:01:00+02:00"}
+{"cause":"sim.PROC-PAYROLL","effect":"sim.BNK-0108","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-22T16:01:00+02:00"}
+{"cause":"sim.PROC-BILLING","effect":"sim.PAY-0042","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-23T10:01:00+02:00"}
+{"cause":"sim.PROC-BILLING","effect":"sim.BNK-0107","explicit":true,"expressed_as":"sim_cause","predicate":"caused_by","since":"2026-10-23T10:03:00+02:00"}

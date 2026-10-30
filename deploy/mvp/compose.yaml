@@ -1,0 +1,239 @@
+# VARIATOR MVP stack: knowledge base (kb/), workspace (workspace/), VARIATOR API and a caddy reverse proxy.
+# Commands: deploy/mvp/Makefile (make -C deploy/mvp help).
+# Settings that change per host come from deploy/mvp/.env (template: .env.example; never commit .env).
+name: variator-mvp
+
+# Container logs are rotated: the default json-file driver grows without a limit on a nearly full disk.
+x-logging: &logging
+  driver: json-file
+  options: {max-size: "10m", max-file: "3"}
+
+x-kb: &kb
+  build:
+    context: ../../kb
+    dockerfile: Dockerfile
+  image: variator-mvp-kb:dev
+  environment:
+    # dev, not prod: prod forces KB_ALLOW_SIMULATED_TIME off. kb-api has no public route (see Caddyfile).
+    KB_ENV: dev
+    KB_PG_DSN: postgresql://kb:${KB_PG_PASSWORD:-kb}@postgres:5432/kb
+    KB_OS_URL: http://opensearch:9200
+    KB_MEMGRAPH_URI: bolt://memgraph:7687
+    KB_BLOB_DIR: /data/blobs
+    # Local embeddings: the fastembed model is baked into the image (KB_EMBED_MODEL, KB_EMBED_CACHE_DIR).
+    # The embedding cache in Postgres is keyed by the encoder: keep provider and model equal to the dump source.
+    KB_EMBED_PROVIDER: fastembed
+    # ONNX threads per process: the default (one per core) was 4x slower on the hybrid development CPU (2026-10-27).
+    # A drain with parts runs several processes; keep processes x threads at or below the core count.
+    KB_EMBED_THREADS: ${KB_EMBED_THREADS:-4}
+    HF_HUB_OFFLINE: ${KB_HF_HUB_OFFLINE:-1}
+    # No LLM in the knowledge base (/ask stays deterministic): no key, no secret.
+    KB_LLM_ENABLED: "false"
+    # The simulated company history carries its own event time (observed_at).
+    KB_ALLOW_SIMULATED_TIME: "true"
+    # The default tenant "company" is fixed in kb/app/kb/api/deps.py and kb.cli (no environment variable).
+  volumes:
+    - kb-blobs:/data/blobs
+  depends_on:
+    postgres: {condition: service_healthy}
+    opensearch: {condition: service_healthy}
+    memgraph: {condition: service_healthy}
+  restart: unless-stopped
+  init: true
+  logging: *logging
+
+services:
+  postgres:
+    image: postgres:18.4
+    environment:
+      POSTGRES_USER: kb
+      POSTGRES_PASSWORD: ${KB_PG_PASSWORD:-kb}
+      POSTGRES_DB: kb
+    command: ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
+    # Postgres as PID 1 without an init: a health check killed on timeout leaves an orphan to the postmaster,
+    # which takes its exit for a crashed backend and restarts every connection with crash recovery (Plancy T07).
+    init: true
+    shm_size: 256mb  # dynamic shared memory of parallel queries (the container default /dev/shm is 64 MB)
+    ports: ["127.0.0.1:55433:5432"]
+    volumes: [pg-data:/var/lib/postgresql]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kb -d kb"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+    restart: unless-stopped
+    logging: *logging
+
+  opensearch:
+    image: opensearchproject/opensearch:3.8.0
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      # heap of OpenSearch (OS_HEAP in .env; default 1g)
+      OPENSEARCH_JAVA_OPTS: -Xms${OS_HEAP:-1g} -Xmx${OS_HEAP:-1g}
+      # Absolute disk watermarks: the default 85/90/95 % blocks index creation on a nearly full disk.
+      cluster.routing.allocation.disk.watermark.low: 3gb
+      cluster.routing.allocation.disk.watermark.high: 2gb
+      cluster.routing.allocation.disk.watermark.flood_stage: 1gb
+    ulimits:
+      nofile: {soft: 65536, hard: 65536}
+    init: true
+    ports: ["127.0.0.1:9202:9200"]
+    volumes: [os-data:/usr/share/opensearch/data]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' >/dev/null"]
+      interval: 10s
+      timeout: 8s
+      retries: 30
+    restart: unless-stopped
+    logging: *logging
+
+  memgraph:
+    image: memgraph/memgraph:3.13.1
+    command: ["--log-level=WARNING", "--also-log-to-stderr"]
+    init: true
+    ports: ["127.0.0.1:7689:7687"]
+    volumes: [mg-data:/var/lib/memgraph]
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'RETURN 1;' | mgconsole >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+    logging: *logging
+
+  kb-api:
+    <<: *kb
+    command: ["uvicorn", "kb.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports: ["127.0.0.1:8720:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status==200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
+
+  kb-worker:
+    <<: *kb
+    command: ["python", "-m", "kb.worker.main"]
+    # After kb-api: both apply migrations at start, so the worker waits for the first one.
+    depends_on:
+      postgres: {condition: service_healthy}
+      opensearch: {condition: service_healthy}
+      memgraph: {condition: service_healthy}
+      kb-api: {condition: service_healthy}
+
+  variator-api:
+    build:
+      context: ../..
+      dockerfile: deploy/app/Dockerfile
+      args:
+        APP_MODULE: variator.web.app:app
+        # starlette comes with fastmcp; it is listed so the app does not depend on that by accident.
+        EXTRA_PACKAGES: "uvicorn[standard]>=0.30 starlette>=0.46"
+    image: variator-mvp-api:dev
+    environment:
+      VARIATOR_ARTIFACTS_DIR: /data/artifacts
+      # The image has no .git; `make up` passes the commit of the checkout.
+      VARIATOR_GIT_COMMIT: ${VARIATOR_GIT_COMMIT:-}
+      # The live month (POST /api/variator/cases/{case}/month, variator.future.live) reads the learned actors
+      # (the served set) and the history: datasets/sim_*.jsonl*, datasets/*.csv, delivery/config/*.yaml.
+      VARIATOR_FUTURE_ACTORS: /data/artifacts/actors
+      VARIATOR_FUTURE_HISTORY: /data/future/history
+      VARIATOR_CASES_DIR: /data/future/cases
+    volumes:
+      - artifacts:/data/artifacts:ro
+      # the final history of the precompute pipeline (scripts/mvp/pipeline.py, root MVP_RELEASE_ROOT)
+      - ${MVP_RELEASE_ROOT:-/tmp/variator-1000/mvp-release}/work/history/datasets:/data/future/history/datasets:ro
+      - ${MVP_RELEASE_ROOT:-/tmp/variator-1000/mvp-release}/work/history/delivery/config:/data/future/history/delivery/config:ro
+      # the case configs that variator.future.forks reads (VARIATOR_CASES_DIR)
+      - ../../workspace/config/cases:/data/future/cases:ro
+    ports: ["127.0.0.1:8730:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status==200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 6
+    restart: unless-stopped
+    init: true
+    logging: *logging
+
+  workspace:
+    build:
+      context: ../../workspace
+      dockerfile: Dockerfile
+    image: variator-mvp-workspace:dev
+    environment:
+      NODE_ENV: production
+      PORT: "3002"
+      KB_URL: http://kb-api:8000
+      # The workspace proxy forwards /api/variator/<path> to ${VARIATOR_API_URL}/api/variator/<path> (the full path).
+      VARIATOR_API_URL: http://variator-api:8000
+      # the decisions of the case pages (workspace/server/decisions.ts)
+      DECISIONS_DIR: /data/decisions
+    volumes:
+      - workspace-decisions:/data/decisions
+    ports: ["127.0.0.1:3002:3002"]
+    depends_on:
+      kb-api: {condition: service_healthy}
+      variator-api: {condition: service_healthy}
+    healthcheck:
+      # Plancy's image health check uses port 3001; this one follows PORT.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    restart: unless-stopped
+    init: true
+    logging: *logging
+
+  caddy:
+    image: caddy:2
+    environment:
+      # Site address: a domain gives automatic HTTPS; empty gives plain HTTP on any host name (port 80).
+      MVP_SITE_ADDRESS: ${MVP_DOMAIN:-:80}
+      MVP_AUTH: ${MVP_AUTH:-off}
+      MVP_AUTH_USER: ${MVP_AUTH_USER:-}
+      MVP_AUTH_HASH: ${MVP_AUTH_HASH:-}
+    ports:
+      - "${MVP_BIND:-127.0.0.1}:${MVP_HTTP_PORT:-8088}:80"
+      - "${MVP_BIND:-127.0.0.1}:${MVP_HTTPS_PORT:-8443}:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      workspace: {condition: service_healthy}
+      variator-api: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    init: true
+    logging: *logging
+
+  lab:
+    image: memgraph/lab:3.13.1
+    profiles: [tools]
+    environment:
+      QUICK_CONNECT_MG_HOST: memgraph
+      QUICK_CONNECT_MG_PORT: "7687"
+    ports: ["127.0.0.1:3012:3000"]
+    depends_on: [memgraph]
+    init: true
+    logging: *logging
+
+volumes:
+  pg-data: {name: variator-mvp-pg-data}
+  os-data: {name: variator-mvp-os-data}
+  mg-data: {name: variator-mvp-mg-data}
+  kb-blobs: {name: variator-mvp-kb-blobs}
+  artifacts: {name: variator-mvp-artifacts}
+  caddy-data: {name: variator-mvp-caddy-data}
+  caddy-config: {name: variator-mvp-caddy-config}
+  workspace-decisions: {name: variator-mvp-workspace-decisions}

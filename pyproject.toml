@@ -1,0 +1,87 @@
+[project]
+name = "variator"
+version = "0.1.0"
+description = "Multi-criteria decision simulator: MCP server, if-then rules, Monte Carlo, RAG bands; Nemotron on Nebius Token Factory"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.27",
+    "jsonschema>=4.23",
+    "pydantic>=2.8",
+    "rfc8785>=0.1.4",
+    "numpy>=1.26",
+    "scipy>=1.13",
+    "fastmcp>=3",
+    "pyyaml>=6",
+    # Windows has no system time zones; actors.history uses zoneinfo
+    "tzdata; sys_platform == 'win32'",
+]
+
+[project.optional-dependencies]
+# GPU Monte Carlo (Nebius Serverless Job on L40S/H100)
+gpu = ["cupy-cuda12x[ctk]>=13"]
+# NVIDIA cuOpt, installed from https://pypi.nvidia.com (see docs/research)
+cuopt = ["cuopt-cu12>=26.10"]
+# NeMo Data Designer for synthetic demo data
+synthetic = ["data-designer>=0.9.7,<0.10"]
+xlsx = [
+    "openpyxl>=3.1",
+]
+pdf = [
+    "pdfplumber>=0.11",
+]
+
+[dependency-groups]
+dev = [
+    "variator-logistics",
+    "variator-it-services",
+    "openpyxl>=3.1",
+    "pdfplumber>=0.11",
+    "pytest>=8",
+    "reportlab>=4",
+    "respx>=0.21",
+    "ruff>=0.6",
+    "pytest-xdist>=3.6",
+    "playwright==1.47.0",
+]
+
+[project.scripts]
+variator-mcp = "variator.mcp.__main__:main"
+variator-agent = "variator.agent.__main__:main"
+variator-dev-agent = "variator.dev_agent.__main__:main"
+
+[tool.uv.workspace]
+members = ["plugins/*"]
+
+[tool.uv.sources]
+variator-logistics = { workspace = true }
+variator-it-services = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/variator"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "live: calls real external APIs (needs keys); skipped unless --live is passed",
+    "gpu: needs an NVIDIA GPU (CuPy/cuOpt); skipped when unavailable",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Embedded HTML/JS template
+"src/variator/report/html.py" = ["E501"]
+# Data tables of a template (one row per variable, derived value or risk)
+"plugins/variator_it_services/src/variator_it_services/company.py" = ["E501"]

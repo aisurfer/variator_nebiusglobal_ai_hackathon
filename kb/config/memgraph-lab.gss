@@ -1,0 +1,122 @@
+// Plancy Knowledge Backend — Memgraph Lab graph style (Graph Style editor → paste → Apply).
+// Node caption = title (Entity) or version id (Version); colour = kind; red border = deleted.
+// Edge caption = relation type; causal links red, inferred candidates waiting for review yellow.
+
+@NodeStyle {
+  size: 6
+  color: #9E9E9E
+  color-hover: #757575
+  color-selected: #424242
+  border-width: 0.6
+  border-color: #1D1D1D
+  font-size: 3
+  font-color: #1D1D1D
+  label: AsText(Property(node, "title"))
+}
+
+@NodeStyle HasLabel(node, "Version") {
+  size: 4
+  color: #E0E0E0
+  label: AsText(Property(node, "vid"))
+}
+
+@NodeStyle Equals(Property(node, "kind"), "Meeting") {
+  size: 10
+  color: #FB6E00
+}
+@NodeStyle Equals(Property(node, "kind"), "Decision") {
+  size: 9
+  color: #DD2222
+}
+@NodeStyle Equals(Property(node, "kind"), "Experiment") {
+  size: 10
+  color: #720096
+}
+@NodeStyle Equals(Property(node, "kind"), "Report") {
+  size: 8
+  color: #FFC500
+}
+@NodeStyle Equals(Property(node, "kind"), "Release") {
+  size: 8
+  color: #3288BD
+}
+@NodeStyle Equals(Property(node, "kind"), "MergeRequest") {
+  color: #66C2A5
+}
+@NodeStyle Equals(Property(node, "kind"), "Epic") {
+  size: 8
+  color: #5E4FA2
+}
+@NodeStyle Equals(Property(node, "kind"), "Story") {
+  color: #ABDDA4
+}
+@NodeStyle Equals(Property(node, "kind"), "Task") {
+  color: #ABDDA4
+}
+@NodeStyle Equals(Property(node, "kind"), "Bug") {
+  color: #D53E4F
+}
+@NodeStyle Equals(Property(node, "kind"), "Policy") {
+  size: 8
+  color: #9E0142
+}
+@NodeStyle Equals(Property(node, "kind"), "ADR") {
+  color: #F46D43
+}
+@NodeStyle Equals(Property(node, "kind"), "Spec") {
+  color: #FEE08B
+}
+@NodeStyle Equals(Property(node, "kind"), "Document") {
+  color: #E6F598
+}
+@NodeStyle Equals(Property(node, "kind"), "KBArticle") {
+  color: #8DA0CB
+}
+@NodeStyle Equals(Property(node, "kind"), "ActionItem") {
+  size: 4
+  color: #F4A582
+}
+@NodeStyle Equals(Property(node, "kind"), "Person") {
+  size: 5
+  color: #BDBDBD
+}
+@NodeStyle Equals(Property(node, "kind"), "Commit") {
+  size: 4
+  color: #DDDDDD
+}
+@NodeStyle Property(node, "deleted") {
+  border-width: 2
+  border-color: #DD2222
+}
+
+@EdgeStyle {
+  color: #999999
+  color-hover: #1D1D1D
+  color-selected: #1D1D1D
+  width: 0.3
+  width-hover: 0.9
+  width-selected: 0.9
+  font-size: 2.5
+  font-color: #1D1D1D
+  label: Type(edge)
+}
+@EdgeStyle HasProperty(edge, "type") {
+  label: AsText(Property(edge, "type"))
+}
+@EdgeStyle Equals(Type(edge), "CAUSAL") {
+  color: #D53E4F
+  width: 0.6
+}
+@EdgeStyle Equals(Type(edge), "CAUSED_BY") {
+  color: #D53E4F
+  width: 0.6
+}
+@EdgeStyle Equals(Property(edge, "review_status"), "pending") {
+  color: #FFC500
+  width: 0.6
+}
+
+@ViewStyle {
+  view: "default"
+  background-color: #FFFFFF00
+}

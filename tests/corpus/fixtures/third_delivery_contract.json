@@ -1,0 +1,127 @@
+{
+  "artifact": {
+    "archive": "/Users/shmakovdima/Downloads/redwood-corpus-b7a0f07.tar.gz",
+    "archive_sha256": "efff4d61a18699b47878ac90cfa69efce4c10c54336f160d905466aade3b9964",
+    "commit": "b7a0f07",
+    "found_read_only": true,
+    "root": "redwood/plancy"
+  },
+  "archive_structure": {
+    "required": [
+      "config/people.yaml",
+      "config/sources.yaml",
+      "fixtures/timeline.jsonl.gz",
+      "cases.jsonl",
+      "gold_links.jsonl",
+      "dashboard.json",
+      "manifest.json",
+      "sample/timeline.jsonl.gz",
+      "sample/cases.jsonl",
+      "sample/gold_links.jsonl",
+      "schemas/PlancyEvent.schema.json",
+      "schemas/EvaluationCase.schema.json",
+      "schemas/GoldLink.schema.json"
+    ],
+    "forbidden_members": ["._*", "__MACOSX"]
+  },
+  "schema": {
+    "event": {
+      "schema_version": "plancy-event/2",
+      "required": [
+        "acl",
+        "aliases",
+        "container",
+        "entity_id",
+        "event_id",
+        "external_id",
+        "object_type",
+        "observed_at",
+        "op",
+        "original_occurred_at",
+        "payload",
+        "previous_event_id",
+        "revision",
+        "sequence",
+        "source",
+        "time_transform_id",
+        "version",
+        "world_at"
+      ]
+    },
+    "case": {
+      "required": ["id", "evidence", "roots", "forbidden", "answer_facts", "rationale"],
+      "evidence_reference": "provider-native-reference",
+      "split_counts": {"dev": 70, "holdout": 30}
+    },
+    "gold_link": {
+      "required": [
+        "evidence_entity_ids",
+        "evidence_quote",
+        "explicit",
+        "expressed_as",
+        "link_id",
+        "predicate",
+        "rule_id",
+        "source_entity_id",
+        "target_entity_id"
+      ],
+      "endpoint_reference": "provider-native-reference"
+    }
+  },
+  "providers": {
+    "jira-redwood": {
+      "payload_id_paths": ["id", "fields.key"],
+      "reference_alias": "jira.<key>",
+      "forbidden_key_prefixes": ["ENT-BATCH-"]
+    },
+    "gitlab-redwood": {
+      "payload_id_paths": ["id", "iid"],
+      "reference_alias": "gitlab.<namespace>.mr-<iid>"
+    },
+    "mail-redwood": {
+      "payload_id_paths": ["id", "internetMessageId"],
+      "reference_alias": "mail.<internetMessageId>"
+    },
+    "confluence-redwood": {"payload_id_paths": ["id"], "reference_alias": "confluence.<id>"},
+    "xwiki-redwood": {"payload_id_paths": ["id"], "reference_alias": "xwiki.<id>"},
+    "slack-redwood": {"payload_id_paths": ["ts"], "reference_alias": "slack.<channel>.<ts>"},
+    "gmail-redwood": {"payload_id_paths": ["id"], "reference_alias": "gmail.<id>"},
+    "linear-redwood": {"payload_id_paths": ["id"], "reference_alias": "linear.<id>"},
+    "github-redwood": {"payload_id_paths": ["id"], "reference_alias": "github.<id>"},
+    "hubspot-redwood": {"payload_id_paths": ["id"], "reference_alias": "hubspot.<object>.<id>"},
+    "fireflies-redwood": {"payload_id_paths": ["id"], "reference_alias": "fireflies.<id>"},
+    "google-drive-redwood": {"payload_id_paths": ["id"], "reference_alias": "google-drive.<id>"}
+  },
+  "directory": {
+    "people_minimum": 45,
+    "availability_key": "availability",
+    "vacation_fields": ["person_id", "status", "valid_from", "valid_to"],
+    "interval_semantics": "[valid_from, valid_to)",
+    "redwood_organization_kind": "internal",
+    "customer_kinds": ["client", "prospect", "supplier"],
+    "role_mailboxes_require_contact": true
+  },
+  "documents": {
+    "north_star_required": ["report_period", "owner", "source_records", "metrics"],
+    "meeting_protocol_required": ["attendees", "agenda", "decisions", "owners", "actions", "timestamps"],
+    "attachment_document_meta_required": [
+      "attachment_id",
+      "filename",
+      "mime_type",
+      "source_document",
+      "checksum"
+    ]
+  },
+  "baseline_observations": {
+    "event_schema_version": "plancy-event/2",
+    "people": 45,
+    "cases": 100,
+    "gold_links": 48663,
+    "event_records": 51087,
+    "documents": 10894,
+    "external_source_records": 634,
+    "external_canonical_documents": 443,
+    "open_task_ratio_ceiling": 0.783,
+    "status_transition_rate_target": 2.2
+  }
+}

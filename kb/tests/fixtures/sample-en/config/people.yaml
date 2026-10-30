@@ -1,0 +1,120 @@
+admins:
+- user:admin
+groups:
+  grp:all-staff:
+    name: All staff
+  grp:management:
+    name: Management
+  grp:sales:
+    name: Sales
+  grp:dev:
+    name: Engineering
+people:
+- id: WP-E01
+  name: Olivia Grant
+  role: Chief Executive Officer
+  department: Management
+  manager: null
+  email: o.grant@wp3sample.example
+  principal: user:o.grant
+  groups:
+  - grp:all-staff
+  - grp:management
+  accounts:
+    jira-wp3sample: 712020:o.grant
+    gitlab-wp3sample: ogrant
+    mail-wp3sample: o.grant@wp3sample.example
+- id: WP-E02
+  name: Sam Rivera
+  role: Head of Sales
+  department: Sales
+  manager: WP-E01
+  email: s.rivera@wp3sample.example
+  principal: user:s.rivera
+  groups:
+  - grp:all-staff
+  - grp:management
+  - grp:sales
+  accounts:
+    jira-wp3sample: 712020:s.rivera
+    gitlab-wp3sample: srivera
+    mail-wp3sample: s.rivera@wp3sample.example
+- id: WP-E03
+  name: Maya Chen
+  role: Head of Engineering
+  department: Engineering
+  manager: WP-E01
+  email: m.chen@wp3sample.example
+  principal: user:m.chen
+  groups:
+  - grp:all-staff
+  - grp:management
+  - grp:dev
+  accounts:
+    jira-wp3sample: 712020:m.chen
+    gitlab-wp3sample: mchen
+    mail-wp3sample: m.chen@wp3sample.example
+- id: WP-E04
+  name: Lena Park
+  role: Backend Engineer
+  department: Engineering
+  manager: WP-E03
+  email: l.park@wp3sample.example
+  principal: user:l.park
+  groups:
+  - grp:all-staff
+  - grp:dev
+  accounts:
+    jira-wp3sample: 712020:l.park
+    gitlab-wp3sample: lpark
+    mail-wp3sample: l.park@wp3sample.example
+- id: WP-E05
+  name: Tom Novak
+  role: Backend Engineer
+  department: Engineering
+  manager: WP-E03
+  email: t.novak@wp3sample.example
+  principal: user:t.novak
+  groups:
+  - grp:all-staff
+  - grp:dev
+  accounts:
+    jira-wp3sample: 712020:t.novak
+    gitlab-wp3sample: tnovak
+    mail-wp3sample: t.novak@wp3sample.example
+- id: WP-E06
+  name: Ravi Shah
+  role: QA Engineer
+  department: Engineering
+  manager: WP-E03
+  email: r.shah@wp3sample.example
+  principal: user:r.shah
+  groups:
+  - grp:all-staff
+  - grp:dev
+  accounts:
+    jira-wp3sample: 712020:r.shah
+    gitlab-wp3sample: rshah
+    mail-wp3sample: r.shah@wp3sample.example
+organizations:
+- id: org-northwind
+  name: Northwind Foods
+  kind: client
+  domain: northwind.example
+- id: org-skycloud
+  name: SkyCloud Ltd
+  kind: vendor
+  domain: skycloud.example
+- id: org-taxoffice
+  name: Federal Tax Office
+  kind: government
+  domain: tax.example
+contacts:
+- id: CT-nw_ross
+  name: Daniel Ross
+  role: CTO, Northwind Foods
+  org: org-northwind
+  email: d.ross@northwind.example
+  accounts:
+    mail-wp3sample: d.ross@northwind.example
+availability: []

@@ -1,0 +1,222 @@
+# Seed of the open schema (KB element 1). Kinds and predicates are data: adapters may emit new ones,
+# which are registered with status "proposed" for schema review. Direction of causal predicates:
+# subject = effect, object = cause ("EXP-7 based_on v2.4.0").
+kinds:
+  Person: {label: Person}
+  Account: {label: Account}
+  Group: {label: Group}
+  Project: {label: Project}
+  Space: {label: Space}
+  Repository: {label: Repository}
+  Meeting: {label: Meeting}
+  Decision: {label: Decision}
+  ActionItem: {label: Action item}
+  Epic: {label: Epic}
+  Story: {label: Story}
+  Task: {label: Task}
+  Bug: {label: Bug}
+  Issue: {label: Issue (GitLab)}
+  Experiment: {label: Experiment}
+  Spec: {label: Requirements (PRD)}
+  Report: {label: Report}
+  Document: {label: Document}
+  MergeRequest: {label: Merge request}
+  Commit: {label: Commit}
+  Release: {label: Release}
+  Policy: {label: Policy}
+  ADR: {label: Architecture decision}
+  KBArticle: {label: Knowledge base article}
+  # corporate mail and the business documents that arrive as attachments
+  Email: {label: Email}
+  Organization: {label: Organization}
+  Contract: {label: Contract}
+  Amendment: {label: Amendment}
+  Invoice: {label: Invoice}
+  Act: {label: Acceptance act}
+  CommercialProposal: {label: Commercial proposal}
+  Claim: {label: Claim}
+  Letter: {label: Official letter}
+  Specification: {label: Specification}
+  PriceList: {label: Price list}
+  Order: {label: Order}
+  NDA: {label: Non-disclosure agreement}
+  BusinessDocument: {label: Business document}
+  # structured business records of the organisation simulator (provider sim, kb.connectors.sim); Contract,
+  # Invoice and Decision above are shared with the mail attachments and the Confluence decisions
+  Payment: {label: Payment, description: Money received from or paid to a counterparty}
+  BankEntry: {label: Bank entry, description: A line of a bank statement}
+  Deal: {label: Deal, description: A sales opportunity with a client}
+  EmployeeEvent: {label: Employee event, description: "A hire, a leave, a promotion, a resignation and similar"}
+  Requisition: {label: Job requisition, description: An open position to hire for}
+  Payroll: {label: Payroll, description: The payroll of a period}
+  Incident: {label: Incident, description: A production incident}
+  Deploy: {label: Deployment, description: A deployment of a component to an environment}
+  SupportTicket: {label: Support ticket, description: A request or a complaint of a client}
+  CloudBill: {label: Cloud bill, description: The bill of a cloud provider for a period}
+  TaxPayment: {label: Tax payment, description: A tax paid for a period}
+  NpsResponse: {label: NPS response, description: "A client contact's answer to an NPS survey: a score from 0 to 10"}
+  # the simulator's cause catalog: what a declared cause points at when it is not a business record (a rule is a Policy)
+  Hypothesis: {label: Hypothesis, description: An assumption the company acts on}
+  LifeEvent: {label: Life event, description: Something that happened to a person or an organisation}
+  Habit: {label: Habit, description: How a person or an organisation usually behaves}
+  Process: {label: Process, description: A recurring business process}
+
+predicates:
+  # ------------------------------------------------------------- causal / dependency (effect -> cause)
+  decided_in:
+    label: decided at
+    inverse_label: decision made at
+    aliases: [decided at, decided in, meeting decision]
+    description: The decision was made at the meeting.
+    causal_kind: caused_by
+    # only the meeting's time and identity matter: editing another decision of the same notes must not make
+    # this decision stale (false staleness, research §8); an edit of the decision itself versions the Decision.
+    typical_sensitivity: [held_at]
+    domain: [Decision]
+    range: [Meeting]
+  motivated_by:
+    label: motivated by
+    inverse_label: motivates
+    aliases: [because of, due to, motivation]
+    description: A decision or an experiment is driven by the facts of a report.
+    causal_kind: decided_because_of
+    typical_sensitivity: [findings, metrics]
+    domain: [Decision, Experiment, Meeting, Contract, Invoice, Payment, BankEntry, Deal, EmployeeEvent, Requisition, Payroll, Incident, Deploy, SupportTicket, CloudBill, TaxPayment, NpsResponse]
+    range: [Report, Document, Habit]
+  informed_by:
+    label: informed by
+    inverse_label: informs
+    aliases: [informed by, following, taking into account]
+    description: The material was used as a basis (a discussion, results, a report).
+    causal_kind: informed_by
+    typical_sensitivity: [findings, body]
+    domain: [Meeting, Spec, Experiment, Decision]
+    range: [Report, Document, Decision, Meeting]
+  implements:
+    label: implements
+    inverse_label: implemented by
+    aliases: [implements, implementation of the decision, carries out the decision]
+    description: The work was created to carry out a decision or a requirement.
+    causal_kind: caused_by
+    typical_sensitivity: [statement]
+    domain: [Epic, Story, Task, Spec, Experiment, Decision, Contract, Invoice, Payment, BankEntry, Deal, EmployeeEvent, Requisition, Payroll, Incident, Deploy, SupportTicket, CloudBill, TaxPayment, NpsResponse]
+    range: [Decision, Spec]
+  part_of:
+    label: part of
+    inverse_label: includes work
+    aliases: [parent, epic link, part of the epic, subtask]
+    description: The ticket was created within an epic or a parent ticket.
+    causal_kind: caused_by
+    typical_sensitivity: [summary, description]
+    domain: [Story, Task, Bug, Issue]
+    range: [Epic, Story, Task]
+  closes:
+    label: closes
+    inverse_label: closed by
+    aliases: [closes, fixes, resolves]
+    description: A merge request carries out a tracker ticket.
+    causal_kind: caused_by
+    typical_sensitivity: [summary, description, acceptance_criteria]
+    domain: [MergeRequest, Commit]
+    range: [Story, Task, Bug, Epic, Issue]
+  includes:
+    label: includes
+    inverse_label: shipped in
+    aliases: [includes, contains, in the release]
+    description: The release contains the change.
+    causal_kind: depends_on
+    typical_sensitivity: [state, merge_commit]
+    domain: [Release]
+    range: [MergeRequest, Commit]
+  based_on:
+    label: based on
+    inverse_label: basis for
+    aliases: [based on, built on, on the results of the release]
+    description: The object is built on the result of another object.
+    causal_kind: based_on
+    domain: [Experiment, Spec, Decision, Document, Contract, Invoice, Payment, BankEntry, Deal, EmployeeEvent, Requisition, Payroll, Incident, Deploy, SupportTicket, CloudBill, TaxPayment, NpsResponse]
+    range: [Release, Decision, Spec, Document, Report, Hypothesis]
+  governed_by:
+    label: governed by
+    inverse_label: governs
+    aliases: [governed by, per the policy, according to the policy]
+    description: The work follows the rules of a policy.
+    causal_kind: depends_on
+    typical_sensitivity: [rules]
+    domain: [Experiment, Decision, Contract, Invoice, Payment, BankEntry, Deal, EmployeeEvent, Requisition, Payroll, Incident, Deploy, SupportTicket, CloudBill, TaxPayment, NpsResponse]
+    range: [Policy]
+  blocked_by:
+    label: blocked by
+    inverse_label: blocks
+    aliases: [is blocked by, blocks, waits for the ticket]
+    description: The ticket cannot be finished before another one.
+    causal_kind: precondition
+    typical_sensitivity: [status]
+    domain: [Story, Task, Bug, Epic, Issue]
+    range: [Story, Task, Bug, Epic, Issue]
+  depends_on:
+    label: depends on
+    inverse_label: needed by
+    aliases: [depends on, requires]
+    description: A general dependency.
+    causal_kind: depends_on
+  caused_by:
+    label: caused by
+    inverse_label: caused
+    aliases: [is caused by, regression from, caused by the change]
+    description: A defect or an incident was caused by a change, a life event or a process.
+    causal_kind: caused_by
+    domain: [Bug, Issue, Decision, Contract, Invoice, Payment, BankEntry, Deal, EmployeeEvent, Requisition, Payroll, Incident, Deploy, SupportTicket, CloudBill, TaxPayment, NpsResponse]
+    range: [MergeRequest, Commit, Release, LifeEvent, Process, Contract, Invoice, Payment, BankEntry, Deal, EmployeeEvent, Requisition, Payroll, Incident, Deploy, SupportTicket, CloudBill, TaxPayment, NpsResponse]
+  supersedes:
+    label: supersedes
+    inverse_label: superseded by
+    aliases: [supersedes, replaces, cancels, replaces the decision]
+    description: A new decision or document replaces the previous one.
+    causal_kind: supersedes
+    domain: [Decision, ADR, Policy, Document]
+    range: [Decision, ADR, Policy, Document]
+  refers_to:
+    label: refers to
+    inverse_label: referred to by
+    aliases: [refers to, implicit reference]
+    description: The text relies on an earlier artifact by meaning (an implicit reference such as "as I wrote on Friday").
+    causal_kind: informed_by
+    # substantive fields only: a new comment on a referenced ticket must not make every reference stale
+    typical_sensitivity: [description, statement, state, decisions, amount, doc_date, summary, subject]
+  replies_to:
+    label: replies to
+    inverse_label: replied in
+    aliases: [in reply to, reply to, replies to]
+    description: The email was written in reply to another email (In-Reply-To).
+    causal_kind: informed_by
+    # no typical_sensitivity: any edit of the parent message may change what the reply answered
+    domain: [Email]
+    range: [Email]
+
+  # ------------------------------------------------------------- structural
+  in_project: {label: in project, inverse_label: contains, aliases: [project]}
+  in_space: {label: in space, inverse_label: contains, aliases: [space]}
+  in_repository: {label: in repository, inverse_label: contains, aliases: [repository, repo]}
+  author: {label: author, inverse_label: authored, aliases: [created by, written by]}
+  assignee: {label: assignee, inverse_label: assigned, aliases: [assigned to, responsible]}
+  reporter: {label: reporter, inverse_label: reported, aliases: [reported by]}
+  owner: {label: owner, inverse_label: owns, aliases: [owner, decision owner]}
+  participant: {label: participant, inverse_label: took part, aliases: [attendee, meeting participant]}
+  mentions: {label: mentions, inverse_label: mentioned in, aliases: [mentions]}
+  relates_to: {label: relates to, inverse_label: relates to, aliases: [relates to, related]}
+  status: {label: status, aliases: [state]}
+  labels: {label: labels, aliases: [tags, labels]}
+  # mail and directory
+  addressed_to: {label: addressed to, inverse_label: received, aliases: [addressed to, sent to, recipient], domain: [Email], range: [Person, Account]}
+  cc_to: {label: cc, inverse_label: received a copy, aliases: [carbon copy, copy to], domain: [Email], range: [Person, Account]}
+  in_thread: {label: in thread, inverse_label: contains, aliases: [thread, conversation, email chain], domain: [Email]}
+  attached_to: {label: attached to, inverse_label: has attachment, aliases: [attached to, attachment of]}
+  counterparty: {label: counterparty, inverse_label: counterparty of, aliases: [counterparty, contract party], range: [Organization]}
+  works_at: {label: works at, inverse_label: employs, aliases: [works at, employed by, representative], domain: [Person], range: [Organization]}
+  # simulated business records (provider sim)
+  under_contract: {label: under contract, inverse_label: covers, aliases: [under the contract, per the contract], domain: [Invoice, Deal, SupportTicket, CloudBill, Payment], range: [Contract]}
+  settles: {label: settles, inverse_label: settled by, aliases: [pays, payment for, settles], domain: [Payment, BankEntry], range: [Invoice, CloudBill, Payroll, TaxPayment]}
+  records: {label: records, inverse_label: recorded in, aliases: [bank record of, booked as], domain: [BankEntry], range: [Payment, Payroll, TaxPayment, CloudBill]}
+  employee: {label: employee, inverse_label: employee record, aliases: [employee, about the employee, hired], domain: [EmployeeEvent, Payroll, Requisition], range: [Person]}
+  component: {label: component, aliases: [component, service, system], domain: [Incident, Deploy, SupportTicket]}

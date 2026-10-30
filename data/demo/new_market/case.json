@@ -1,0 +1,213 @@
+{
+  "manifest_version": 1,
+  "name": "new_market",
+  "title": "Enter the central region?",
+  "company": "Northbeam Home & Garden Supply (fictional)",
+  "description": "Northbeam Home & Garden Supply (fictional) serves four regions (401,613 orders in the last 12 months) and is considering entering the central region in 2027: 350,000 addressable households, 2 competitors with a local DC, and deliveries would take about 4.7 days from our current warehouse. Past launches (west 2021, south 2022, a peer benchmark) settled at 10.3-11.5 orders per 1k households a month and took 8-9 months to reach half of that level, which suggests about 3,822 orders a month at steady state. After in-house fulfilment and $0.79 extra shipping, each order would contribute about $5.21. Launch needs $120k fixed cost plus a $360k six-month marketing push.",
+  "question": "Should we enter the central region in 2027, and with what launch budget?",
+  "options": [
+    "full_launch",
+    "pilot_two_cities",
+    "do_not_enter"
+  ],
+  "key_facts": {
+    "orders_last_12m": 401613.0,
+    "margin_per_order_last_12m": 9.06,
+    "inhouse_cost_per_order_last_12m": 3.06,
+    "candidate_households_k": 350.0,
+    "comparable_orders_per_1k_households_min": 10.25,
+    "comparable_orders_per_1k_households_max": 11.53,
+    "steady_state_orders_per_month_likely": 3822.0,
+    "months_to_half_steady_state_min": 8.0,
+    "months_to_half_steady_state_max": 9.0,
+    "launch_fixed_cost": 120000.0,
+    "launch_marketing_budget_6m": 360000.0,
+    "extra_shipping_cost_per_order": 0.79,
+    "expected_cac": 35.87
+  },
+  "seed": 42,
+  "period_start": "2023-11",
+  "period_end": "2026-10",
+  "tables": [
+    {
+      "name": "monthly_orders",
+      "file": "monthly_orders.csv",
+      "description": "Monthly orders, prices, revenue and cost of goods by region and product category. gross_margin = revenue - cogs, i.e. contribution before fulfilment and marketing.",
+      "columns": [
+        "month",
+        "region",
+        "category",
+        "orders",
+        "list_price_index",
+        "avg_order_value",
+        "revenue",
+        "cogs",
+        "gross_margin"
+      ],
+      "dtypes": {
+        "month": "str",
+        "region": "str",
+        "category": "str",
+        "orders": "int",
+        "list_price_index": "float",
+        "avg_order_value": "float",
+        "revenue": "float",
+        "cogs": "float",
+        "gross_margin": "float"
+      },
+      "units": {
+        "month": "YYYY-MM",
+        "orders": "orders/month",
+        "list_price_index": "index, 2023-11 = 1.0",
+        "avg_order_value": "USD/order",
+        "revenue": "USD",
+        "cogs": "USD",
+        "gross_margin": "USD"
+      },
+      "n_rows": 576
+    },
+    {
+      "name": "monthly_pnl",
+      "file": "monthly_pnl.csv",
+      "description": "Company-level monthly P&L and operating metrics. margin_per_order is the contribution margin before fulfilment; fulfilment_cost includes spot-3PL overflow; churn_rate is the monthly share of active customers lost.",
+      "columns": [
+        "month",
+        "orders",
+        "revenue",
+        "cogs",
+        "gross_margin",
+        "margin_per_order",
+        "fulfilment_cost",
+        "inhouse_cost_per_order",
+        "marketing_spend",
+        "active_customers",
+        "new_customers",
+        "churned_customers",
+        "churn_rate",
+        "warehouse_utilization"
+      ],
+      "dtypes": {
+        "month": "str",
+        "orders": "int",
+        "revenue": "float",
+        "cogs": "float",
+        "gross_margin": "float",
+        "margin_per_order": "float",
+        "fulfilment_cost": "float",
+        "inhouse_cost_per_order": "float",
+        "marketing_spend": "float",
+        "active_customers": "int",
+        "new_customers": "int",
+        "churned_customers": "int",
+        "churn_rate": "float",
+        "warehouse_utilization": "float"
+      },
+      "units": {
+        "month": "YYYY-MM",
+        "orders": "orders/month",
+        "revenue": "USD",
+        "cogs": "USD",
+        "gross_margin": "USD",
+        "margin_per_order": "USD/order",
+        "fulfilment_cost": "USD",
+        "inhouse_cost_per_order": "USD/order",
+        "marketing_spend": "USD",
+        "active_customers": "customers",
+        "new_customers": "customers/month",
+        "churned_customers": "customers/month",
+        "churn_rate": "share per month",
+        "warehouse_utilization": "share of monthly capacity"
+      },
+      "n_rows": 36
+    },
+    {
+      "name": "region_economics",
+      "file": "region_economics.csv",
+      "description": "Last-12-month economics of the four regions we serve today.",
+      "columns": [
+        "region",
+        "orders_last_12m",
+        "revenue_last_12m",
+        "gross_margin_last_12m",
+        "margin_per_order",
+        "orders_yoy_growth",
+        "avg_delivery_days",
+        "households_k",
+        "orders_per_1k_households_month"
+      ],
+      "dtypes": {
+        "region": "str",
+        "orders_last_12m": "int",
+        "revenue_last_12m": "float",
+        "gross_margin_last_12m": "float",
+        "margin_per_order": "float",
+        "orders_yoy_growth": "float",
+        "avg_delivery_days": "float",
+        "households_k": "float",
+        "orders_per_1k_households_month": "float"
+      },
+      "units": {
+        "orders_last_12m": "orders",
+        "revenue_last_12m": "USD",
+        "gross_margin_last_12m": "USD",
+        "margin_per_order": "USD/order",
+        "orders_yoy_growth": "share",
+        "avg_delivery_days": "days",
+        "households_k": "thousand households",
+        "orders_per_1k_households_month": "orders per 1k households per month"
+      },
+      "n_rows": 4
+    },
+    {
+      "name": "region_rampups",
+      "file": "region_rampups.csv",
+      "description": "Monthly ramp-up after past region launches: our own west (2021) and south (2022) launches from the archive, plus an anonymized peer benchmark. Use orders per 1k households to compare markets.",
+      "columns": [
+        "comparable",
+        "launch_month",
+        "months_since_launch",
+        "households_k",
+        "orders",
+        "marketing_spend",
+        "new_customers"
+      ],
+      "dtypes": {
+        "comparable": "str",
+        "launch_month": "str",
+        "months_since_launch": "int",
+        "households_k": "float",
+        "orders": "int",
+        "marketing_spend": "float",
+        "new_customers": "int"
+      },
+      "units": {
+        "launch_month": "YYYY-MM",
+        "months_since_launch": "months",
+        "households_k": "thousand households",
+        "orders": "orders/month",
+        "marketing_spend": "USD/month",
+        "new_customers": "customers/month"
+      },
+      "n_rows": 72
+    },
+    {
+      "name": "candidate_market",
+      "file": "candidate_market.csv",
+      "description": "What we know about the candidate central region (not served today).",
+      "columns": [
+        "metric",
+        "value",
+        "unit",
+        "source"
+      ],
+      "dtypes": {
+        "metric": "str",
+        "value": "float",
+        "unit": "str",
+        "source": "str"
+      },
+      "units": {},
+      "n_rows": 8
+    }
+  ]
+}

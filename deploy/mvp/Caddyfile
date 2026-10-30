@@ -1,0 +1,109 @@
+# VARIATOR MVP reverse proxy. The values come from the caddy service environment (compose.yaml, .env).
+#   MVP_SITE_ADDRESS  a domain: automatic HTTPS (ports 80 and 443 must be public); ":80": plain HTTP
+#   MVP_AUTH          off (default) or on: one shared login (basic auth) for the whole site
+#   MVP_AUTH_USER     login name when MVP_AUTH=on
+#   MVP_AUTH_HASH     bcrypt hash from `caddy hash-password` when MVP_AUTH=on
+# Caddy substitutes {$VAR} before it parses this file, so "import auth_{$MVP_AUTH}" selects a snippet.
+#
+# Layout (WP27): the whole app lives under /workspace/; the root of the domain holds the landing page.
+#   /workspace/*   the app; the prefix is taken off, so the services keep their routes (/api/variator/..., /brief)
+#   /workspace     302 to /workspace/
+#   /api/*         404: the API is under /workspace/api/
+#   anything else  a file of the landing page when /srv/landing/index.html exists (a read-only mount); else the old
+#                  app paths (/, /brief, /ask, /actors, /sources, /cases...) 302 to the same path under /workspace, 404
+
+# A harmless directive: some Caddy versions take an empty snippet for a file name on import.
+(auth_off) {
+	vars mvp_auth off
+}
+
+(auth_on) {
+	basic_auth {
+		{$MVP_AUTH_USER} {$MVP_AUTH_HASH}
+	}
+}
+
+{$MVP_SITE_ADDRESS::80} {
+	import auth_{$MVP_AUTH:off}
+
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	# The app. VARIATOR API: it serves /api/variator/...; everything else: the workspace (Express + React).
+	# The knowledge base API is not public (the workspace calls it).
+	handle_path /workspace/* {
+		handle /api/variator/* {
+			reverse_proxy variator-api:8000 {
+				# its own redirects (a trailing slash) name /api/...: the browser gets the path under /workspace
+				header_down Location ^(?:https?://[^/]+)?/api/ /workspace/api/
+			}
+		}
+		handle {
+			reverse_proxy workspace:3002
+		}
+	}
+
+	# The address of the app without the last slash; the query stays.
+	handle /workspace {
+		@query expression {query} != ""
+		redir @query /workspace/?{query} 302
+		redir * /workspace/ 302
+	}
+
+	# The old API paths at the root: an explicit answer, not the landing page.
+	handle /api/* {
+		respond "The VARIATOR API is under /workspace/api/" 404
+	}
+
+	# The root of the domain: the landing page, else the app.
+	handle {
+		# the landing page is there (WP28 mounts the bundle's landing/ read-only at /srv/landing)
+		@landing file {
+			root /srv/landing
+			try_files /index.html
+		}
+		# the old app pages at the root (the app's routes: src/pages.tsx); the same path under /workspace keeps old links
+		@app_page path / /brief /brief/* /ask /ask/* /actors /actors/* /sources /sources/* /cases /cases/*
+		# a file of the landing page for this path
+		@landing_file file {
+			root /srv/landing
+			try_files {path} {path}/index.html
+		}
+		@app_page_not_landing {
+			path / /brief /brief/* /ask /ask/* /actors /actors/* /sources /sources/* /cases /cases/*
+			not file {
+				root /srv/landing
+				try_files {path} {path}/index.html
+			}
+		}
+
+		handle @landing {
+			handle @landing_file {
+				root * /srv/landing
+				file_server
+			}
+			handle @app_page_not_landing {
+				redir * /workspace{uri} 302
+			}
+			handle {
+				respond "Not found" 404
+			}
+		}
+		handle @app_page {
+			redir * /workspace{uri} 302
+		}
+		handle {
+			respond "Not found" 404
+		}
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

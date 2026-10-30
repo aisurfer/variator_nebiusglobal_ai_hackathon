@@ -1,0 +1,9 @@
+metric,value,unit,source
+addressable_households_k,350.0,thousand households,regional statistics office
+online_penetration,0.5713,share of households,market survey 2026
+competitors_with_local_dc,2.0,count,web research
+est_delivery_days,4.7,days,carrier quotes
+extra_shipping_cost_per_order,0.79,USD/order,carrier quotes
+launch_fixed_cost,120000.0,USD,"legal, carrier onboarding"
+launch_marketing_budget_6m,360000.0,USD,marketing plan draft
+expected_cac,35.87,USD per new customer,south launch actuals

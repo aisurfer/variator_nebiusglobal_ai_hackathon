@@ -1,0 +1,38 @@
+{
+  "schema": "variator-tour/1",
+  "id": "reviewer",
+  "title": "Start from the company",
+  "minutes": 1,
+  "steps": [
+    {
+      "id": "brief",
+      "page": "/brief",
+      "anchor": "brief-top",
+      "title": "The company in a few numbers",
+      "body": "This is what the CEO of Larchwood Systems reads every morning: the key numbers of the company, each computed from a year of its history in the knowledge base. Every number opens the records behind it.",
+      "try": "Select a number to open its sheet: the formula, the weekly series and the records."
+    },
+    {
+      "id": "actor",
+      "page": "/actors?actor=CL-001",
+      "anchor": "actor-card",
+      "focus": "actor-habits",
+      "title": "A client, learned from its records",
+      "body": "Meridian Freight Group is a key client. Its habits, how it pays, how often it asks for help and how likely it is to leave, are learned from its invoices, contracts and tickets. The simulation lets every client act on its own habits.",
+      "try": "Open a cited record in the profile above the habits."
+    },
+    {
+      "id": "risks",
+      "page": "/actors?tab=risks&risk=R5",
+      "anchor": "risks-register",
+      "title": "Risks that already fired",
+      "body": "The register lists the risks that already happened in the history, how often and with the records behind them. Clients giving notice is one: case B draws its world hypothesis «Big client may leave» from it.",
+      "try": "Next comes the decision these numbers feed: the best year for the company.",
+      "focus": "risk-selected"
+    }
+  ],
+  "next": {
+    "to": "/cases/company_best_year",
+    "label": "Continue to the decision"
+  }
+}

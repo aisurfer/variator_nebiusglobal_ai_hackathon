@@ -1,0 +1,38 @@
+[project]
+name = "plancy-kb"
+version = "0.1.0"
+description = "Knowledge backend (copy of the Plancy KB for the VARIATOR MVP): bitemporal journal, knowledge graph, hybrid search and causal queries"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi==0.143.0",
+  "uvicorn[standard]==0.54.0",
+  "pydantic==2.14.0",
+  "pydantic-settings==2.15.0",
+  "psycopg[binary]==3.3.6",
+  "psycopg-pool==3.3.3",
+  "opensearch-py==3.2.0",
+  "neo4j==6.4.0",
+  "fastembed==0.9.0",
+  "numpy==2.5.3",
+  "networkx==3.7",
+  "dateparser==1.4.3",
+  "pyyaml==6.0.3",
+  "orjson==3.13.0",
+  "httpx==0.28.1",
+  "mcp==2.3.0",
+  "tenacity==9.2.1",
+]
+
+[dependency-groups]
+dev = ["pytest==9.1.1"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["app"]
+markers = [
+  "integration: needs the running infra (postgres, opensearch, memgraph)",
+  "llm: calls the live LLM API",
+]

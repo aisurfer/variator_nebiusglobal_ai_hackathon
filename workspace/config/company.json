@@ -1,0 +1,57 @@
+{
+  "id": "company",
+  "tenant": "company",
+  "name": "Larchwood Systems",
+  "sector": "IT services · platform development and support",
+  "headcount": 20,
+  "timezone": "Europe/London",
+  "ownDomain": "larchwood.io",
+  "currency": "USD",
+  "engineeringDepartment": "Engineering",
+  "northStar": {
+    "title": "Annual recurring revenue",
+    "reportLabel": "report",
+    "property": "ARR, $k",
+    "period": "Period",
+    "unit": "$k of ARR",
+    "field": "arrK",
+    "target": 14400,
+    "by": "2027-12-31",
+    "secondary": [
+      { "property": "Active clients", "label": "active clients", "field": "activeClients" },
+      { "property": "New ARR, $k", "label": "new ARR, $k", "field": "newArrK" },
+      { "property": "Churned ARR, $k", "label": "churned ARR, $k", "field": "churnedArrK", "summary": false },
+      { "property": "Cash, $k", "label": "cash, $k", "field": "cashK", "summary": false }
+    ],
+    "question": "Is recurring revenue growing fast enough to reach the goal?",
+    "definition": "Annual recurring revenue in thousands of dollars, as published in the weekly company metrics report. The goal is $14.4M of ARR by 31 December 2027.",
+    "howCalculated": [
+      "The latest weekly company metrics report published by the date (pages labelled «report»).",
+      "Its «ARR, $k» value: recurring revenue under signed client contracts, annualised, in thousands of dollars.",
+      "On track when the average weekly gain over the last four reports is at least the gain still needed each week to reach 14400 by Dec 31, 2027; watch at half of it."
+    ],
+    "headline": "ARR ${value}k"
+  },
+  "askExamples": {
+    "ceo": [
+      "Why is the Brightwell Council Services contract in notice?",
+      "Why is the Maple Energy contract in notice?",
+      "Why do we have an upsell deal with Vale Homes?",
+      "What caused the auth incident with GPU inference timeouts?",
+      "Why did the billing engine payment runs fail?",
+      "Why did we open the requisition for a Frontend Engineer?",
+      "Why did we hire a DevOps engineer?"
+    ]
+  },
+  "roles": [
+    {
+      "id": "ceo",
+      "label": "CEO",
+      "title": "Chief Executive Officer",
+      "name": "Avery Collins",
+      "personId": "person.lw-e01",
+      "principal": "user:admin",
+      "metadata": true
+    }
+  ]
+}

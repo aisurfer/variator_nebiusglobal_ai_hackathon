@@ -1,0 +1,19 @@
+{
+  "primary_keys": {"tickets": "id", "slack_messages": "id", "tasks": "id", "task_status_history": "id", "pull_requests": "id", "incidents": "id", "documents": "id"},
+  "foreign_keys": {
+    "slack_messages": {"ticket_id": "tickets"},
+    "tasks": {"ticket_id": "tickets", "slack_id": "slack_messages"},
+    "task_status_history": {"task_id": "tasks"},
+    "pull_requests": {"task_id": "tasks"},
+    "incidents": {"pull_request_id": "pull_requests"}
+  },
+  "tables": {
+    "tickets": [{"id":"ticket-1","timestamp":"2026-01-04T09:00:00Z","author":"Maya Chen","content":"Customer reports a deployment incident."}],
+    "slack_messages": [{"id":"slack-1","ticket_id":"ticket-1","timestamp":"2026-01-04T10:00:00Z","author":"Alex Rivera","content":"Investigating the customer report."}],
+    "tasks": [{"id":"task-1","ticket_id":"ticket-1","slack_id":"slack-1","timestamp":"2026-01-05T09:00:00Z","author":"Jordan Patel","content":"Fix the deployment path."}],
+    "task_status_history": [{"id":"task-1-progress","task_id":"task-1","timestamp":"2026-01-05T12:00:00Z","from_status":"To Do","to_status":"In Progress","author":"Jordan Patel"}, {"id":"task-1-done","task_id":"task-1","timestamp":"2026-01-06T08:00:00Z","from_status":"In Progress","to_status":"Done","author":"Olivia Brooks"}],
+    "pull_requests": [{"id":"pr-1","task_id":"task-1","timestamp":"2026-01-06T09:00:00Z","author":"Olivia Brooks","content":"Merged deployment fix."}],
+    "incidents": [{"id":"incident-1","pull_request_id":"pr-1","timestamp":"2026-01-07T09:00:00Z","author":"Noah Kim","content":"Post-deploy incident resolved."}],
+    "documents": [{"id":"doc-1","timestamp":"2026-01-07T10:00:00Z","author":"Noah Kim","title":"Deployment incident review","linked_incident_id":"incident-1","content":"The rollback resolved the incident."}]
+  }
+}

@@ -1,0 +1,110 @@
+/* WP24: the Day section (sections/Day.tsx, case/day). Tokens of case.css (--cs-*); status colours only for status. */
+.cs-day-toolbar{justify-content:space-between}
+.cs-day-tools{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.cs-day-wait{padding:18px 4px}
+.cs-day-main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.cs-day-hint{font-size:11.5px!important}
+
+/* charts: focusable, a click picks a day */
+.cs-daycharts{position:relative;border-radius:8px;outline:none}
+.cs-daycharts:focus-visible{box-shadow:0 0 0 2px #fff,0 0 0 4px #263830}
+.cs-daycharts .recharts-surface{cursor:pointer}
+.cs-day-sr,.cs-daycharts .cs-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* «Metrics» */
+.cs-mpick{position:relative}
+.cs-mpick-btn{min-height:34px;padding:7px 11px}
+.cs-mpick-btn .cs-count{margin-left:0}
+.cs-mpick-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;width:248px;max-height:min(420px,70vh);overflow:auto;display:flex;flex-direction:column;gap:1px;padding:8px;background:#fff;border:1px solid var(--cs-line);border-radius:10px;box-shadow:0 14px 40px #17231e1f}
+.cs-mpick-head{font-size:10.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--cs-faint);padding:4px 8px 6px}
+.cs-mpick-item{display:flex;align-items:center;gap:9px;width:100%;min-height:34px;padding:6px 8px;border-radius:7px;font-size:12.5px;color:var(--cs-ink);text-align:left}
+.cs-mpick-item:hover,.cs-mpick-item:focus-visible{background:#f3f6ee;outline:none}
+.cs-mpick-item[aria-disabled=true]:not(.is-on){color:var(--cs-faint);cursor:not-allowed}
+.cs-mpick-box{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:4px;border:1.5px solid #b9c3c8;flex-shrink:0;color:#fff}
+.cs-mpick-item.is-on .cs-mpick-box{background:#263830;border-color:#263830}
+.cs-mpick-reset{align-self:flex-start;margin:4px 4px 0}
+.cs-mpick-group{display:flex;flex-direction:column;gap:1px}
+.cs-mpick-group+.cs-mpick-group{margin-top:6px;padding-top:6px;border-top:1px solid var(--cs-line-2,#eff1f2)}
+.cs-mpick-sub{font-size:11px;font-weight:600;color:var(--cs-muted);padding:4px 8px 2px}
+.cs-mpick-menu{width:364px}
+
+/* «Ask this future» */
+.cs-day-ask{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}
+.cs-day-ask-lead{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--cs-ink-2)}
+.cs-day-ask-chip{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:5px 11px;border-radius:15px;border:1px solid #d7e4cc;background:var(--cs-lime-bg,#f1f7e6);color:#3f5a26;font-size:12px;font-weight:500;text-decoration:none;max-width:100%}
+.cs-day-ask-chip:hover{border-color:#b7cf9f;color:#2f4425}
+.cs-day-ask-chip[aria-disabled=true]{opacity:.55;cursor:not-allowed}
+.cs-day-ask-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* the day card */
+.cs-daycard{padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px;border-color:#c9d3cd}
+.cs-daycard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.cs-daycard-title{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;min-width:0;color:var(--cs-ink)}
+.cs-daycard-title h3{margin:0;font-size:15px;font-weight:600;letter-spacing:-.2px}
+.cs-daycard-title .cs-muted{font-size:12px}
+.cs-daycard-nav{display:inline-flex;gap:2px;flex-shrink:0}
+.cs-daycard-nav .cs-icon-btn:disabled{opacity:.35;cursor:default;background:none}
+.cs-daycard-values{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px;margin:0}
+.cs-daycard-values>div{padding:7px 9px;border-radius:7px;background:#f6f8f8;min-width:0}
+.cs-daycard-values>div.is-on{background:#f1f5ef;box-shadow:inset 0 0 0 1px #dfe8d8}
+.cs-daycard-values dt{font-size:10.5px;line-height:1.3;color:var(--cs-faint);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cs-daycard-more{align-self:flex-start;min-height:28px}
+.cs-daycard-values dd{margin:2px 0 0;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--cs-ink)}
+.cs-daycard-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 18px}
+.cs-daycard-group h4{display:flex;align-items:center;gap:6px;margin:0 0 4px;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--cs-muted)}
+.cs-daycard-group ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.cs-daycard-quiet{margin:0;font-size:12.5px;color:var(--cs-muted)}
+
+/* an event (card and lane) */
+.cs-dayitem{position:relative;display:flex;flex-direction:column;gap:3px;font-size:12px;line-height:1.45;padding-left:12px}
+.cs-dayitem:before{content:'';position:absolute;left:0;top:6px;width:6px;height:6px;border-radius:50%;background:var(--cs-event)}
+.cs-dayitem.is-good:before{background:#5f9c84}.cs-dayitem.is-bad:before{background:#c0604f}
+.cs-dayitem-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 7px;min-width:0}
+.cs-dayitem-line strong{font-size:12.5px;font-weight:600;color:var(--cs-ink);overflow-wrap:anywhere}
+.cs-dayitem-kind{font-size:10.5px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;color:var(--cs-faint)}
+.cs-dayitem-date{font-size:10.5px;color:var(--cs-faint)}
+.cs-dayitem-meta{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;font-size:11.5px;color:var(--cs-muted)}
+.cs-dayitem-meta .cs-kb-link{font-size:11.5px}
+.cs-kb-person{color:#536846;font-weight:500}
+.cs-kb-person:hover{color:#2f4425;text-decoration:underline}
+.cs-sev{display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.3px;border-radius:4px;padding:1px 5px;background:#f1f3f5;color:#5c6970}
+.cs-sev.is-sev1{background:var(--cs-bad);color:#fff}
+.cs-sev.is-sev2{background:var(--cs-bad-bg);color:var(--cs-bad)}
+.cs-sev.is-sev3{background:#f4f1ea;color:var(--cs-warn)}
+
+/* the lane follows the selected day */
+.cs-feed.cs-dayfeed{position:relative;padding-top:0}
+.cs-dayfeed>.cs-card-head{position:sticky;top:0;z-index:2;background:#fff;padding:14px 0 8px;margin-bottom:0}
+.cs-dayfeed>.cs-dayfeed-note{position:sticky;top:44px;z-index:2;background:#fff;margin:0;padding:0 0 6px}
+.cs-dayfeed .cs-feed-item.cs-dayitem{padding:8px 8px 8px 20px;cursor:pointer}
+.cs-dayfeed .cs-feed-item.cs-dayitem:before{left:6px;top:13px;width:7px;height:7px}
+.cs-dayfeed .cs-feed-item:hover{background:#fafbf9}
+.cs-dayfeed .cs-feed-item.is-day{background:#f1f5ef;box-shadow:inset 3px 0 0 #263830}
+.cs-dayfeed .cs-feed-item.is-active{background:#e9f0e4}
+.cs-dayfeed .cs-feed-date{align-self:flex-start;padding:0;border-radius:4px;min-height:0}
+.cs-dayfeed .cs-feed-date:hover{color:var(--cs-ink)}
+.cs-dayfeed-note{font-size:11.5px;color:var(--cs-faint)}
+
+/* no example days */
+.cs-day-none{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;padding:22px 18px;border:1px dashed #dfe4e6;border-radius:10px;background:#fbfcfc;color:var(--cs-muted);font-size:13px}
+.cs-day-none>svg{color:var(--cs-faint)}
+.cs-day-none strong{color:var(--cs-ink);font-weight:600}
+.cs-day-none-has{font-size:12.5px}
+.cs-day-none-link{min-height:0;padding:2px 4px;font-size:12.5px}
+.cs-day-none-has .cs-text-btn{min-height:0;padding:0 2px;font-size:12.5px;text-decoration:underline}
+
+@media(max-width:760px){
+  .cs-day-tools{margin-left:0;width:100%}
+  .cs-day-tools .cs-branch-link{flex:1 1 auto}
+  .cs-mpick-menu{left:0;right:auto}
+  .cs-daycard-groups{grid-template-columns:minmax(0,1fr)}
+  .cs-daycard-values{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* one tooltip for the charts (on the first chart) */
+.cs-daytip{display:flex;flex-direction:column;gap:2px;min-width:170px;padding:8px 10px;background:#fff;border:1px solid #e5e8eb;border-radius:10px;box-shadow:0 8px 24px #17231e14;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--cs-ink,#263138)}
+.cs-daytip strong{font-size:12px;font-weight:600;margin-bottom:2px}
+.cs-daytip span{display:flex;justify-content:space-between;gap:14px;font-variant-numeric:tabular-nums}
+.cs-daytip em{font-style:normal;color:var(--cs-muted,#66727a)}
+.cs-daytip small{margin-top:3px;font-size:10.5px;color:var(--cs-faint,#8a949b)}
+.cs-mpick-source{display:block;padding:0 10px 4px;font-size:11px;color:var(--cs-muted);line-height:1.35}

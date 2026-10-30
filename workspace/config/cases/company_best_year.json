@@ -1,0 +1,5167 @@
+{
+ "schema": "variator-case/1",
+ "id": "company_best_year",
+ "letter": "B",
+ "title": "Best year",
+ "company": "Larchwood Systems",
+ "lead": "Larchwood Systems (12M USD ARR) plans the twelve months after 26 October 2026. Which lever gives the best year: keep the plan, reduce tech debt, hire 5 engineers, reserve GPU capacity, or raise prices by 8%?",
+ "owner": "LW-E01",
+ "forkDate": "2026-10-26",
+ "horizonMonths": 12.0,
+ "template": "company_model",
+ "previewFile": "company_best_year.preview.json",
+ "question": "Which lever gives Larchwood Systems the best year: keep the plan, pay down technical debt, hire, reserve GPU capacity, or raise prices?",
+ "variables": [
+  {
+   "name": "arr0",
+   "desc": "Annual recurring revenue at the start",
+   "unit": "USD/year",
+   "block": "finance",
+   "source": "history at T: rev.arr = 1.20012e+07 (calibrated: the value equals it)",
+   "dist": {
+    "kind": "fixed",
+    "value": 12001200.0
+   }
+  },
+  {
+   "name": "opex",
+   "desc": "Operating cost without infrastructure and CAC (salaries, office)",
+   "unit": "USD/year",
+   "block": "finance",
+   "source": "data: finance",
+   "dist": {
+    "kind": "pert",
+    "low": 8200000.0,
+    "mode": 8800000.0,
+    "high": 9400000.0
+   }
+  },
+  {
+   "name": "cash0",
+   "desc": "Cash at the start",
+   "unit": "USD",
+   "block": "finance",
+   "source": "history at T: fin.cash = 2e+06 (calibrated: the value equals it)",
+   "dist": {
+    "kind": "fixed",
+    "value": 2000000.0
+   }
+  },
+  {
+   "name": "budget",
+   "desc": "Annual cost budget",
+   "unit": "USD/year",
+   "block": "finance",
+   "source": "data: finance",
+   "dist": {
+    "kind": "fixed",
+    "value": 11200000.0
+   }
+  },
+  {
+   "name": "acv",
+   "desc": "Average annual contract value",
+   "unit": "USD",
+   "block": "finance",
+   "source": "data: CRM",
+   "dist": {
+    "kind": "fixed",
+    "value": 120000.0
+   }
+  },
+  {
+   "name": "cac",
+   "desc": "Customer acquisition cost per new client",
+   "unit": "USD",
+   "block": "finance",
+   "source": "data: CRM",
+   "dist": {
+    "kind": "pert",
+    "low": 20000.0,
+    "mode": 30000.0,
+    "high": 45000.0
+   }
+  },
+  {
+   "name": "ar_days",
+   "desc": "Receivables: days until clients pay",
+   "unit": "days",
+   "block": "finance",
+   "source": "history at T: fin.dso = 62 (calibrated: the value equals it)",
+   "dist": {
+    "kind": "pert",
+    "low": 47.0,
+    "mode": 62.0,
+    "high": 92.0
+   }
+  },
+  {
+   "name": "base_churn",
+   "desc": "Annual churn without the effects below",
+   "unit": "share",
+   "block": "clients",
+   "source": "history at T: rev.churn = 0.1234 (calibrated: the model's churn at T equals it)",
+   "dist": {
+    "kind": "pert",
+    "low": 0.05262702702702715,
+    "mode": 0.09262702702702716,
+    "high": 0.15262702702702713
+   }
+  },
+  {
+   "name": "pipeline",
+   "desc": "Annual new ARR in the sales pipeline",
+   "unit": "USD/year",
+   "block": "clients",
+   "source": "data: CRM",
+   "dist": {
+    "kind": "pert",
+    "low": 2000000.0,
+    "mode": 3000000.0,
+    "high": 4500000.0
+   }
+  },
+  {
+   "name": "win_rate",
+   "desc": "Share of the pipeline that closes",
+   "unit": "share",
+   "block": "clients",
+   "source": "data: CRM",
+   "dist": {
+    "kind": "pert",
+    "low": 0.2,
+    "mode": 0.25,
+    "high": 0.32
+   }
+  },
+  {
+   "name": "renewal_due",
+   "desc": "Share of ARR with a renewal this year",
+   "unit": "share",
+   "block": "clients",
+   "source": "data: CRM",
+   "dist": {
+    "kind": "pert",
+    "low": 0.3,
+    "mode": 0.4,
+    "high": 0.5
+   }
+  },
+  {
+   "name": "overdue_base",
+   "desc": "Share of client implementations that are late",
+   "unit": "share",
+   "block": "clients",
+   "source": "data: PMO",
+   "dist": {
+    "kind": "pert",
+    "low": 0.05,
+    "mode": 0.1,
+    "high": 0.18
+   }
+  },
+  {
+   "name": "support_quality",
+   "desc": "Support quality score (0-1)",
+   "unit": "score",
+   "block": "operations",
+   "source": "history at T: cust.nps = 30.1 (calibrated: the model's nps at T equals it)",
+   "dist": {
+    "kind": "pert",
+    "low": 0.6274054054054052,
+    "mode": 0.7274054054054053,
+    "high": 0.8274054054054052
+   }
+  },
+  {
+   "name": "tech_debt",
+   "desc": "Technical debt index (0 = none, 1 = severe)",
+   "unit": "index",
+   "block": "product",
+   "source": "data: code metrics (complexity, cycles, hot spots)",
+   "dist": {
+    "kind": "pert",
+    "low": 0.3,
+    "mode": 0.45,
+    "high": 0.6
+   }
+  },
+  {
+   "name": "infra_base",
+   "desc": "Annual infrastructure and GPU cost",
+   "unit": "USD/year",
+   "block": "product",
+   "source": "data: cloud bills",
+   "dist": {
+    "kind": "pert",
+    "low": 1200000.0,
+    "mode": 1500000.0,
+    "high": 1900000.0
+   }
+  },
+  {
+   "name": "latency_base",
+   "desc": "p95 API latency",
+   "unit": "ms",
+   "block": "product",
+   "source": "history at T: ops.latency = 181.8 (calibrated: the model's latency at T equals it)",
+   "dist": {
+    "kind": "pert",
+    "low": 123.67346938775509,
+    "mode": 148.40816326530611,
+    "high": 189.6326530612245
+   }
+  },
+  {
+   "name": "latency_slo",
+   "desc": "Latency objective in the SLA",
+   "unit": "ms",
+   "block": "product",
+   "source": "data: contracts",
+   "dist": {
+    "kind": "fixed",
+    "value": 250.0
+   }
+  },
+  {
+   "name": "sla_target",
+   "desc": "Availability promised in the SLA",
+   "unit": "share",
+   "block": "product",
+   "source": "data: contracts",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.995
+   }
+  },
+  {
+   "name": "incidents_base",
+   "desc": "Incidents per month at the average debt and load",
+   "unit": "count",
+   "block": "product",
+   "source": "history at T: ops.incidents = 1 (calibrated: the model's incidents at T equals it)",
+   "dist": {
+    "kind": "pert",
+    "low": 0.3435717721432007,
+    "mode": 0.6871435442864015,
+    "high": 1.2025012025012025
+   }
+  },
+  {
+   "name": "mttr_h",
+   "desc": "Mean time to restore",
+   "unit": "hours",
+   "block": "operations",
+   "source": "history at T: ops.mttr = 1.81 (calibrated: the model's mttr_eff at T equals it)",
+   "dist": {
+    "kind": "pert",
+    "low": 0.898152253541826,
+    "mode": 1.796304507083652,
+    "high": 3.592609014167304
+   }
+  },
+  {
+   "name": "deploy_freq",
+   "desc": "Deployments per week",
+   "unit": "count",
+   "block": "operations",
+   "source": "history at T: ops.deploys = 9.75 (calibrated: the value equals it)",
+   "dist": {
+    "kind": "pert",
+    "low": 4.875,
+    "mode": 9.75,
+    "high": 19.5
+   }
+  },
+  {
+   "name": "team_load",
+   "desc": "Planned work / capacity",
+   "unit": "ratio",
+   "block": "operations",
+   "source": "history at T: ops.team_load = 0.945 (calibrated: the value equals it)",
+   "dist": {
+    "kind": "pert",
+    "low": 0.845,
+    "mode": 0.9450000000000001,
+    "high": 1.095
+   }
+  },
+  {
+   "name": "blockers",
+   "desc": "Share of time lost to blockers",
+   "unit": "share",
+   "block": "operations",
+   "source": "data: Jira",
+   "dist": {
+    "kind": "pert",
+    "low": 0.05,
+    "mode": 0.1,
+    "high": 0.2
+   }
+  },
+  {
+   "name": "attrition",
+   "desc": "Annual staff attrition",
+   "unit": "share",
+   "block": "people",
+   "source": "data: HR",
+   "dist": {
+    "kind": "pert",
+    "low": 0.1,
+    "mode": 0.15,
+    "high": 0.22
+   }
+  },
+  {
+   "name": "hiring_lead",
+   "desc": "Months to hire and onboard",
+   "unit": "months",
+   "block": "people",
+   "source": "data: HR",
+   "dist": {
+    "kind": "pert",
+    "low": 2.0,
+    "mode": 3.0,
+    "high": 5.0
+   }
+  },
+  {
+   "name": "skills",
+   "desc": "Team skills index (1 = normal)",
+   "unit": "index",
+   "block": "people",
+   "source": "data: HR",
+   "dist": {
+    "kind": "pert",
+    "low": 0.9,
+    "mode": 1.0,
+    "high": 1.1
+   }
+  },
+  {
+   "name": "demand_growth",
+   "desc": "Market demand growth",
+   "unit": "share",
+   "block": "market",
+   "source": "web: market reports",
+   "dist": {
+    "kind": "pert",
+    "low": -0.05,
+    "mode": 0.08,
+    "high": 0.2
+   }
+  },
+  {
+   "name": "new_tech_gain",
+   "desc": "Productivity gain from new tools (for example AI assistants)",
+   "unit": "share",
+   "block": "market",
+   "source": "web: market reports",
+   "dist": {
+    "kind": "pert",
+    "low": 0.0,
+    "mode": 0.05,
+    "high": 0.12
+   }
+  },
+  {
+   "name": "lever_debt",
+   "desc": "Lever: 15% of capacity pays down technical debt",
+   "unit": "0/1",
+   "block": "lever",
+   "source": "decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "debt_share",
+   "desc": "Share of delivery capacity the debt work takes",
+   "unit": "share",
+   "block": "lever",
+   "source": "decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.15
+   }
+  },
+  {
+   "name": "lever_hire",
+   "desc": "Lever: hire 5 engineers",
+   "unit": "0/1",
+   "block": "lever",
+   "source": "decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "hire_count",
+   "desc": "Engineers the hiring lever hires",
+   "unit": "count",
+   "block": "lever",
+   "source": "decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 5.0
+   }
+  },
+  {
+   "name": "lever_gpu",
+   "desc": "Lever: reserved GPU capacity on a second cloud",
+   "unit": "0/1",
+   "block": "lever",
+   "source": "decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "gpu_reserve_cost",
+   "desc": "Annual cost of the reserved GPU capacity",
+   "unit": "USD/year",
+   "block": "lever",
+   "source": "decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 300000.0
+   }
+  },
+  {
+   "name": "price_change",
+   "desc": "Lever: list price change",
+   "unit": "share",
+   "block": "lever",
+   "source": "decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "gpu_shortage",
+   "desc": "GPU shortage severity",
+   "unit": "share",
+   "block": "external",
+   "source": "assumption: external",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "vendor_price",
+   "desc": "Price rise by NVIDIA, AWS or another supplier",
+   "unit": "share",
+   "block": "market",
+   "source": "assumption: market",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "fx_shock",
+   "desc": "Cost increase from currency moves",
+   "unit": "share",
+   "block": "external",
+   "source": "assumption: external",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "regulation_cost",
+   "desc": "New compliance cost",
+   "unit": "USD/year",
+   "block": "external",
+   "source": "assumption: external",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "competitor_cut",
+   "desc": "Competitor price cut",
+   "unit": "share",
+   "block": "market",
+   "source": "assumption: market",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "key_person_exit",
+   "desc": "A key engineer leaves (1 = yes)",
+   "unit": "0/1",
+   "block": "people",
+   "source": "assumption: people",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "key_account_lost",
+   "desc": "Share of ARR lost with a key account",
+   "unit": "share",
+   "block": "clients",
+   "source": "assumption: clients",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "reputation_hit",
+   "desc": "Extra churn from a reputation event",
+   "unit": "share",
+   "block": "external",
+   "source": "assumption: external",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "k_infra_gpu",
+   "desc": "Infra cost growth per unit of GPU shortage",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.8
+   }
+  },
+  {
+   "name": "k_lat_gpu",
+   "desc": "Latency growth per unit of GPU shortage",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.6
+   }
+  },
+  {
+   "name": "k_lat_debt",
+   "desc": "Latency growth per unit of technical debt",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.5
+   }
+  },
+  {
+   "name": "k_inc_debt",
+   "desc": "Incident growth per unit of technical debt",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 1.2
+   }
+  },
+  {
+   "name": "k_mttr_deploy",
+   "desc": "Elasticity of restore time to deploy frequency",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.3
+   }
+  },
+  {
+   "name": "k_churn_sla",
+   "desc": "Churn added per 0.1 pp of availability below the SLA",
+   "unit": "share",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.01
+   }
+  },
+  {
+   "name": "k_churn_overdue",
+   "desc": "Churn added per unit of overdue implementations",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.15
+   }
+  },
+  {
+   "name": "k_churn_nps",
+   "desc": "Churn added per NPS point below 30, on the renewal share",
+   "unit": "share",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.01
+   }
+  },
+  {
+   "name": "k_churn_price",
+   "desc": "Churn added per unit of price increase",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.6
+   }
+  },
+  {
+   "name": "k_churn_competitor",
+   "desc": "Churn added per unit of competitor price cut",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.5
+   }
+  },
+  {
+   "name": "k_win_price",
+   "desc": "Win-rate loss per unit of price increase",
+   "unit": "x",
+   "block": "link",
+   "source": "assumption: link",
+   "dist": {
+    "kind": "fixed",
+    "value": 1.0
+   }
+  },
+  {
+   "name": "m_price",
+   "desc": "Month when the new prices are announced",
+   "unit": "month",
+   "block": "timeline",
+   "source": "plan",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "price_notice",
+   "desc": "Contract notice before new prices apply",
+   "unit": "months",
+   "block": "timeline",
+   "source": "assumption: contracts",
+   "dist": {
+    "kind": "pert",
+    "low": 1.0,
+    "mode": 1.5,
+    "high": 3.0
+   }
+  },
+  {
+   "name": "m_debt",
+   "desc": "Month when the technical-debt work starts",
+   "unit": "month",
+   "block": "timeline",
+   "source": "plan",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "debt_lead",
+   "desc": "Months until the debt work shows an effect",
+   "unit": "months",
+   "block": "timeline",
+   "source": "assumption: engineering",
+   "dist": {
+    "kind": "pert",
+    "low": 2.0,
+    "mode": 3.0,
+    "high": 5.0
+   }
+  },
+  {
+   "name": "m_hire",
+   "desc": "Month when the hiring starts",
+   "unit": "month",
+   "block": "timeline",
+   "source": "plan",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "m_gpu",
+   "desc": "Month when the GPU reservation is ordered",
+   "unit": "month",
+   "block": "timeline",
+   "source": "plan",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "gpu_setup",
+   "desc": "Months to set up the second cloud",
+   "unit": "months",
+   "block": "timeline",
+   "source": "assumption: vendor",
+   "dist": {
+    "kind": "pert",
+    "low": 1.0,
+    "mode": 2.0,
+    "high": 3.0
+   }
+  },
+  {
+   "name": "ev_gpu",
+   "desc": "Placed event: a GPU shortage (1 = yes)",
+   "unit": "0/1",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "ev_gpu_month",
+   "desc": "Month of the GPU shortage",
+   "unit": "month",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 4.0
+   }
+  },
+  {
+   "name": "ev_gpu_size",
+   "desc": "Size of the placed GPU shortage",
+   "unit": "share",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.4
+   }
+  },
+  {
+   "name": "ev_vendor",
+   "desc": "Placed event: a supplier raises prices by 10% (1 = yes)",
+   "unit": "0/1",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "ev_vendor_month",
+   "desc": "Month of the supplier price rise",
+   "unit": "month",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 3.0
+   }
+  },
+  {
+   "name": "ev_vendor_size",
+   "desc": "Price rise of the placed supplier event",
+   "unit": "share",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.1
+   }
+  },
+  {
+   "name": "ev_account",
+   "desc": "Placed event: a key account (10% of ARR) leaves (1 = yes)",
+   "unit": "0/1",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "ev_account_month",
+   "desc": "Month when the key account leaves",
+   "unit": "month",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 6.0
+   }
+  },
+  {
+   "name": "ev_account_size",
+   "desc": "Share of ARR the placed key account takes",
+   "unit": "share",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0851914808519148
+   }
+  },
+  {
+   "name": "ev_kp",
+   "desc": "Placed event: a key engineer leaves (1 = yes)",
+   "unit": "0/1",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "ev_kp_month",
+   "desc": "Month when the key engineer leaves",
+   "unit": "month",
+   "block": "timeline",
+   "source": "event",
+   "dist": {
+    "kind": "fixed",
+    "value": 5.0
+   }
+  },
+  {
+   "name": "ms_price",
+   "desc": "Milestone: new prices live",
+   "unit": "month",
+   "block": "timeline",
+   "source": "milestone",
+   "dist": {
+    "kind": "fixed",
+    "value": 3.0
+   }
+  },
+  {
+   "name": "ms_debt",
+   "desc": "Milestone: the debt work shows an effect",
+   "unit": "month",
+   "block": "timeline",
+   "source": "milestone",
+   "dist": {
+    "kind": "fixed",
+    "value": 5.0
+   }
+  },
+  {
+   "name": "ms_hire",
+   "desc": "Milestone: the new hires are productive",
+   "unit": "month",
+   "block": "timeline",
+   "source": "milestone",
+   "dist": {
+    "kind": "fixed",
+    "value": 4.0
+   }
+  },
+  {
+   "name": "ms_gpu",
+   "desc": "Milestone: GPU capacity on the second cloud ready",
+   "unit": "month",
+   "block": "timeline",
+   "source": "milestone",
+   "dist": {
+    "kind": "fixed",
+    "value": 3.0
+   }
+  },
+  {
+   "name": "g_cash",
+   "desc": "Goal: cash at year end at least",
+   "unit": "USD",
+   "block": "timeline",
+   "source": "goal",
+   "dist": {
+    "kind": "fixed",
+    "value": 1500000.0
+   }
+  },
+  {
+   "name": "g_churn",
+   "desc": "Goal and red limit: annual churn at most",
+   "unit": "share",
+   "block": "timeline",
+   "source": "goal",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.2
+   }
+  },
+  {
+   "name": "headcount",
+   "desc": "Staff at the start of the year",
+   "unit": "count",
+   "block": "people",
+   "source": "data: HR",
+   "dist": {
+    "kind": "fixed",
+    "value": 20.0
+   }
+  },
+  {
+   "name": "engineer_cost",
+   "desc": "Annual cost of one new engineer (salary, tax and overhead)",
+   "unit": "USD/year",
+   "block": "people",
+   "source": "data: HR",
+   "dist": {
+    "kind": "fixed",
+    "value": 150000.0
+   }
+  },
+  {
+   "name": "delivery_payroll_share",
+   "desc": "Share of the operating cost that pays the delivery (engineers, delivery and support staff, subcontractors)",
+   "unit": "share",
+   "block": "finance",
+   "source": "data: payroll and vendor bills",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.85
+   }
+  },
+  {
+   "name": "burnout_load",
+   "desc": "Burnout: a team load after the hires above this level raises attrition",
+   "unit": "ratio",
+   "block": "limits",
+   "source": "assumption: HR",
+   "dist": {
+    "kind": "fixed",
+    "value": 1.05
+   }
+  },
+  {
+   "name": "burnout_attrition",
+   "desc": "Burnout: attrition added above the load level",
+   "unit": "share",
+   "block": "limits",
+   "source": "assumption: HR",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.05
+   }
+  },
+  {
+   "name": "runway_cap",
+   "desc": "The most months of runway the model reports",
+   "unit": "months",
+   "block": "limits",
+   "source": "assumption: finance",
+   "dist": {
+    "kind": "fixed",
+    "value": 60.0
+   }
+  },
+  {
+   "name": "runway_green",
+   "desc": "Runway RAG: green from this many months",
+   "unit": "months",
+   "block": "limits",
+   "source": "policy: finance",
+   "dist": {
+    "kind": "fixed",
+    "value": 18.0
+   }
+  },
+  {
+   "name": "runway_red",
+   "desc": "Runway RAG and check: fewer months are red and not acceptable",
+   "unit": "months",
+   "block": "limits",
+   "source": "policy: finance",
+   "dist": {
+    "kind": "fixed",
+    "value": 6.0
+   }
+  },
+  {
+   "name": "md_cash",
+   "desc": "Meaningful difference of cash: under 1% of revenue, below one month of cost",
+   "unit": "USD",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 100000.0
+   }
+  },
+  {
+   "name": "md_runway",
+   "desc": "Meaningful difference of runway: the month is the planning step",
+   "unit": "months",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 1.0
+   }
+  },
+  {
+   "name": "md_churn",
+   "desc": "Meaningful difference of churn: 0.5 pp is about $60k of ARR",
+   "unit": "share",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.005
+   }
+  },
+  {
+   "name": "md_sla",
+   "desc": "Meaningful difference of availability: 0.05 pp is about 22 minutes a month",
+   "unit": "share",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0005
+   }
+  },
+  {
+   "name": "md_nps",
+   "desc": "Meaningful difference of NPS: the score is reported in whole points",
+   "unit": "points",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 1.0
+   }
+  },
+  {
+   "name": "payroll",
+   "desc": "Annual gross payroll of the staff (salaries before employer taxes)",
+   "unit": "USD/year",
+   "block": "people",
+   "source": "history at T: gross salaries of the staff (company facts)",
+   "dist": {
+    "kind": "fixed",
+    "value": 2397900.0
+   }
+  },
+  {
+   "name": "payroll_tax_add",
+   "desc": "Extra employer payroll tax on the gross payroll",
+   "unit": "share",
+   "block": "external",
+   "source": "assumption: regulation",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "payroll_tax_month",
+   "desc": "Month when the extra payroll tax applies",
+   "unit": "month",
+   "block": "timeline",
+   "source": "assumption: regulation",
+   "dist": {
+    "kind": "fixed",
+    "value": 8.15
+   }
+  }
+ ],
+ "derived": [
+  {
+   "name": "price_live",
+   "desc": "Month when the new prices apply",
+   "unit": "month",
+   "formula": "m_price + price_notice"
+  },
+  {
+   "name": "debt_ready",
+   "desc": "Month when the debt work shows an effect",
+   "unit": "month",
+   "formula": "m_debt + debt_lead"
+  },
+  {
+   "name": "hire_ready",
+   "desc": "Month when the new hires join (their work and their cost start)",
+   "unit": "month",
+   "formula": "m_hire + hiring_lead"
+  },
+  {
+   "name": "gpu_ready",
+   "desc": "Month when the GPU capacity is ready",
+   "unit": "month",
+   "formula": "m_gpu + gpu_setup"
+  },
+  {
+   "name": "price_eff",
+   "desc": "Price change over the year (from the month it applies)",
+   "unit": "share",
+   "formula": "price_change * maximum(12 - price_live, 0) / 12"
+  },
+  {
+   "name": "gpu_total",
+   "desc": "GPU shortage: shock events + a placed event (rest of the year)",
+   "unit": "share",
+   "formula": "gpu_shortage + ev_gpu * ev_gpu_size * maximum(12 - ev_gpu_month, 0) / 12"
+  },
+  {
+   "name": "vendor_total",
+   "desc": "Supplier price rise: shock events + a placed event",
+   "unit": "share",
+   "formula": "vendor_price + ev_vendor * ev_vendor_size * maximum(12 - ev_vendor_month, 0) / 12"
+  },
+  {
+   "name": "account_total",
+   "desc": "ARR lost with key accounts: shock events + a placed event",
+   "unit": "share",
+   "formula": "key_account_lost + ev_account * ev_account_size * maximum(12 - ev_account_month, 0) / 12"
+  },
+  {
+   "name": "kp_total",
+   "desc": "Key engineer gone: shock events + a placed event (share of the year)",
+   "unit": "share",
+   "formula": "minimum(key_person_exit + ev_kp * maximum(12 - ev_kp_month, 0) / 12, 1)"
+  },
+  {
+   "name": "hire_effect",
+   "desc": "Share of the year in which the new hires work",
+   "unit": "share",
+   "formula": "lever_hire * maximum(12 - hire_ready, 0) / 12"
+  },
+  {
+   "name": "debt_eff",
+   "desc": "Technical debt after the debt lever",
+   "unit": "index",
+   "formula": "tech_debt * (1 - 0.4 * lever_debt * maximum(12 - debt_ready, 0) / 12)"
+  },
+  {
+   "name": "load",
+   "desc": "Team load after the hires",
+   "unit": "ratio",
+   "formula": "team_load * headcount / (headcount + hire_count * hire_effect)"
+  },
+  {
+   "name": "hire_cost",
+   "desc": "Cost of the new hires in the year (from the month they join)",
+   "unit": "USD/year",
+   "formula": "engineer_cost * hire_count * hire_effect"
+  },
+  {
+   "name": "capacity",
+   "desc": "Delivery capacity (1 = normal)",
+   "unit": "ratio",
+   "formula": "(1 - debt_share * lever_debt * maximum(12 - m_debt, 0) / 12) * (1 - 0.5 * attrition) * (1 - 0.15 * kp_total) * (1 - blockers) * skills * (1 + new_tech_gain) / load"
+  },
+  {
+   "name": "gpu_hit",
+   "desc": "GPU shortage after the GPU lever",
+   "unit": "share",
+   "formula": "gpu_total * (1 - 0.7 * lever_gpu * maximum(12 - gpu_ready, 0) / 12)"
+  },
+  {
+   "name": "infra_cost",
+   "desc": "Infrastructure cost",
+   "unit": "USD/year",
+   "formula": "infra_base * (1 + k_infra_gpu * gpu_hit) * (1 + vendor_total) * (1 + fx_shock) + gpu_reserve_cost * lever_gpu * maximum(12 - m_gpu, 0) / 12"
+  },
+  {
+   "name": "latency",
+   "desc": "p95 latency",
+   "unit": "ms",
+   "formula": "latency_base * (1 + k_lat_gpu * gpu_hit) * (1 + k_lat_debt * debt_eff)"
+  },
+  {
+   "name": "incidents",
+   "desc": "Incidents per month",
+   "unit": "count",
+   "formula": "incidents_base * (1 + k_inc_debt * debt_eff) * load"
+  },
+  {
+   "name": "mttr_eff",
+   "desc": "Time to restore after deploy and people effects",
+   "unit": "hours",
+   "formula": "mttr_h * (10 / deploy_freq) ** k_mttr_deploy * (1 + 0.5 * kp_total)"
+  },
+  {
+   "name": "sla",
+   "desc": "Availability (1 = always up)",
+   "unit": "share",
+   "formula": "1 - incidents * mttr_eff * 0.1 / 720 - 0.002 * maximum(latency - latency_slo, 0) / 50"
+  },
+  {
+   "name": "overdue",
+   "desc": "Share of late implementations",
+   "unit": "share",
+   "formula": "minimum(overdue_base * (1 + debt_eff) / maximum(capacity, 0.3), 1)"
+  },
+  {
+   "name": "nps",
+   "desc": "Net promoter score",
+   "unit": "points",
+   "formula": "40 - 2000 * maximum(sla_target - sla, 0) - 40 * overdue + 50 * (support_quality - 0.8)"
+  },
+  {
+   "name": "churn",
+   "desc": "Annual churn",
+   "unit": "share",
+   "formula": "clip(base_churn + k_churn_sla * maximum(sla_target - sla, 0) * 1000 + k_churn_overdue * overdue + k_churn_nps * renewal_due * maximum(30 - nps, 0) + k_churn_price * price_eff + k_churn_competitor * competitor_cut + account_total + reputation_hit - 0.1 * (support_quality - 0.8), 0, 0.9)"
+  },
+  {
+   "name": "roadmap",
+   "desc": "Share of the roadmap delivered",
+   "unit": "share",
+   "formula": "minimum(capacity, 1)"
+  },
+  {
+   "name": "new_arr",
+   "desc": "New ARR closed in the year",
+   "unit": "USD/year",
+   "formula": "pipeline * win_rate * (1 - k_win_price * price_eff) * (1 - competitor_cut) * (1 + demand_growth) * (0.8 + 0.2 * roadmap)"
+  },
+  {
+   "name": "cac_cost",
+   "desc": "Acquisition spend for the new clients",
+   "unit": "USD/year",
+   "formula": "new_arr / acv * cac"
+  },
+  {
+   "name": "revenue",
+   "desc": "Revenue in the year (mid-year averages)",
+   "unit": "USD/year",
+   "formula": "arr0 * (1 + price_eff) * (1 - churn / 2) + new_arr / 2"
+  },
+  {
+   "name": "payroll_tax_cost",
+   "desc": "Extra payroll tax in the year (from the month it applies)",
+   "unit": "USD/year",
+   "formula": "payroll_tax_add * payroll * maximum(12 - payroll_tax_month, 0) / 12"
+  },
+  {
+   "name": "cost",
+   "desc": "Total cost in the year",
+   "unit": "USD/year",
+   "formula": "opex * (1 + 0.5 * fx_shock) + infra_cost + regulation_cost + hire_cost + cac_cost + payroll_tax_cost"
+  },
+  {
+   "name": "delivery_payroll",
+   "desc": "Delivery payroll: the delivery share of the operating cost and the new hires",
+   "unit": "USD/year",
+   "formula": "delivery_payroll_share * opex * (1 + 0.5 * fx_shock) + hire_cost"
+  },
+  {
+   "name": "cash_end",
+   "desc": "Cash at the end of the year (after the receivables change)",
+   "unit": "USD",
+   "formula": "cash0 + revenue - cost - revenue * (ar_days - 60) / 365"
+  },
+  {
+   "name": "burn",
+   "desc": "Monthly net burn (0 when profitable)",
+   "unit": "USD/month",
+   "formula": "maximum(cost - revenue, 0) / 12"
+  },
+  {
+   "name": "runway",
+   "desc": "Months of cash left at the end of the year (up to the cap, 60 by default)",
+   "unit": "months",
+   "formula": "minimum(maximum(cash_end, 0) / maximum(burn, 1), runway_cap)"
+  },
+  {
+   "name": "gross_margin",
+   "desc": "Gross margin after the infrastructure and the delivery payroll",
+   "unit": "share",
+   "formula": "(revenue - infra_cost - delivery_payroll) / maximum(revenue, 1)"
+  },
+  {
+   "name": "ltv_cac",
+   "desc": "Client lifetime value / acquisition cost",
+   "unit": "ratio",
+   "formula": "acv * gross_margin / maximum(churn, 0.01) / cac"
+  }
+ ],
+ "options": [
+  {
+   "name": "status_quo",
+   "desc": "Keep the current plan",
+   "formula": "cash_end",
+   "metrics": {
+    "runway": "runway",
+    "churn": "churn",
+    "sla": "sla",
+    "nps": "nps"
+   },
+   "overrides": {}
+  },
+  {
+   "name": "pay_tech_debt",
+   "desc": "Use 15% of capacity for technical debt for a year",
+   "formula": "cash_end",
+   "metrics": {
+    "runway": "runway",
+    "churn": "churn",
+    "sla": "sla",
+    "nps": "nps"
+   },
+   "overrides": {
+    "lever_debt": {
+     "kind": "fixed",
+     "value": 1.0
+    }
+   }
+  },
+  {
+   "name": "hire_5",
+   "desc": "Hire 5 engineers (cost from the month they join)",
+   "formula": "cash_end",
+   "metrics": {
+    "runway": "runway",
+    "churn": "churn",
+    "sla": "sla",
+    "nps": "nps"
+   },
+   "overrides": {
+    "lever_hire": {
+     "kind": "fixed",
+     "value": 1.0
+    }
+   }
+  },
+  {
+   "name": "reserve_gpu",
+   "desc": "Reserve GPU capacity on a second cloud (+0.3M per year)",
+   "formula": "cash_end",
+   "metrics": {
+    "runway": "runway",
+    "churn": "churn",
+    "sla": "sla",
+    "nps": "nps"
+   },
+   "overrides": {
+    "lever_gpu": {
+     "kind": "fixed",
+     "value": 1.0
+    }
+   }
+  },
+  {
+   "name": "raise_prices_8",
+   "desc": "Raise list prices by 8%",
+   "formula": "cash_end",
+   "metrics": {
+    "runway": "runway",
+    "churn": "churn",
+    "sla": "sla",
+    "nps": "nps"
+   },
+   "overrides": {
+    "price_change": {
+     "kind": "fixed",
+     "value": 0.08
+    }
+   }
+  }
+ ],
+ "criteria": [
+  {
+   "name": "cash",
+   "desc": "Cash at the end of the year",
+   "unit": "USD",
+   "higher": true,
+   "weight": 1.0,
+   "tie": "md_cash"
+  },
+  {
+   "name": "runway",
+   "desc": "Months of cash at the end of the year",
+   "unit": "months",
+   "higher": true,
+   "weight": 0.5,
+   "rag": {
+    "green": "runway_green",
+    "red": "runway_red"
+   },
+   "tie": "md_runway"
+  },
+  {
+   "name": "churn",
+   "desc": "Annual client churn",
+   "unit": "share",
+   "higher": false,
+   "weight": 1.0,
+   "tie": "md_churn"
+  },
+  {
+   "name": "sla",
+   "desc": "Availability",
+   "unit": "share",
+   "higher": true,
+   "weight": 0.75,
+   "tie": "md_sla"
+  },
+  {
+   "name": "nps",
+   "desc": "Net promoter score",
+   "unit": "points",
+   "higher": true,
+   "weight": 0.5,
+   "tie": "md_nps"
+  }
+ ],
+ "risks": [
+  {
+   "name": "gpu_shortage_event",
+   "desc": "GPU shortage at the cloud provider",
+   "p": 0.25,
+   "variable": "gpu_shortage",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": 0.2,
+    "mode": 0.4,
+    "high": 0.7
+   }
+  },
+  {
+   "name": "vendor_price_event",
+   "desc": "NVIDIA, AWS or a supplier raises prices",
+   "p": 0.2,
+   "variable": "vendor_price",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": 0.05,
+    "mode": 0.1,
+    "high": 0.25
+   }
+  },
+  {
+   "name": "fx_event",
+   "desc": "Currency move raises offshore cost",
+   "p": 0.2,
+   "variable": "fx_shock",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": 0.03,
+    "mode": 0.08,
+    "high": 0.15
+   }
+  },
+  {
+   "name": "regulation_event",
+   "desc": "New regulation needs compliance work",
+   "p": 0.15,
+   "variable": "regulation_cost",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": 100000.0,
+    "mode": 250000.0,
+    "high": 500000.0
+   }
+  },
+  {
+   "name": "competitor_event",
+   "desc": "A competitor cuts prices",
+   "p": 0.3,
+   "variable": "competitor_cut",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": 0.05,
+    "mode": 0.1,
+    "high": 0.2
+   }
+  },
+  {
+   "name": "key_person_event",
+   "desc": "A key engineer leaves",
+   "p": 0.2,
+   "variable": "key_person_exit",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "fixed",
+    "value": 1.0
+   }
+  },
+  {
+   "name": "key_account_event",
+   "desc": "A key account leaves",
+   "p": 0.1,
+   "variable": "key_account_lost",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": 0.05,
+    "mode": 0.1,
+    "high": 0.15
+   }
+  },
+  {
+   "name": "reputation_event",
+   "desc": "A public incident hurts the reputation",
+   "p": 0.1,
+   "variable": "reputation_hit",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": 0.01,
+    "mode": 0.03,
+    "high": 0.06
+   }
+  },
+  {
+   "name": "macro_event",
+   "desc": "Macro downturn lowers demand",
+   "p": 0.2,
+   "variable": "demand_growth",
+   "effect": "add",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": -0.15,
+    "mode": -0.1,
+    "high": -0.05
+   }
+  }
+ ],
+ "rules": [
+  {
+   "id": "burnout",
+   "pack": "company_basic",
+   "kind": "effect",
+   "desc": "A team over capacity after the hires loses more people",
+   "branches": [
+    {
+     "if": "load > burnout_load",
+     "then": {
+      "set": {
+       "attrition": "attrition + burnout_attrition"
+      },
+      "fail": null,
+      "flag": null,
+      "criterion": null
+     }
+    }
+   ],
+   "else": null,
+   "options": null
+  },
+  {
+   "id": "runway_low",
+   "pack": "company_basic",
+   "kind": "check",
+   "desc": "Less cash than for 6 months (the runway red limit) is not acceptable",
+   "branches": [
+    {
+     "if": "runway < runway_red",
+     "then": {
+      "set": {},
+      "fail": "Runway is below its red limit (6 months by default)",
+      "flag": null,
+      "criterion": null
+     }
+    }
+   ],
+   "else": null,
+   "options": null
+  },
+  {
+   "id": "sla_breach",
+   "pack": "company_basic",
+   "kind": "flag",
+   "desc": "",
+   "branches": [
+    {
+     "if": "sla < sla_target",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "red",
+      "criterion": "sla"
+     }
+    },
+    {
+     "if": "sla < sla_target + 0.002",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "amber",
+      "criterion": "sla"
+     }
+    }
+   ],
+   "else": null,
+   "options": null
+  },
+  {
+   "id": "over_budget",
+   "pack": "company_basic",
+   "kind": "flag",
+   "desc": "Total cost above the annual budget",
+   "branches": [
+    {
+     "if": "cost > budget",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "amber",
+      "criterion": "cash"
+     }
+    }
+   ],
+   "else": null,
+   "options": null
+  },
+  {
+   "id": "churn_high",
+   "pack": "company_basic",
+   "kind": "flag",
+   "desc": "",
+   "branches": [
+    {
+     "if": "churn > g_churn",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "red",
+      "criterion": "churn"
+     }
+    },
+    {
+     "if": "churn > 0.75 * g_churn",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "amber",
+      "criterion": "churn"
+     }
+    }
+   ],
+   "else": null,
+   "options": null
+  }
+ ],
+ "assumptions": [
+  "One year, mid-year averages; no month-by-month dynamics.",
+  "All k_* link coefficients are assumptions; calibrate them with the company's own history."
+ ],
+ "page": {
+  "title": "IT Company Simulator",
+  "eyebrow": "VARIATOR · IT services company · one year",
+  "lead": "An IT services company (12M USD ARR, 20 people) plans the next year. Which lever gives the best year: status quo, pay down technical debt, hire 5 engineers, reserve GPU capacity, or raise prices by 8%? The model links finance, clients, product, operations, people, market and external risks.",
+  "scope": "🏢 <b>Company level (strategy).</b> This page compares levers for the whole company over one year. To choose how to deliver one project or release (in-house, nearshore or offshore), use the case <b>Best way to deliver</b>.",
+  "change": [
+   "Your preference: weights of cash, runway, churn, SLA and NPS; risk aversion.",
+   "Any factor of the 7 blocks: a fixed value or a range (low, likely, high).",
+   "Shocks: the probability and the size of each event (GPU shortage, vendor prices, FX, regulation, competitor, key person, key account, reputation, macro).",
+   "Links: each k coefficient sets how strongly one factor moves the next one.",
+   "Levers of each option (for example the price change)."
+  ],
+  "real": [
+   "Each block has a real data source: finance, CRM, PMO, monitoring, incident tool, CI/CD, HR, cloud bills, market reports.",
+   "The numbers here are a plausible example company, not real data. Put in your own numbers to model your company.",
+   "The chains matter more than the list: a GPU shortage raises infra cost and latency, the SLA falls, churn rises, revenue and cash fall.",
+   "The k coefficients are assumptions. Calibrate them with your history (for example churn after past SLA breaches)."
+  ],
+  "metrics": [
+   "<b>Outputs:</b> cash at year end, runway (months), churn, SLA (availability), NPS; score, P(best), feasible share, RAG. Runway has fixed RAG limits: green from 18 months, red at 6 months or less.",
+   "<b>Chain values:</b> capacity, infra cost, latency, incidents, time to restore, SLA, overdue, NPS, churn, roadmap, new ARR, CAC spend, revenue, cost, burn, runway, gross margin, LTV/CAC.",
+   "<b>Rules:</b> burnout (a team load after the hires above 1.05 adds 5 points of attrition), runway below 6 months fails, SLA and churn flags, budget flag. The limits are inputs under “Limits and thresholds”.",
+   "<b>Not modelled yet:</b> month-by-month dynamics, several products, sales seasonality."
+  ],
+  "labels": {
+   "status_quo": "Keep the plan",
+   "pay_tech_debt": "Reduce tech debt",
+   "hire_5": "Hire 5 engineers",
+   "reserve_gpu": "Reserve GPU capacity",
+   "raise_prices_8": "Raise prices 8%",
+   "cash": "Cash at year end",
+   "runway": "Runway",
+   "churn": "Client churn",
+   "sla": "Availability (SLA)",
+   "nps": "NPS",
+   "burnout": "Burnout raises attrition",
+   "runway_low": "Runway below 6 months",
+   "sla_breach": "SLA breach",
+   "over_budget": "Cost above budget",
+   "churn_high": "High churn"
+  },
+  "risks": {
+   "cash": "💰 You may need a credit line or cost cuts by year end",
+   "runway": "⏳ You get less time to react: fundraising or cuts come sooner",
+   "churn": "🚪 You lose more clients and their recurring revenue",
+   "sla": "🛠️ SLA penalties and angry clients are possible",
+   "nps": "📉 Fewer referrals and renewals; churn can grow",
+   "runway_low": "⛔ Cash runs out within 6 months: the plan is not acceptable then"
+  },
+  "tour": [
+   {
+    "target": "#lead",
+    "min": "0–2 min",
+    "title": "🧩 The question and 5 forks",
+    "body": "An IT services company (12M USD ARR, 20 people) plans the next year. The forks: Keep the plan, Reduce tech debt, Hire 5 engineers, Reserve GPU capacity, Raise prices 8%."
+   },
+   {
+    "target": "#presets",
+    "min": "2–4 min",
+    "title": "🌍 World hypotheses",
+    "body": "Situations outside your control. They add up as layers, and all forks calculate again at once.",
+    "try": "Turn on “GPU shortage” and “Big client may leave”, then read the Best path."
+   },
+   {
+    "target": "#timeline",
+    "min": "4–6 min",
+    "title": "⏱️ Timeline",
+    "body": "Plans, events, milestones and goals over 12 months. P(met) shows how often a goal is met in the simulated futures.",
+    "try": "Place the “Key account leaves” event, or choose “Hire 5 engineers” in “Show for” and move “Hiring starts”."
+   },
+   {
+    "target": "#answer",
+    "min": "6–8 min",
+    "title": "🧭 The answer",
+    "body": "The decision, how often it is best, the expected result with its spread, and the numbered risks.",
+    "try": "Read R1: the consequence, its odds, the choice that changes it and what to watch."
+   },
+   {
+    "target": "nav.pages",
+    "min": "8–10 min",
+    "title": "📦 Same engine, another domain",
+    "body": "The IT delivery page uses the same engine for one project: in-house, nearshore or offshore.",
+    "try": "Open “IT delivery · one project”."
+   }
+  ],
+  "chain": [
+   "gpu_hit",
+   "infra_cost",
+   "latency",
+   "incidents",
+   "mttr_eff",
+   "sla",
+   "nps",
+   "overdue",
+   "capacity",
+   "churn",
+   "roadmap",
+   "new_arr",
+   "revenue",
+   "cost",
+   "cash_end",
+   "runway",
+   "ltv_cac"
+  ]
+ },
+ "scenarios": [
+  {
+   "name": "price_war",
+   "label": "Price war",
+   "emoji": "⚔️",
+   "description": "The chance of a competitor price cut rises from 30% to 65%, and the cut is 1.5 times deeper.",
+   "ops": [
+    {
+     "kind": "risk",
+     "target": "competitor_event",
+     "probability": 0.5
+    },
+    {
+     "kind": "risk",
+     "target": "competitor_event",
+     "scale": 1.5
+    }
+   ]
+  },
+  {
+   "name": "gpu_crunch",
+   "label": "GPU shortage",
+   "emoji": "🖥️",
+   "description": "The chance of a GPU shortage rises from 25% to 62%, and of a supplier price rise from 20% to 44%.",
+   "ops": [
+    {
+     "kind": "risk",
+     "target": "gpu_shortage_event",
+     "probability": 0.5
+    },
+    {
+     "kind": "risk",
+     "target": "vendor_price_event",
+     "probability": 0.3
+    }
+   ]
+  },
+  {
+   "name": "big_client_leaves",
+   "label": "Big client may leave",
+   "emoji": "🧲",
+   "description": "A key account gives notice with a much higher chance, and the account it takes is 1.5 times larger.",
+   "ops": [
+    {
+     "kind": "risk",
+     "target": "key_account_event",
+     "probability": 0.6
+    },
+    {
+     "kind": "risk",
+     "target": "key_account_event",
+     "scale": 1.5
+    }
+   ]
+  },
+  {
+   "name": "client_requirements_churn",
+   "label": "Clients change requirements",
+   "emoji": "🔁",
+   "description": "Clients change requirements and priorities often: more blockers, higher load, more late implementations.",
+   "ops": [
+    {
+     "kind": "variable",
+     "target": "blockers",
+     "scale": 1.5
+    },
+    {
+     "kind": "variable",
+     "target": "team_load",
+     "scale": 1.08
+    },
+    {
+     "kind": "variable",
+     "target": "overdue_base",
+     "scale": 1.3
+    }
+   ]
+  },
+  {
+   "name": "hiring_freeze",
+   "label": "Hard to hire",
+   "emoji": "🧊",
+   "description": "Hiring takes 4 months longer, and attrition is 20% higher.",
+   "ops": [
+    {
+     "kind": "variable",
+     "target": "hiring_lead",
+     "shift": 4.0
+    },
+    {
+     "kind": "variable",
+     "target": "attrition",
+     "scale": 1.2
+    }
+   ]
+  },
+  {
+   "name": "cash_squeeze",
+   "label": "Cash squeeze",
+   "emoji": "💰",
+   "description": "Funding is late: 30% less cash at the start, and clients pay 30 days later.",
+   "ops": [
+    {
+     "kind": "variable",
+     "target": "cash0",
+     "scale": 0.7
+    },
+    {
+     "kind": "variable",
+     "target": "ar_days",
+     "shift": 30.0
+    }
+   ]
+  },
+  {
+   "name": "downturn",
+   "label": "Market downturn",
+   "emoji": "📉",
+   "description": "The chance of a macro downturn rises from 20% to 60%, and demand growth is 5 points lower.",
+   "ops": [
+    {
+     "kind": "risk",
+     "target": "macro_event",
+     "probability": 0.5
+    },
+    {
+     "kind": "variable",
+     "target": "demand_growth",
+     "shift": -0.05
+    }
+   ]
+  },
+  {
+   "name": "payroll_tax_july",
+   "label": "Payroll tax +5 pp from July",
+   "emoji": "🧾",
+   "description": "A new employer payroll tax of 5 more points applies from July: the cost of the gross payroll rises by 5% for the rest of the year.",
+   "ops": [
+    {
+     "kind": "variable",
+     "target": "payroll_tax_add",
+     "shift": 0.05
+    }
+   ]
+  }
+ ],
+ "timeline": {
+  "horizon": 12.0,
+  "items": [
+   {
+    "name": "start_cash",
+    "label": "Cash at the start",
+    "kind": "start",
+    "emoji": "💵",
+    "description": "",
+    "month": 0.0,
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": "cash0",
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "start_arr",
+    "label": "ARR at the start",
+    "kind": "start",
+    "emoji": "📈",
+    "description": "",
+    "month": 0.0,
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": "arr0",
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "price_start",
+    "label": "New prices announced",
+    "kind": "plan",
+    "emoji": "🏷️",
+    "description": "",
+    "month": "m_price",
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": null,
+    "options": [
+     "raise_prices_8"
+    ],
+    "depends": []
+   },
+   {
+    "name": "debt_start",
+    "label": "Debt work starts",
+    "kind": "plan",
+    "emoji": "🧹",
+    "description": "",
+    "month": "m_debt",
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": null,
+    "options": [
+     "pay_tech_debt"
+    ],
+    "depends": []
+   },
+   {
+    "name": "hire_start",
+    "label": "Hiring starts",
+    "kind": "plan",
+    "emoji": "👥",
+    "description": "",
+    "month": "m_hire",
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": null,
+    "options": [
+     "hire_5"
+    ],
+    "depends": []
+   },
+   {
+    "name": "gpu_start",
+    "label": "GPU reservation ordered",
+    "kind": "plan",
+    "emoji": "🖥️",
+    "description": "",
+    "month": "m_gpu",
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": null,
+    "options": [
+     "reserve_gpu"
+    ],
+    "depends": []
+   },
+   {
+    "name": "gpu_event",
+    "label": "GPU shortage",
+    "kind": "event",
+    "emoji": "⚡",
+    "description": "40% shortage from that month: infra cost and latency rise.",
+    "month": "ev_gpu_month",
+    "condition": null,
+    "target": 0.8,
+    "place": {
+     "ev_gpu": 1.0
+    },
+    "show": null,
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "vendor_event",
+    "label": "Supplier raises prices 10%",
+    "kind": "event",
+    "emoji": "📈",
+    "description": "",
+    "month": "ev_vendor_month",
+    "condition": null,
+    "target": 0.8,
+    "place": {
+     "ev_vendor": 1.0
+    },
+    "show": null,
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "account_event",
+    "label": "Key account leaves",
+    "kind": "event",
+    "emoji": "🚪",
+    "description": "10% of ARR from that month.",
+    "month": "ev_account_month",
+    "condition": null,
+    "target": 0.8,
+    "place": {
+     "ev_account": 1.0
+    },
+    "show": null,
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "kp_event",
+    "label": "Key engineer leaves",
+    "kind": "event",
+    "emoji": "🧑‍💻",
+    "description": "",
+    "month": "ev_kp_month",
+    "condition": null,
+    "target": 0.8,
+    "place": {
+     "ev_kp": 1.0
+    },
+    "show": null,
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "price_live",
+    "label": "New prices live",
+    "kind": "milestone",
+    "emoji": "🏷️",
+    "description": "",
+    "month": "ms_price",
+    "condition": "price_live <= ms_price",
+    "target": 0.8,
+    "place": {},
+    "show": "price_live",
+    "options": [
+     "raise_prices_8"
+    ],
+    "depends": [
+     "price_start"
+    ]
+   },
+   {
+    "name": "debt_done",
+    "label": "Debt work shows an effect",
+    "kind": "milestone",
+    "emoji": "🧹",
+    "description": "",
+    "month": "ms_debt",
+    "condition": "debt_ready <= ms_debt",
+    "target": 0.8,
+    "place": {},
+    "show": "debt_ready",
+    "options": [
+     "pay_tech_debt"
+    ],
+    "depends": [
+     "debt_start"
+    ]
+   },
+   {
+    "name": "hires_ready",
+    "label": "New hires productive",
+    "kind": "milestone",
+    "emoji": "👥",
+    "description": "",
+    "month": "ms_hire",
+    "condition": "hire_ready <= ms_hire",
+    "target": 0.8,
+    "place": {},
+    "show": "hire_ready",
+    "options": [
+     "hire_5"
+    ],
+    "depends": [
+     "hire_start"
+    ]
+   },
+   {
+    "name": "gpu_ready",
+    "label": "GPU capacity ready",
+    "kind": "milestone",
+    "emoji": "🖥️",
+    "description": "",
+    "month": "ms_gpu",
+    "condition": "gpu_ready <= ms_gpu",
+    "target": 0.8,
+    "place": {},
+    "show": "gpu_ready",
+    "options": [
+     "reserve_gpu"
+    ],
+    "depends": [
+     "gpu_start"
+    ]
+   },
+   {
+    "name": "cash_goal",
+    "label": "Cash at year end at least the goal",
+    "kind": "goal",
+    "emoji": "💰",
+    "description": "",
+    "month": 12.0,
+    "condition": "cash >= g_cash",
+    "target": 0.8,
+    "place": {},
+    "show": null,
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "churn_goal",
+    "label": "Churn at most the goal",
+    "kind": "goal",
+    "emoji": "🤝",
+    "description": "",
+    "month": 12.0,
+    "condition": "churn <= g_churn",
+    "target": 0.8,
+    "place": {},
+    "show": null,
+    "options": null,
+    "depends": []
+   }
+  ],
+  "levers": [
+   {
+    "variable": "m_price",
+    "label": "Announce the new prices by month",
+    "low": 0.0,
+    "high": 6.0,
+    "step": 0.5,
+    "unit": "month",
+    "mode": null,
+    "modes": {},
+    "prefer": "high",
+    "needs": null,
+    "options": [
+     "raise_prices_8"
+    ]
+   },
+   {
+    "variable": "m_debt",
+    "label": "Start the debt work by month",
+    "low": 0.0,
+    "high": 6.0,
+    "step": 0.5,
+    "unit": "month",
+    "mode": null,
+    "modes": {},
+    "prefer": "high",
+    "needs": null,
+    "options": [
+     "pay_tech_debt"
+    ]
+   },
+   {
+    "variable": "m_hire",
+    "label": "Start hiring by month",
+    "low": 0.0,
+    "high": 6.0,
+    "step": 0.5,
+    "unit": "month",
+    "mode": null,
+    "modes": {},
+    "prefer": "high",
+    "needs": null,
+    "options": [
+     "hire_5"
+    ]
+   },
+   {
+    "variable": "m_gpu",
+    "label": "Order the GPU reservation by month",
+    "low": 0.0,
+    "high": 6.0,
+    "step": 0.5,
+    "unit": "month",
+    "mode": null,
+    "modes": {},
+    "prefer": "high",
+    "needs": null,
+    "options": [
+     "reserve_gpu"
+    ]
+   }
+  ]
+ },
+ "defaults": {
+  "weights": {
+   "cash": 1.0,
+   "runway": 0.5,
+   "churn": 1.0,
+   "sla": 0.75,
+   "nps": 0.5
+  },
+  "riskAversion": 0.25,
+  "n": 4096,
+  "seed": 42,
+  "activePresets": [],
+  "edits": {}
+ },
+ "priorityPresets": [
+  {
+   "id": "balanced",
+   "label": "Balanced",
+   "description": "The model defaults: cash and churn first, then availability, runway and NPS.",
+   "weights": {
+    "cash": 1.0,
+    "runway": 0.5,
+    "churn": 1.0,
+    "sla": 0.75,
+    "nps": 0.5
+   }
+  },
+  {
+   "id": "cash_first",
+   "label": "Cash first",
+   "description": "Cash at year end and runway count most; clients and reliability count less.",
+   "weights": {
+    "cash": 2.0,
+    "runway": 1.5,
+    "churn": 0.5,
+    "sla": 0.25,
+    "nps": 0.25
+   }
+  },
+  {
+   "id": "clients_first",
+   "label": "Clients first",
+   "description": "Client churn and NPS count most; cash counts less.",
+   "weights": {
+    "cash": 0.5,
+    "runway": 0.25,
+    "churn": 2.0,
+    "sla": 1.0,
+    "nps": 1.5
+   }
+  },
+  {
+   "id": "reliability_first",
+   "label": "Reliability first",
+   "description": "Availability (SLA) counts most, then churn; cash counts less.",
+   "weights": {
+    "cash": 0.5,
+    "runway": 0.25,
+    "churn": 1.0,
+    "sla": 2.0,
+    "nps": 0.5
+   }
+  }
+ ],
+ "caution": [
+  {
+   "id": "average",
+   "label": "On average",
+   "description": "Rank by the mean result of all scenarios.",
+   "value": 0.0
+  },
+  {
+   "id": "margin",
+   "label": "With a margin",
+   "description": "Mostly the mean, with a quarter of the weight on the worst 5% (the default).",
+   "value": 0.25
+  },
+  {
+   "id": "worst",
+   "label": "Worst 5%",
+   "description": "Rank by the mean of the worst 5% of the scenarios only.",
+   "value": 1.0
+  }
+ ],
+ "hypotheses": [
+  {
+   "id": "price_war",
+   "kind": "hypothesis",
+   "label": "Price war",
+   "description": "The chance of a competitor price cut rises from 30% to 65%, and the cut is 1.5 times deeper.",
+   "emoji": "",
+   "icon": "swords",
+   "effects": [
+    "A competitor cuts prices: chance 30% -> 65%",
+    "A competitor cuts prices: size x 1.5"
+   ]
+  },
+  {
+   "id": "gpu_crunch",
+   "kind": "hypothesis",
+   "label": "GPU shortage",
+   "description": "The chance of a GPU shortage rises from 25% to 62%, and of a supplier price rise from 20% to 44%.",
+   "emoji": "",
+   "icon": "cpu",
+   "effects": [
+    "GPU shortage at the cloud provider: chance 25% -> 62%",
+    "NVIDIA, AWS or a supplier raises prices: chance 20% -> 44%"
+   ]
+  },
+  {
+   "id": "big_client_leaves",
+   "kind": "hypothesis",
+   "label": "Big client may leave",
+   "description": "A key account gives notice with a much higher chance, and the account it takes is 1.5 times larger.",
+   "emoji": "",
+   "icon": "user-minus",
+   "effects": [
+    "A key account leaves: chance 10% -> 64%",
+    "A key account leaves: size x 1.5"
+   ]
+  },
+  {
+   "id": "client_requirements_churn",
+   "kind": "hypothesis",
+   "label": "Clients change requirements",
+   "description": "Clients change requirements and priorities often: more blockers, higher load, more late implementations.",
+   "emoji": "",
+   "icon": "repeat",
+   "effects": [
+    "Share of time lost to blockers: x 1.5",
+    "Planned work / capacity: x 1.08",
+    "Share of client implementations that are late: x 1.3"
+   ]
+  },
+  {
+   "id": "hiring_freeze",
+   "kind": "hypothesis",
+   "label": "Hard to hire",
+   "description": "Hiring takes 4 months longer, and attrition is 20% higher.",
+   "emoji": "",
+   "icon": "snowflake",
+   "effects": [
+    "Months to hire and onboard: + 4 months",
+    "Annual staff attrition: x 1.2"
+   ]
+  },
+  {
+   "id": "cash_squeeze",
+   "kind": "hypothesis",
+   "label": "Cash squeeze",
+   "description": "Funding is late: 30% less cash at the start, and clients pay 30 days later.",
+   "emoji": "",
+   "icon": "wallet",
+   "effects": [
+    "Cash at the start: x 0.7",
+    "Receivables: days until clients pay: + 30 days"
+   ]
+  },
+  {
+   "id": "downturn",
+   "kind": "hypothesis",
+   "label": "Market downturn",
+   "description": "The chance of a macro downturn rises from 20% to 60%, and demand growth is 5 points lower.",
+   "emoji": "",
+   "icon": "trending-down",
+   "effects": [
+    "Macro downturn lowers demand: chance 20% -> 60%",
+    "Market demand growth: - 0.05 share"
+   ]
+  },
+  {
+   "id": "payroll_tax_july",
+   "kind": "hypothesis",
+   "label": "Payroll tax +5 pp from July",
+   "description": "A new employer payroll tax of 5 more points applies from July: the cost of the gross payroll rises by 5% for the rest of the year.",
+   "emoji": "",
+   "icon": "receipt",
+   "effects": [
+    "Extra employer payroll tax on the gross payroll: + 0.05 share"
+   ]
+  }
+ ],
+ "forks": [
+  {
+   "id": "status_quo",
+   "kind": "decision",
+   "label": "Keep the plan",
+   "description": "Keep the current plan",
+   "icon": "circle-dot",
+   "color": 0,
+   "levers": {},
+   "interventions": [],
+   "baseline": true,
+   "recompute": null
+  },
+  {
+   "id": "pay_tech_debt",
+   "kind": "decision",
+   "label": "Reduce tech debt",
+   "description": "Use 15% of capacity for technical debt for a year",
+   "icon": "wrench",
+   "color": 1,
+   "levers": {
+    "lever_debt": 1.0
+   },
+   "interventions": [
+    {
+     "item": "debt_start",
+     "label": "Debt work starts",
+     "kind": "plan",
+     "monthVar": "m_debt",
+     "month": 0.0
+    },
+    {
+     "item": "debt_done",
+     "label": "Debt work shows an effect",
+     "kind": "milestone",
+     "monthVar": "ms_debt",
+     "month": 5.0
+    }
+   ],
+   "baseline": false,
+   "recompute": "from_date"
+  },
+  {
+   "id": "hire_5",
+   "kind": "decision",
+   "label": "Hire 5 engineers",
+   "description": "Hire 5 engineers (cost from the month they join)",
+   "icon": "user-plus",
+   "color": 2,
+   "levers": {
+    "lever_hire": 1.0
+   },
+   "interventions": [
+    {
+     "item": "hire_start",
+     "label": "Hiring starts",
+     "kind": "plan",
+     "monthVar": "m_hire",
+     "month": 0.0
+    },
+    {
+     "item": "hires_ready",
+     "label": "New hires productive",
+     "kind": "milestone",
+     "monthVar": "ms_hire",
+     "month": 4.0
+    }
+   ],
+   "baseline": false,
+   "recompute": "from_date"
+  },
+  {
+   "id": "reserve_gpu",
+   "kind": "decision",
+   "label": "Reserve GPU capacity",
+   "description": "Reserve GPU capacity on a second cloud (+0.3M per year)",
+   "icon": "server",
+   "color": 3,
+   "levers": {
+    "lever_gpu": 1.0
+   },
+   "interventions": [
+    {
+     "item": "gpu_start",
+     "label": "GPU reservation ordered",
+     "kind": "plan",
+     "monthVar": "m_gpu",
+     "month": 0.0
+    },
+    {
+     "item": "gpu_ready",
+     "label": "GPU capacity ready",
+     "kind": "milestone",
+     "monthVar": "ms_gpu",
+     "month": 3.0
+    }
+   ],
+   "baseline": false,
+   "recompute": "structural"
+  },
+  {
+   "id": "raise_prices_8",
+   "kind": "decision",
+   "label": "Raise prices 8%",
+   "description": "Raise list prices by 8%",
+   "icon": "tag",
+   "color": 4,
+   "levers": {
+    "price_change": 0.08
+   },
+   "interventions": [
+    {
+     "item": "price_start",
+     "label": "New prices announced",
+     "kind": "plan",
+     "monthVar": "m_price",
+     "month": 0.0
+    },
+    {
+     "item": "price_live",
+     "label": "New prices live",
+     "kind": "milestone",
+     "monthVar": "ms_price",
+     "month": 3.0
+    }
+   ],
+   "baseline": false,
+   "recompute": "from_date"
+  }
+ ],
+ "people": [
+  {
+   "id": "LW-E01",
+   "name": "Avery Collins",
+   "title": "Chief Executive Officer",
+   "entityId": "person.lw-e01"
+  },
+  {
+   "id": "LW-E02",
+   "name": "Morgan Reyes",
+   "title": "Head of Finance",
+   "entityId": "person.lw-e02"
+  },
+  {
+   "id": "LW-E03",
+   "name": "Jordan Patel",
+   "title": "Head of Delivery",
+   "entityId": "person.lw-e03"
+  },
+  {
+   "id": "LW-E06",
+   "name": "Daniel Kowalski",
+   "title": "Lead Backend Engineer",
+   "entityId": "person.lw-e06"
+  },
+  {
+   "id": "LW-E22",
+   "name": "Victor Osei",
+   "title": "DevOps Engineer",
+   "entityId": "person.lw-e22"
+  },
+  {
+   "id": "LW-E16",
+   "name": "Grace Whitfield",
+   "title": "Senior Support Engineer",
+   "entityId": "person.lw-e16"
+  },
+  {
+   "id": "LW-E18",
+   "name": "Natalie Brooks",
+   "title": "Senior Account Manager",
+   "entityId": "person.lw-e18"
+  }
+ ],
+ "items": {
+  "price_start": {
+   "kind": "lever",
+   "lane": "decisions",
+   "label": "New prices announced",
+   "description": "The new list prices are announced to the clients; they apply after the contract notice.",
+   "owner": "LW-E02",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "price_eff",
+     "label": "Price change"
+    },
+    {
+     "id": "revenue",
+     "label": "Revenue"
+    },
+    {
+     "id": "churn",
+     "label": "Client churn"
+    },
+    {
+     "id": "new_arr",
+     "label": "New ARR"
+    }
+   ],
+   "shock": null,
+   "valuePath": "o|raise_prices_8|price_change|value",
+   "value": {
+    "path": "o|raise_prices_8|price_change|value",
+    "variable": "price_change",
+    "label": "Price change",
+    "unit": "share",
+    "min": 0.02,
+    "max": 0.15,
+    "step": 0.01
+   },
+   "range": "price_notice",
+   "source": "plan · contracts"
+  },
+  "debt_start": {
+   "kind": "lever",
+   "lane": "decisions",
+   "label": "Debt work starts",
+   "description": "Part of the engineering capacity goes to technical debt from this month; the effect shows after a lead time.",
+   "owner": "LW-E06",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "debt_eff",
+     "label": "Technical debt"
+    },
+    {
+     "id": "latency",
+     "label": "Latency"
+    },
+    {
+     "id": "incidents",
+     "label": "Incidents"
+    },
+    {
+     "id": "overdue",
+     "label": "Late implementations"
+    },
+    {
+     "id": "capacity",
+     "label": "Delivery capacity"
+    }
+   ],
+   "shock": null,
+   "valuePath": "v|debt_share|value",
+   "value": {
+    "path": "v|debt_share|value",
+    "variable": "debt_share",
+    "label": "Capacity on debt",
+    "unit": "share",
+    "min": 0.05,
+    "max": 0.3,
+    "step": 0.01
+   },
+   "range": "debt_lead",
+   "source": "plan · engineering"
+  },
+  "hire_start": {
+   "kind": "lever",
+   "lane": "decisions",
+   "label": "Hiring starts",
+   "description": "Requisitions for new engineers open. The new engineers join after the hiring lead time; their work and their cost start then.",
+   "owner": "LW-E03",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "load",
+     "label": "Team load"
+    },
+    {
+     "id": "hire_cost",
+     "label": "Cost of new hires"
+    },
+    {
+     "id": "cost",
+     "label": "Cost"
+    },
+    {
+     "id": "incidents",
+     "label": "Incidents"
+    },
+    {
+     "id": "capacity",
+     "label": "Delivery capacity"
+    }
+   ],
+   "shock": null,
+   "valuePath": "v|hire_count|value",
+   "value": {
+    "path": "v|hire_count|value",
+    "variable": "hire_count",
+    "label": "Engineers to hire",
+    "unit": "count",
+    "min": 1,
+    "max": 12,
+    "step": 1
+   },
+   "range": "hiring_lead",
+   "source": "plan · HR"
+  },
+  "gpu_start": {
+   "kind": "lever",
+   "lane": "decisions",
+   "label": "GPU reservation ordered",
+   "description": "GPU capacity is reserved on a second cloud; it is ready after the setup time.",
+   "owner": "LW-E22",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "infra_cost",
+     "label": "Infrastructure cost"
+    },
+    {
+     "id": "gpu_hit",
+     "label": "GPU shortage"
+    },
+    {
+     "id": "latency",
+     "label": "Latency"
+    },
+    {
+     "id": "sla",
+     "label": "Availability"
+    }
+   ],
+   "shock": null,
+   "valuePath": "v|gpu_reserve_cost|value",
+   "value": {
+    "path": "v|gpu_reserve_cost|value",
+    "variable": "gpu_reserve_cost",
+    "label": "Reservation cost per year",
+    "unit": "USD/year",
+    "min": 100000,
+    "max": 600000,
+    "step": 25000
+   },
+   "range": "gpu_setup",
+   "source": "plan · vendor"
+  },
+  "gpu_event": {
+   "kind": "event",
+   "lane": "factors",
+   "label": "GPU shortage at Nimbus Cloud",
+   "description": "A 40% GPU shortage at the cloud provider from that month: infrastructure cost and latency rise.",
+   "owner": "LW-E22",
+   "person": null,
+   "entityId": "org.VN-03",
+   "affects": [
+    {
+     "id": "gpu_hit",
+     "label": "GPU shortage"
+    },
+    {
+     "id": "infra_cost",
+     "label": "Infrastructure cost"
+    },
+    {
+     "id": "latency",
+     "label": "Latency"
+    },
+    {
+     "id": "sla",
+     "label": "Availability"
+    }
+   ],
+   "shock": "gpu_shortage_event",
+   "valuePath": "v|ev_gpu_size|value",
+   "value": {
+    "path": "v|ev_gpu_size|value",
+    "variable": "ev_gpu_size",
+    "label": "Shortage size",
+    "unit": "share",
+    "min": 0.1,
+    "max": 0.8,
+    "step": 0.05
+   },
+   "range": null,
+   "source": "event · external"
+  },
+  "vendor_event": {
+   "kind": "event",
+   "lane": "clients_vendors",
+   "label": "Nimbus Cloud raises prices",
+   "description": "The cloud provider raises its prices by 10% from that month.",
+   "owner": "LW-E02",
+   "person": null,
+   "entityId": "org.VN-03",
+   "affects": [
+    {
+     "id": "infra_cost",
+     "label": "Infrastructure cost"
+    },
+    {
+     "id": "cost",
+     "label": "Cost"
+    }
+   ],
+   "shock": "vendor_price_event",
+   "valuePath": "v|ev_vendor_size|value",
+   "value": {
+    "path": "v|ev_vendor_size|value",
+    "variable": "ev_vendor_size",
+    "label": "Price rise",
+    "unit": "share",
+    "min": 0.05,
+    "max": 0.3,
+    "step": 0.01
+   },
+   "range": null,
+   "source": "event · market"
+  },
+  "account_event": {
+   "kind": "event",
+   "lane": "clients_vendors",
+   "label": "Meridian Freight Group gives notice",
+   "description": "Meridian Freight Group (about 9% of ARR) gives notice; its ARR leaves from that month.",
+   "owner": "LW-E18",
+   "person": null,
+   "entityId": "org.CL-001",
+   "affects": [
+    {
+     "id": "churn",
+     "label": "Client churn"
+    },
+    {
+     "id": "revenue",
+     "label": "Revenue"
+    }
+   ],
+   "shock": "key_account_event",
+   "valuePath": "v|ev_account_size|value",
+   "value": {
+    "path": "v|ev_account_size|value",
+    "variable": "ev_account_size",
+    "label": "Share of ARR lost",
+    "unit": "share",
+    "min": 0.02,
+    "max": 0.2,
+    "step": 0.01
+   },
+   "range": null,
+   "source": "event · clients"
+  },
+  "kp_event": {
+   "kind": "event",
+   "lane": "people",
+   "label": "Daniel Kowalski leaves",
+   "description": "The lead backend engineer leaves from that month: restore times grow and delivery capacity falls.",
+   "owner": "LW-E03",
+   "person": "LW-E06",
+   "entityId": "person.lw-e06",
+   "affects": [
+    {
+     "id": "mttr_eff",
+     "label": "Time to restore"
+    },
+    {
+     "id": "capacity",
+     "label": "Delivery capacity"
+    }
+   ],
+   "shock": "key_person_event",
+   "valuePath": null,
+   "value": null,
+   "range": null,
+   "source": "event · people"
+  }
+ },
+ "shocks": {
+  "gpu_shortage_event": {
+   "label": "GPU shortage at the cloud provider",
+   "lane": "factors",
+   "owner": "LW-E22",
+   "person": null,
+   "entityId": "org.VN-03",
+   "affects": [
+    {
+     "id": "gpu_hit",
+     "label": "GPU shortage"
+    },
+    {
+     "id": "infra_cost",
+     "label": "Infrastructure cost"
+    },
+    {
+     "id": "latency",
+     "label": "Latency"
+    }
+   ],
+   "event": "gpu_event"
+  },
+  "vendor_price_event": {
+   "label": "NVIDIA, AWS or a supplier raises prices",
+   "lane": "clients_vendors",
+   "owner": "LW-E02",
+   "person": null,
+   "entityId": "org.VN-03",
+   "affects": [
+    {
+     "id": "infra_cost",
+     "label": "Infrastructure cost"
+    }
+   ],
+   "event": "vendor_event"
+  },
+  "fx_event": {
+   "label": "Currency move raises offshore cost",
+   "lane": "factors",
+   "owner": "LW-E02",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "cost",
+     "label": "Cost"
+    },
+    {
+     "id": "infra_cost",
+     "label": "Infrastructure cost"
+    }
+   ],
+   "event": null
+  },
+  "regulation_event": {
+   "label": "New regulation needs compliance work",
+   "lane": "factors",
+   "owner": "LW-E01",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "cost",
+     "label": "Cost"
+    }
+   ],
+   "event": null
+  },
+  "competitor_event": {
+   "label": "A competitor cuts prices",
+   "lane": "factors",
+   "owner": "LW-E18",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "churn",
+     "label": "Client churn"
+    },
+    {
+     "id": "new_arr",
+     "label": "New ARR"
+    }
+   ],
+   "event": null
+  },
+  "key_person_event": {
+   "label": "A key engineer leaves",
+   "lane": "people",
+   "owner": "LW-E03",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "mttr_eff",
+     "label": "Time to restore"
+    },
+    {
+     "id": "capacity",
+     "label": "Delivery capacity"
+    }
+   ],
+   "event": "kp_event"
+  },
+  "key_account_event": {
+   "label": "A key account leaves",
+   "lane": "clients_vendors",
+   "owner": "LW-E18",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "churn",
+     "label": "Client churn"
+    },
+    {
+     "id": "revenue",
+     "label": "Revenue"
+    }
+   ],
+   "event": "account_event"
+  },
+  "reputation_event": {
+   "label": "A public incident hurts the reputation",
+   "lane": "factors",
+   "owner": "LW-E16",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "churn",
+     "label": "Client churn"
+    }
+   ],
+   "event": null
+  },
+  "macro_event": {
+   "label": "Macro downturn lowers demand",
+   "lane": "factors",
+   "owner": "LW-E01",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "new_arr",
+     "label": "New ARR"
+    }
+   ],
+   "event": null
+  }
+ },
+ "chainPath": [
+  [
+   "gpu_hit"
+  ],
+  [
+   "infra_cost",
+   "latency"
+  ],
+  [
+   "sla"
+  ],
+  [
+   "nps"
+  ],
+  [
+   "churn"
+  ],
+  [
+   "revenue"
+  ],
+  [
+   "cash_end"
+  ]
+ ],
+ "chainHigher": {
+  "gpu_hit": false,
+  "infra_cost": false,
+  "latency": false,
+  "incidents": false,
+  "mttr_eff": false,
+  "sla": true,
+  "nps": true,
+  "overdue": false,
+  "capacity": true,
+  "churn": false,
+  "roadmap": true,
+  "new_arr": true,
+  "revenue": true,
+  "cost": false,
+  "cash_end": true,
+  "runway": true,
+  "ltv_cac": true
+ },
+ "blocks": [
+  {
+   "id": "finance",
+   "label": "Finance"
+  },
+  {
+   "id": "clients",
+   "label": "Clients"
+  },
+  {
+   "id": "product",
+   "label": "Product and technology"
+  },
+  {
+   "id": "operations",
+   "label": "Operations"
+  },
+  {
+   "id": "people",
+   "label": "People"
+  },
+  {
+   "id": "market",
+   "label": "Market"
+  },
+  {
+   "id": "external",
+   "label": "External risks"
+  },
+  {
+   "id": "link",
+   "label": "Links between factors"
+  },
+  {
+   "id": "limits",
+   "label": "Limits and thresholds"
+  },
+  {
+   "id": "lever",
+   "label": "Levers"
+  },
+  {
+   "id": "timeline",
+   "label": "Timeline and events"
+  }
+ ],
+ "stays": [
+  "arr0",
+  "opex",
+  "budget",
+  "acv",
+  "cac",
+  "delivery_payroll_share",
+  "base_churn",
+  "pipeline",
+  "win_rate",
+  "renewal_due",
+  "latency_slo",
+  "sla_target",
+  "incidents_base",
+  "support_quality",
+  "mttr_h",
+  "deploy_freq",
+  "skills",
+  "headcount",
+  "engineer_cost",
+  "payroll",
+  "new_tech_gain",
+  "k_infra_gpu",
+  "k_lat_gpu",
+  "k_lat_debt",
+  "k_inc_debt",
+  "k_mttr_deploy",
+  "k_churn_sla",
+  "k_churn_overdue",
+  "k_churn_nps",
+  "k_churn_price",
+  "k_churn_competitor",
+  "k_win_price"
+ ],
+ "goals": {
+  "cash": {
+   "value": 1500000.0,
+   "label": "Goal $1.50M"
+  },
+  "churn": {
+   "value": 0.2,
+   "label": "Goal 20%"
+  },
+  "sla": {
+   "value": 0.995,
+   "label": "SLA 99.5%"
+  },
+  "runway": {
+   "value": 6.0,
+   "label": "Check: 6 months"
+  }
+ },
+ "riskRows": {
+  "fragile": "runway_low",
+  "runway_low": "runway_low",
+  "runway": "runway_low",
+  "cash": "cash_negative",
+  "cash_goal": "cash_negative",
+  "sla": "sla_breach",
+  "sla_breach": "sla_breach",
+  "churn": "churn_high",
+  "churn_high": "churn_high",
+  "churn_goal": "churn_high",
+  "over_budget": "over_budget",
+  "price_live": "price_live",
+  "debt_done": "debt_done",
+  "hires_ready": "hires_ready",
+  "gpu_ready": "gpu_ready"
+ },
+ "helpKeys": {
+  "pBest": "kpi.pBest",
+  "feasible": "kpi.feasible",
+  "score": "kpi.score",
+  "rag": "kpi.overallRag",
+  "priorities": "control.priorityPresets",
+  "caution": "control.caution",
+  "changesIf": "kpi.breaks",
+  "expected": "kpi.expected",
+  "risks": "kpi.risks",
+  "tradeoff": "kpi.tradeoff",
+  "criteriaTable": "kpi.vsBase",
+  "fan": "kpi.fan",
+  "calendar": "kpi.riskCalendar",
+  "goalsMet": "kpi.pMet",
+  "timeline": "kpi.forecastBand",
+  "pmet": "kpi.pMet",
+  "spare": "kpi.spare",
+  "conflicts": "kpi.conflicts",
+  "levers": "kpi.plan",
+  "suggest": "control.suggestDates",
+  "chain": "kpi.chainValue",
+  "drivers": "kpi.drivers",
+  "range": "kpi.range",
+  "rules": "kpi.ruleShare",
+  "boxplot": "kpi.boxplot",
+  "ragTable": "kpi.ragTable",
+  "review": "control.forkSelection",
+  "dayReview": "control.dayForks",
+  "tree": "kpi.weekTree",
+  "weekly": "kpi.weekNode",
+  "examples": "kpi.dayExample",
+  "exampleChoice": "control.exampleChoice",
+  "daily": "kpi.dayEvents",
+  "hypotheses": "control.hypotheses",
+  "interventions": "control.dragMarker",
+  "events": "control.eventButtons",
+  "inspector": "control.inspector",
+  "compareOriginal": "control.compare",
+  "returnOriginal": "control.resetAll",
+  "modelSettings": "control.modelSettings",
+  "simulation": "kpi.simulationBadge",
+  "preview": "kpi.preview",
+  "openInKb": "control.openInKb",
+  "stays": "section.stays",
+  "world": "section.world",
+  "limits": "kpi.limits",
+  "histogram": "kpi.histogram",
+  "runMeta": "kpi.runMeta",
+  "medianFirstMonth": "kpi.medianFirstMonth",
+  "weights": "control.weights",
+  "resetField": "control.resetField",
+  "resetSection": "control.resetSection",
+  "undo": "control.undo",
+  "n": "control.n",
+  "seed": "control.seed",
+  "whiskers": "control.whiskers"
+ },
+ "help": {
+  "section.world": {
+   "title": "World",
+   "body": "Typical situations of the world around the decision. Turn on one or more: they add up as layers in a fixed order, and your own edits stay on top. The forks are compared inside the world you choose.",
+   "more": "World hypotheses as layers: price war, GPU shortage, a big client leaving and more."
+  },
+  "section.forks": {
+   "title": "Forks",
+   "body": "Each fork is one decision to compare. The timeline below shows when each intervention starts, and the events you can place. Drag a marker to move its date; select it to edit its value in the inspector.",
+   "more": "An IT services company (12M USD ARR, 20 people) plans the next year. Which lever gives the best year: status quo, pay down technical debt, hire 5 engineers, reserve GPU capacity, or raise prices by 8%? The model links finance, clients, product, operations, people, market and external risks. Your preference: weights of cash, runway, churn, SLA and NPS; risk aversion. Any factor of the 7 blocks: a fixed value or a range (low, likely, high). Shocks: the probability and the size of each event (GPU shortage, vendor prices, FX, regulation, competitor, key person, key account, reputation, macro). Links: each k coefficient sets how strongly one factor moves the next one. Levers of each option (for example the price change)."
+  },
+  "section.stays": {
+   "title": "As before",
+   "body": "Inputs that no fork changes. The inputs with a metric at T start from the history (the company facts): ARR, cash, receivables days, team load and deploys as measured; time to restore, incidents, latency, support quality (from the NPS) and the base churn so that the plan without shocks gives the measured values. Every other input, the k links and the limits are model assumptions. The forecast differs from T: the shocks, the uncertainty and the links act over the year.",
+   "more": "The common ground of all options: the values that no fork, hypothesis or event changes. Correct them only when the data is wrong."
+  },
+  "section.month-answer": {
+   "title": "Answer",
+   "body": "The fork with the best score times the share of feasible scenarios. The sentence says what you aim for, what to choose and when to look again. The cards show the median and the 5%-95% range of each criterion; the risks come as consequences with their odds.",
+   "more": "The best fork in one sentence, its expected result and the three main risks."
+  },
+  "section.month-compare": {
+   "title": "Compare",
+   "body": "Each criterion is scaled 0-1 across the forks, weighted and summed. The order uses score x feasible share. Change the priorities or the caution level: the ranking changes at once, without a new simulation.",
+   "more": "Ranking, criteria per fork and your priorities; a priority change reranks at once."
+  },
+  "section.month-time": {
+   "title": "Over time",
+   "body": "A preview: monthly paths drawn to end at the year-end results of the model. The fan shows the median and the 25-75% and 10-90% ranges. The risk calendar shows the chance, by each month, that cash goes below zero, the runway falls below 6 months, a month breaks the SLA, churn passes 20%, cost runs above the budget, or a milestone is late.",
+   "more": "Monthly fans per fork and the risk calendar: when cash, runway, SLA, churn, cost or a milestone can fail."
+  },
+  "section.month-plan": {
+   "title": "Plan",
+   "body": "Each milestone and goal is met in a share of the scenarios; 80% is the target. Drag a marker to move its date. When a goal is missed, the inputs in conflict and a plan of levers (what, how much, when) show what to change.",
+   "more": "Milestones and goals with their chance, the inputs in conflict and a plan of levers."
+  },
+  "section.month-why": {
+   "title": "Why",
+   "body": "The chain shows how a shock moves through the company: GPU shortage, infrastructure cost and latency, availability, NPS, churn, revenue and cash. Values are means over all scenarios, per fork. The drivers are the inputs that move cash most.",
+   "more": "Each block has a real data source: finance, CRM, PMO, monitoring, incident tool, CI/CD, HR, cloud bills, market reports. The numbers here are a plausible example company, not real data. Put in your own numbers to model your company. The chains matter more than the list: a GPU shortage raises infra cost and latency, the SLA falls, churn rises, revenue and cash fall. The k coefficients are assumptions. Calibrate them with your history (for example churn after past SLA breaches)."
+  },
+  "section.month-details": {
+   "title": "Details",
+   "body": "For the analyst: the spread of each criterion per fork (box plots), the RAG shares with their limits, histograms, and the number of scenarios and the seed of the run.",
+   "more": "Outputs: cash at year end, runway (months), churn, SLA (availability), NPS; score, P(best), feasible share, RAG. Runway has fixed RAG limits: green from 18 months, red at 6 months or less. Chain values: capacity, infra cost, latency, incidents, time to restore, SLA, overdue, NPS, churn, roadmap, new ARR, CAC spend, revenue, cost, burn, runway, gross margin, LTV/CAC. Rules: burnout (a team load after the hires above 1.05 adds 5 points of attrition), runway below 6 months fails, SLA and churn flags, budget flag. The limits are inputs under “Limits and thresholds”. Not modelled yet: month-by-month dynamics, several products, sales seasonality."
+  },
+  "section.week-review": {
+   "title": "Review",
+   "body": "Choose the forks for the week and day steps. A fork whose range of results overlaps the leader is marked: better keep it, it can still win.",
+   "more": "Keep the forks worth a closer look; a fork whose range overlaps the leader is marked."
+  },
+  "section.week": {
+   "title": "Paths",
+   "body": "A preview: weekly paths as a tree. Each node gives 3 variants of the next week; each level keeps at most 60 nodes, so the tree stays a fair sample. A thicker branch carries more paths.",
+   "more": "Pick a fork and see how its year can go, week by week: the common paths, the bad branches to watch, and how far the numbers can spread."
+  },
+  "section.day-review": {
+   "title": "Review",
+   "body": "The day level shows three example scenarios of each fork you pick: pessimistic, median and optimistic. Pick one or two forks.",
+   "more": "Pick one or two forks for the example days."
+  },
+  "section.day": {
+   "title": "Examples",
+   "body": "A preview: three example scenarios of a fork, from the bad, the typical and the good part of the scenarios. Each shows daily cash, team load and incidents for the first 60 working days, and the events.",
+   "more": "Three example scenarios (bad, typical, good): daily cash, load, incidents and events."
+  },
+  "step.forks": {
+   "title": "Forks",
+   "body": "Step 1: choose what to compare. Changes here make the later steps out of date until they run again."
+  },
+  "step.month": {
+   "title": "Month",
+   "body": "Step 2: the horizon as a Monte Carlo of the cause-and-effect model, per fork."
+  },
+  "step.week": {
+   "title": "Week",
+   "body": "Step 3: weekly paths for the forks you choose in the review card."
+  },
+  "step.day": {
+   "title": "Day",
+   "body": "Step 4: example days of 1-2 forks."
+  },
+  "kpi.decision": {
+   "title": "Decision",
+   "body": "The fork with the highest score x feasible share at your priorities."
+  },
+  "kpi.strategy": {
+   "title": "Strategy",
+   "body": "What you aim for, what to choose, and when to examine the choice again, in 1-2 sentences."
+  },
+  "kpi.score": {
+   "title": "Score",
+   "body": "Each criterion scaled 0-1 on fixed anchors (the 1st to 99th percentile of the baseline fork), times its weight, summed. A change of one fork changes only its own score. A gap to the baseline counts only beyond the meaningful difference of the criterion (inputs under Limits and thresholds)."
+  },
+  "kpi.pBest": {
+   "title": "P(best)",
+   "body": "Share of scenarios where the fork has the highest weighted score of all the forks compared (the same fixed anchors as the score). The label beside it says how many forks that is («of 5 forks»): the review before the week or the day lists only some forks, but each one's P(best) is still out of all of them. Two forks equal on every criterion share the scenarios they win, so the verdict gives them together («together best in»). Failed scenarios do not count for it. In each scenario, gaps below the meaningful difference of a criterion are ties."
+  },
+  "kpi.feasible": {
+   "title": "Feasible",
+   "body": "Share of scenarios where no check rule fails (for example: runway below 6 months)."
+  },
+  "kpi.overallRag": {
+   "title": "Overall RAG",
+   "body": "Per scenario, the worst colour over the weighted criteria: green, amber or red."
+  },
+  "kpi.limits": {
+   "title": "RAG limits",
+   "body": "Runway has fixed limits: green from 18 months, red at 6 months or less (inputs under Limits and thresholds). The other criteria take them from the baseline fork (keep the plan): green = its median; red = its worst 10%. Flags make a colour worse; a failed check makes it red."
+  },
+  "kpi.expected": {
+   "title": "Expected result",
+   "body": "Median and the range of 90% of the outcomes (5% to 95%) of each criterion for the chosen fork."
+  },
+  "kpi.breaks": {
+   "title": "Changes if",
+   "body": "Single changes after which another fork leads clearly (by more than 0.02 of score): one weight halved or doubled, or another caution level."
+  },
+  "kpi.risks": {
+   "title": "Risks to watch",
+   "body": "Consequences for you, most important first: the odds in words, a fork that makes it less likely, and the input to watch."
+  },
+  "kpi.odds": {
+   "title": "Odds",
+   "body": "The share of scenarios in words: 3 in 10, 1 in 12, below 1 in 50."
+  },
+  "kpi.watch": {
+   "title": "What to watch",
+   "body": "The input whose values correlate most with the bad outcome (|r| at least 0.1)."
+  },
+  "kpi.tradeoff": {
+   "title": "Trade-off",
+   "body": "On which criteria the leader is better than the second fork (and by how much on average), the reverse, and where the two are equal within the meaningful difference."
+  },
+  "kpi.vsBase": {
+   "title": "Compared with the base",
+   "body": "The difference to the run without your changes: up = better, down = worse."
+  },
+  "kpi.pMet": {
+   "title": "P(met)",
+   "body": "Share of scenarios where the milestone or goal is met by its date. Target: 80%."
+  },
+  "kpi.forecastBand": {
+   "title": "Forecast",
+   "body": "In 80% of the scenarios the milestone is reached in this range of months; the line is the median month. Your date does not change the forecast."
+  },
+  "kpi.spare": {
+   "title": "Months spare",
+   "body": "Your date minus the month that 8 of 10 scenarios meet: positive = spare time, negative = more time needed."
+  },
+  "kpi.conflicts": {
+   "title": "Inputs in conflict",
+   "body": "For a missed goal, the random inputs that correlate most with the miss (C1-C3). Too high or too low gives the direction."
+  },
+  "kpi.plan": {
+   "title": "Plan",
+   "body": "Levers of the fork in order (what, how much, when). Each takes the value with the most goals met, then the latest start."
+  },
+  "kpi.chainValue": {
+   "title": "Chain value",
+   "body": "The mean of a link of the cause-and-effect chain over all scenarios, per fork."
+  },
+  "kpi.drivers": {
+   "title": "Main drivers",
+   "body": "Inputs that move cash most for this fork.",
+   "more": "The correlation of each uncertain input with cash at year end over the scenarios. A bar to the right: higher values give more cash; to the left: they cost cash."
+  },
+  "kpi.range": {
+   "title": "Range",
+   "body": "Low, likely and high value of an uncertain input.",
+   "more": "Each scenario draws a value from this range. Most draws fall near the likely value; the curve shows the shape (a PERT distribution)."
+  },
+  "kpi.ruleShare": {
+   "title": "Rule share",
+   "body": "Share of scenarios where the rule fired, per fork."
+  },
+  "kpi.boxplot": {
+   "title": "Box plot",
+   "body": "Box = middle 50% of the scenarios; whiskers = the range of the slider; thick line = median; dot = mean; dashed lines = RAG limits."
+  },
+  "kpi.ragTable": {
+   "title": "RAG detail",
+   "body": "Per criterion and fork, the share of green, amber and red scenarios."
+  },
+  "kpi.histogram": {
+   "title": "Histogram",
+   "body": "How often each value occurs, one line per fork; dashed lines are the RAG limits."
+  },
+  "kpi.runMeta": {
+   "title": "Run",
+   "body": "Number of scenarios, the seed and the time of the last simulation. The same seed gives the same result."
+  },
+  "kpi.fan": {
+   "title": "Fan",
+   "body": "Median line; the dark band holds 50% of the paths (25-75%), the light band 80% (10-90%). Preview data."
+  },
+  "kpi.riskCalendar": {
+   "title": "Risk calendar",
+   "body": "Chance that the check, limit, milestone or goal has failed by each month (cumulative). Preview data."
+  },
+  "kpi.medianFirstMonth": {
+   "title": "Typical month",
+   "body": "Among the scenarios where it fails, the median month of the first failure."
+  },
+  "kpi.weekTree": {
+   "title": "Week tree",
+   "body": "Weeks on the axis; a branch is a group of paths; a thicker branch carries more paths. Click a node for the week summary. Preview data."
+  },
+  "kpi.weekNode": {
+   "title": "Week node",
+   "body": "One week of one group of paths: cash, team load and incidents, and a short summary."
+  },
+  "kpi.dayExample": {
+   "title": "Example future",
+   "body": "A scenario of the model from the bad (10%), typical (50%) or good (90%) part of cash at year end. Preview data."
+  },
+  "kpi.dayEvents": {
+   "title": "Events",
+   "body": "What happens on each day of the example: incidents, payments, shocks and decisions. A link opens the record in the knowledge base."
+  },
+  "kpi.simulationBadge": {
+   "title": "Simulation",
+   "body": "These numbers are a simulated future, not recorded data."
+  },
+  "kpi.preview": {
+   "title": "Preview",
+   "body": "Stand-in data drawn to match the model at the horizon, until the month-by-month simulation on actors is ready."
+  },
+  "kpi.stale": {
+   "title": "Out of date",
+   "body": "An input changed after this result. It updates after the next run."
+  },
+  "control.hypotheses": {
+   "title": "World hypotheses",
+   "body": "Typical situations as layers. Turn on one or more: they add up in a fixed order. Your own edits stay on top."
+  },
+  "control.priorityPresets": {
+   "title": "Priorities",
+   "body": "Ready weight sets. Balanced = the model defaults. A preset sets all weights; you can then move each one."
+  },
+  "control.weights": {
+   "title": "Weights",
+   "body": "How much each criterion counts in the score, 0-3. Only the ratios matter."
+  },
+  "control.caution": {
+   "title": "How careful?",
+   "body": "On average = rank by the mean; with a margin = a quarter of the weight on the worst 5%; worst 5% = rank by the bad cases only."
+  },
+  "control.compare": {
+   "title": "Compare with the start",
+   "body": "Shows the difference to a run without your changes and hypotheses."
+  },
+  "control.timelineOption": {
+   "title": "Show for",
+   "body": "The fork whose timeline, conflicts and plan are shown; default: the best fork."
+  },
+  "control.eventButtons": {
+   "title": "Events",
+   "body": "Place a certain event (GPU shortage, supplier price rise, key account or key engineer leaves) on the timeline, then move it to its month."
+  },
+  "control.dragMarker": {
+   "title": "Move a date",
+   "body": "Drag a marker, or focus it and press the arrow keys (half a month; Shift: a month). Esc during a drag moves it back."
+  },
+  "control.suggestDates": {
+   "title": "Suggest dates",
+   "body": "Each milestone moves to the month that 8 of 10 scenarios meet, rounded up to half a month."
+  },
+  "control.applyPlan": {
+   "title": "Apply the plan",
+   "body": "Sets the levers of the plan (the start months) on the timeline."
+  },
+  "control.deleteItem": {
+   "title": "Delete",
+   "body": "Removes the milestone or goal from the evaluation. Restore it from the list."
+  },
+  "control.restoreItem": {
+   "title": "Restore",
+   "body": "Brings a deleted milestone or goal back."
+  },
+  "control.resetField": {
+   "title": "Back to the default",
+   "body": "Removes your edit of this value; a hypothesis value stays."
+  },
+  "control.resetSection": {
+   "title": "Reset the section",
+   "body": "Removes your changes in this section only."
+  },
+  "control.resetAll": {
+   "title": "Back to the start",
+   "body": "Removes all your changes and hypotheses. You can undo it in the notification."
+  },
+  "control.undo": {
+   "title": "Undo",
+   "body": "Restores the value before this change."
+  },
+  "control.modelSettings": {
+   "title": "Model settings",
+   "body": "All inputs by block, the link coefficients, the shocks and the levers. A changed value has a dot; a hypothesis value has a mark."
+  },
+  "control.inspector": {
+   "title": "Intervention",
+   "body": "The value and its range (low, likely, high) of the selected intervention, its source, its owner and what it changes."
+  },
+  "control.n": {
+   "title": "Scenarios",
+   "body": "Number of simulated scenarios. More gives smoother numbers and takes longer."
+  },
+  "control.seed": {
+   "title": "Seed",
+   "body": "Start of the random numbers. The same seed gives the same result."
+  },
+  "control.whiskers": {
+   "title": "Whiskers",
+   "body": "The range of the box-plot whiskers, from 1%-99% to 25%-75%."
+  },
+  "control.forkSelection": {
+   "title": "Forks for the next steps",
+   "body": "Choose the forks for the week and day steps. A fork whose range overlaps the leader is marked: better keep it."
+  },
+  "control.dayForks": {
+   "title": "Forks for the day level",
+   "body": "Pick one or two forks to see day by day.",
+   "more": "The day level shows three example scenarios of each fork you pick: pessimistic, median and optimistic."
+  },
+  "control.exampleChoice": {
+   "title": "Example future",
+   "body": "Choose the pessimistic, the median or the optimistic example.",
+   "more": "The examples are scenarios of the model from the bad (10%), the typical (50%) and the good (90%) part of the first criterion."
+  },
+  "control.openInKb": {
+   "title": "Open in the knowledge base",
+   "body": "Shows the brief, dossiers and questions on this example branch, marked as a simulation."
+  },
+  "recompute.baseline": {
+   "title": "Baseline",
+   "body": "The fork every delta is measured against.",
+   "more": "The baseline is always compared, and every vs-baseline delta on the page is measured against it. Its RAG limits are the green and red lines of the other forks."
+  },
+  "recompute.overlay": {
+   "title": "Overlay",
+   "body": "Recomputed as an overlay on the same paths: instant.",
+   "more": "An overlay fork changes only prices or values on top of the same scenario paths; no actor reacts to the change by itself. The recompute is instant."
+  },
+  "recompute.from_date": {
+   "title": "Rerun from its date",
+   "body": "The paths are rerun from the start date of the fork.",
+   "more": "This fork changes how the company works from its start month. The scenarios are rerun from that month on; earlier months stay the same."
+  },
+  "recompute.structural": {
+   "title": "Structural",
+   "body": "New actors or rules: the whole horizon is rerun.",
+   "more": "This fork adds something new to the company or the project, for example a second cloud or a vendor team. The whole horizon is rerun, and the ranges are wider."
+  },
+  "lane.decisions": {
+   "title": "Decisions",
+   "body": "What you decide and when it starts: the levers of the forks."
+  },
+  "lane.people": {
+   "title": "People",
+   "body": "Events about people: a key engineer leaves, a hire starts later."
+  },
+  "lane.clients_vendors": {
+   "title": "Clients and vendors",
+   "body": "Events at clients and suppliers: a client gives notice, a vendor raises prices or rotates its team."
+  },
+  "lane.factors": {
+   "title": "Factors",
+   "body": "Outside factors: shortages, markets, currency and regulation."
+  },
+  "criterion.cash": {
+   "title": "Cash at year end",
+   "body": "Cash at the end of the year, USD; higher is better. Default weight 1.",
+   "more": "You may need a credit line or cost cuts by year end",
+   "formula": "cash = cash_end",
+   "metric": "cash"
+  },
+  "criterion.runway": {
+   "title": "Runway",
+   "body": "Months of cash at the end of the year, months; higher is better. Default weight 0.5.",
+   "more": "You get less time to react: fundraising or cuts come sooner",
+   "formula": "runway = runway",
+   "metric": "runway"
+  },
+  "criterion.churn": {
+   "title": "Client churn",
+   "body": "Annual client churn, share; lower is better. Default weight 1.",
+   "more": "You lose more clients and their recurring revenue",
+   "formula": "churn = churn",
+   "metric": "churn"
+  },
+  "criterion.sla": {
+   "title": "Availability (SLA)",
+   "body": "Availability, share; higher is better. Default weight 0.75.",
+   "more": "SLA penalties and angry clients are possible",
+   "formula": "sla = sla",
+   "metric": "sla"
+  },
+  "criterion.nps": {
+   "title": "NPS",
+   "body": "Net promoter score, points; higher is better. Default weight 0.5.",
+   "more": "Fewer referrals and renewals; churn can grow",
+   "formula": "nps = nps",
+   "metric": "nps"
+  },
+  "fork.status_quo": {
+   "title": "Keep the plan",
+   "body": "Keep the current plan.",
+   "more": "Sets: no lever: the baseline."
+  },
+  "fork.pay_tech_debt": {
+   "title": "Reduce tech debt",
+   "body": "Use 15% of capacity for technical debt for a year.",
+   "more": "Sets: Lever: 15% of capacity pays down technical debt = 1."
+  },
+  "fork.hire_5": {
+   "title": "Hire 5 engineers",
+   "body": "Hire 5 engineers (cost from the month they join).",
+   "more": "Sets: Lever: hire 5 engineers = 1."
+  },
+  "fork.reserve_gpu": {
+   "title": "Reserve GPU capacity",
+   "body": "Reserve GPU capacity on a second cloud (+0.3M per year).",
+   "more": "Sets: Lever: reserved GPU capacity on a second cloud = 1."
+  },
+  "fork.raise_prices_8": {
+   "title": "Raise prices 8%",
+   "body": "Raise list prices by 8%.",
+   "more": "Sets: Lever: list price change = 0.08."
+  },
+  "hypothesis.price_war": {
+   "title": "Price war",
+   "body": "The chance of a competitor price cut rises from 30% to 65%, and the cut is 1.5 times deeper.",
+   "more": "A competitor cuts prices: chance 30% -> 65%; A competitor cuts prices: size x 1.5."
+  },
+  "hypothesis.gpu_crunch": {
+   "title": "GPU shortage",
+   "body": "The chance of a GPU shortage rises from 25% to 62%, and of a supplier price rise from 20% to 44%.",
+   "more": "GPU shortage at the cloud provider: chance 25% -> 62%; NVIDIA, AWS or a supplier raises prices: chance 20% -> 44%."
+  },
+  "hypothesis.big_client_leaves": {
+   "title": "Big client may leave",
+   "body": "A key account gives notice with a much higher chance, and the account it takes is 1.5 times larger.",
+   "more": "A key account leaves: chance 10% -> 64%; A key account leaves: size x 1.5."
+  },
+  "hypothesis.client_requirements_churn": {
+   "title": "Clients change requirements",
+   "body": "Clients change requirements and priorities often: more blockers, higher load, more late implementations.",
+   "more": "Share of time lost to blockers: x 1.5; Planned work / capacity: x 1.08; Share of client implementations that are late: x 1.3."
+  },
+  "hypothesis.hiring_freeze": {
+   "title": "Hard to hire",
+   "body": "Hiring takes 4 months longer, and attrition is 20% higher.",
+   "more": "Months to hire and onboard: + 4 months; Annual staff attrition: x 1.2."
+  },
+  "hypothesis.cash_squeeze": {
+   "title": "Cash squeeze",
+   "body": "Funding is late: 30% less cash at the start, and clients pay 30 days later.",
+   "more": "Cash at the start: x 0.7; Receivables: days until clients pay: + 30 days."
+  },
+  "hypothesis.downturn": {
+   "title": "Market downturn",
+   "body": "The chance of a macro downturn rises from 20% to 60%, and demand growth is 5 points lower.",
+   "more": "Macro downturn lowers demand: chance 20% -> 60%; Market demand growth: - 0.05 share."
+  },
+  "hypothesis.payroll_tax_july": {
+   "title": "Payroll tax +5 pp from July",
+   "body": "A new employer payroll tax of 5 more points applies from July: the cost of the gross payroll rises by 5% for the rest of the year.",
+   "more": "Extra employer payroll tax on the gross payroll: + 0.05 share."
+  },
+  "priority.balanced": {
+   "title": "Balanced",
+   "body": "The model defaults: cash and churn first, then availability, runway and NPS."
+  },
+  "priority.cash_first": {
+   "title": "Cash first",
+   "body": "Cash at year end and runway count most; clients and reliability count less."
+  },
+  "priority.clients_first": {
+   "title": "Clients first",
+   "body": "Client churn and NPS count most; cash counts less."
+  },
+  "priority.reliability_first": {
+   "title": "Reliability first",
+   "body": "Availability (SLA) counts most, then churn; cash counts less."
+  },
+  "caution.average": {
+   "title": "On average",
+   "body": "Rank by the mean result of all scenarios."
+  },
+  "caution.margin": {
+   "title": "With a margin",
+   "body": "Mostly the mean, with a quarter of the weight on the worst 5% (the default)."
+  },
+  "caution.worst": {
+   "title": "Worst 5%",
+   "body": "Rank by the mean of the worst 5% of the scenarios only."
+  },
+  "rule.burnout": {
+   "title": "Burnout raises attrition",
+   "body": "A team over capacity after the hires loses more people. An effect rule changes an input when its condition is true.",
+   "formula": "if load > burnout_load: attrition = attrition + burnout_attrition"
+  },
+  "rule.runway_low": {
+   "title": "Runway below 6 months",
+   "body": "Less cash than for 6 months (the runway red limit) is not acceptable. A check rule: when it fails, the scenario is not acceptable (infeasible).",
+   "formula": "if runway < runway_red: fail: Runway is below its red limit (6 months by default)"
+  },
+  "rule.sla_breach": {
+   "title": "SLA breach",
+   "body": "A flag rule sets a RAG colour on a criterion.",
+   "formula": "if sla < sla_target: red on sla\nelif sla < sla_target + 0.002: amber on sla"
+  },
+  "rule.over_budget": {
+   "title": "Cost above budget",
+   "body": "Total cost above the annual budget. A flag rule sets a RAG colour on a criterion.",
+   "formula": "if cost > budget: amber on cash"
+  },
+  "rule.churn_high": {
+   "title": "High churn",
+   "body": "A flag rule sets a RAG colour on a criterion.",
+   "formula": "if churn > g_churn: red on churn\nelif churn > 0.75 * g_churn: amber on churn"
+  },
+  "derived.price_live": {
+   "title": "New prices live",
+   "body": "Month when the new prices apply, month. A link of the cause-and-effect chain.",
+   "more": "Inputs: Month when the new prices are announced, Contract notice before new prices apply. Used by: Price change over the year (from the month it applies).",
+   "formula": "price_live = m_price + price_notice",
+   "metric": "price_live"
+  },
+  "derived.debt_ready": {
+   "title": "Month when the debt work shows an effect",
+   "body": "Month when the debt work shows an effect, month. A link of the cause-and-effect chain.",
+   "more": "Inputs: Months until the debt work shows an effect, Month when the technical-debt work starts. Used by: Technical debt after the debt lever.",
+   "formula": "debt_ready = m_debt + debt_lead",
+   "metric": "debt_ready"
+  },
+  "derived.hire_ready": {
+   "title": "Month when the new hires join (their work and their cost start)",
+   "body": "Month when the new hires join (their work and their cost start), month. A link of the cause-and-effect chain.",
+   "more": "Inputs: Months to hire and onboard, Month when the hiring starts. Used by: Share of the year in which the new hires work.",
+   "formula": "hire_ready = m_hire + hiring_lead",
+   "metric": "hire_ready"
+  },
+  "derived.gpu_ready": {
+   "title": "GPU capacity ready",
+   "body": "Month when the GPU capacity is ready, month. A link of the cause-and-effect chain.",
+   "more": "Inputs: Months to set up the second cloud, Month when the GPU reservation is ordered. Used by: GPU shortage.",
+   "formula": "gpu_ready = m_gpu + gpu_setup",
+   "metric": "gpu_ready"
+  },
+  "derived.price_eff": {
+   "title": "Price change over the year (from the month it applies)",
+   "body": "Price change over the year (from the month it applies), share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Lever: list price change, New prices live. Used by: Client churn, New ARR, Revenue.",
+   "formula": "price_eff = price_change * maximum(12 - price_live, 0) / 12",
+   "metric": "price_eff"
+  },
+  "derived.gpu_total": {
+   "title": "GPU shortage: shock events + a placed event (rest of the year)",
+   "body": "GPU shortage: shock events + a placed event (rest of the year), share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Placed event: a GPU shortage (1 = yes), Month of the GPU shortage, Size of the placed GPU shortage, GPU shortage severity. Used by: GPU shortage.",
+   "formula": "gpu_total = gpu_shortage + ev_gpu * ev_gpu_size * maximum(12 - ev_gpu_month, 0) / 12",
+   "metric": "gpu_total"
+  },
+  "derived.vendor_total": {
+   "title": "Supplier price rise: shock events + a placed event",
+   "body": "Supplier price rise: shock events + a placed event, share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Placed event: a supplier raises prices by 10% (1 = yes), Month of the supplier price rise, Price rise of the placed supplier event, Price rise by NVIDIA, AWS or another supplier. Used by: Infrastructure cost.",
+   "formula": "vendor_total = vendor_price + ev_vendor * ev_vendor_size * maximum(12 - ev_vendor_month, 0) / 12",
+   "metric": "vendor_total"
+  },
+  "derived.account_total": {
+   "title": "ARR lost with key accounts: shock events + a placed event",
+   "body": "ARR lost with key accounts: shock events + a placed event, share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Placed event: a key account (10% of ARR) leaves (1 = yes), Month when the key account leaves, Share of ARR the placed key account takes, Share of ARR lost with a key account. Used by: Client churn.",
+   "formula": "account_total = key_account_lost + ev_account * ev_account_size * maximum(12 - ev_account_month, 0) / 12",
+   "metric": "account_total"
+  },
+  "derived.kp_total": {
+   "title": "Key engineer gone: shock events + a placed event (share of the year)",
+   "body": "Key engineer gone: shock events + a placed event (share of the year), share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Placed event: a key engineer leaves (1 = yes), Month when the key engineer leaves, A key engineer leaves (1 = yes). Used by: Delivery capacity, Time to restore.",
+   "formula": "kp_total = minimum(key_person_exit + ev_kp * maximum(12 - ev_kp_month, 0) / 12, 1)",
+   "metric": "kp_total"
+  },
+  "derived.hire_effect": {
+   "title": "Share of the year in which the new hires work",
+   "body": "Share of the year in which the new hires work, share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Month when the new hires join (their work and their cost start), Lever: hire 5 engineers. Used by: Team load after the hires, Cost of the new hires in the year (from the month they join).",
+   "formula": "hire_effect = lever_hire * maximum(12 - hire_ready, 0) / 12",
+   "metric": "hire_effect"
+  },
+  "derived.debt_eff": {
+   "title": "Technical debt after the debt lever",
+   "body": "Technical debt after the debt lever, index. A link of the cause-and-effect chain.",
+   "more": "Inputs: Month when the debt work shows an effect, Lever: 15% of capacity pays down technical debt, Technical debt index (0 = none, 1 = severe). Used by: Latency, Incidents, Late implementations.",
+   "formula": "debt_eff = tech_debt * (1 - 0.4 * lever_debt * maximum(12 - debt_ready, 0) / 12)",
+   "metric": "debt_eff"
+  },
+  "derived.load": {
+   "title": "Team load after the hires",
+   "body": "Team load after the hires, ratio. A link of the cause-and-effect chain.",
+   "more": "Inputs: Staff at the start of the year, Engineers the hiring lever hires, Share of the year in which the new hires work, Planned work / capacity. Used by: Delivery capacity, Incidents.",
+   "formula": "load = team_load * headcount / (headcount + hire_count * hire_effect)",
+   "metric": "load"
+  },
+  "derived.hire_cost": {
+   "title": "Cost of the new hires in the year (from the month they join)",
+   "body": "Cost of the new hires in the year (from the month they join), USD/year. A link of the cause-and-effect chain.",
+   "more": "Inputs: Annual cost of one new engineer (salary, tax and overhead), Engineers the hiring lever hires, Share of the year in which the new hires work. Used by: Cost, Delivery payroll: the delivery share of the operating cost and the new hires.",
+   "formula": "hire_cost = engineer_cost * hire_count * hire_effect",
+   "metric": "hire_cost"
+  },
+  "derived.capacity": {
+   "title": "Delivery capacity",
+   "body": "Delivery capacity (1 = normal), ratio. A link of the cause-and-effect chain.",
+   "more": "Inputs: Annual staff attrition, Share of time lost to blockers, Share of delivery capacity the debt work takes, Key engineer gone: shock events + a placed event (share of the year), Lever: 15% of capacity pays down technical debt, Team load after the hires, Month when the technical-debt work starts, Productivity gain from new tools (for example AI assistants), Team skills index (1 = normal). Used by: Late implementations, Roadmap done.",
+   "formula": "capacity = (1 - debt_share * lever_debt * maximum(12 - m_debt, 0) / 12) * (1 - 0.5 * attrition) * (1 - 0.15 * kp_total) * (1 - blockers) * skills * (1 + new_tech_gain) / load",
+   "metric": "capacity"
+  },
+  "derived.gpu_hit": {
+   "title": "GPU shortage",
+   "body": "GPU shortage after the GPU lever, share. A link of the cause-and-effect chain.",
+   "more": "Inputs: GPU capacity ready, GPU shortage: shock events + a placed event (rest of the year), Lever: reserved GPU capacity on a second cloud. Used by: Infrastructure cost, Latency.",
+   "formula": "gpu_hit = gpu_total * (1 - 0.7 * lever_gpu * maximum(12 - gpu_ready, 0) / 12)",
+   "metric": "gpu_hit"
+  },
+  "derived.infra_cost": {
+   "title": "Infrastructure cost",
+   "body": "Infrastructure cost, USD/year. A link of the cause-and-effect chain.",
+   "more": "Inputs: Cost increase from currency moves, GPU shortage, Annual cost of the reserved GPU capacity, Annual infrastructure and GPU cost, Infra cost growth per unit of GPU shortage, Lever: reserved GPU capacity on a second cloud, Month when the GPU reservation is ordered, Supplier price rise: shock events + a placed event. Used by: Cost, Gross margin after the infrastructure and the delivery payroll.",
+   "formula": "infra_cost = infra_base * (1 + k_infra_gpu * gpu_hit) * (1 + vendor_total) * (1 + fx_shock) + gpu_reserve_cost * lever_gpu * maximum(12 - m_gpu, 0) / 12",
+   "metric": "infra_cost"
+  },
+  "derived.latency": {
+   "title": "Latency",
+   "body": "p95 latency, ms. A link of the cause-and-effect chain.",
+   "more": "Inputs: Technical debt after the debt lever, GPU shortage, Latency growth per unit of technical debt, Latency growth per unit of GPU shortage, p95 API latency. Used by: Availability (SLA).",
+   "formula": "latency = latency_base * (1 + k_lat_gpu * gpu_hit) * (1 + k_lat_debt * debt_eff)",
+   "metric": "latency"
+  },
+  "derived.incidents": {
+   "title": "Incidents",
+   "body": "Incidents per month, count. A link of the cause-and-effect chain.",
+   "more": "Inputs: Technical debt after the debt lever, Incidents per month at the average debt and load, Incident growth per unit of technical debt, Team load after the hires. Used by: Availability (SLA).",
+   "formula": "incidents = incidents_base * (1 + k_inc_debt * debt_eff) * load",
+   "metric": "incidents"
+  },
+  "derived.mttr_eff": {
+   "title": "Time to restore",
+   "body": "Time to restore after deploy and people effects, hours. A link of the cause-and-effect chain.",
+   "more": "Inputs: Deployments per week, Elasticity of restore time to deploy frequency, Key engineer gone: shock events + a placed event (share of the year), Mean time to restore. Used by: Availability (SLA).",
+   "formula": "mttr_eff = mttr_h * (10 / deploy_freq) ** k_mttr_deploy * (1 + 0.5 * kp_total)",
+   "metric": "mttr_eff"
+  },
+  "derived.sla": {
+   "title": "Availability (SLA)",
+   "body": "Availability (1 = always up), share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Incidents, Latency, Latency objective in the SLA, Time to restore. Used by: NPS, Client churn, criterion sla.",
+   "formula": "sla = 1 - incidents * mttr_eff * 0.1 / 720 - 0.002 * maximum(latency - latency_slo, 0) / 50",
+   "metric": "sla"
+  },
+  "derived.overdue": {
+   "title": "Late implementations",
+   "body": "Share of late implementations, share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Delivery capacity, Technical debt after the debt lever, Share of client implementations that are late. Used by: NPS, Client churn.",
+   "formula": "overdue = minimum(overdue_base * (1 + debt_eff) / maximum(capacity, 0.3), 1)",
+   "metric": "overdue"
+  },
+  "derived.nps": {
+   "title": "NPS",
+   "body": "Net promoter score, points. A link of the cause-and-effect chain.",
+   "more": "Inputs: Late implementations, Availability (SLA), Availability promised in the SLA, Support quality score (0-1). Used by: Client churn, criterion nps.",
+   "formula": "nps = 40 - 2000 * maximum(sla_target - sla, 0) - 40 * overdue + 50 * (support_quality - 0.8)",
+   "metric": "nps"
+  },
+  "derived.churn": {
+   "title": "Client churn",
+   "body": "Annual churn, share. A link of the cause-and-effect chain.",
+   "more": "Inputs: ARR lost with key accounts: shock events + a placed event, Annual churn without the effects below, Competitor price cut, Churn added per unit of competitor price cut, Churn added per NPS point below 30, on the renewal share, Churn added per unit of overdue implementations, Churn added per unit of price increase, Churn added per 0.1 pp of availability below the SLA, NPS, Late implementations, Price change over the year (from the month it applies), Share of ARR with a renewal this year, Extra churn from a reputation event, Availability (SLA), Availability promised in the SLA, Support quality score (0-1). Used by: Revenue, LTV / CAC, criterion churn.",
+   "formula": "churn = clip(base_churn + k_churn_sla * maximum(sla_target - sla, 0) * 1000 + k_churn_overdue * overdue + k_churn_nps * renewal_due * maximum(30 - nps, 0) + k_churn_price * price_eff + k_churn_competitor * competitor_cut + account_total + reputation_hit - 0.1 * (support_quality - 0.8), 0, 0.9)",
+   "metric": "churn"
+  },
+  "derived.roadmap": {
+   "title": "Roadmap done",
+   "body": "Share of the roadmap delivered, share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Delivery capacity. Used by: New ARR.",
+   "formula": "roadmap = minimum(capacity, 1)",
+   "metric": "roadmap"
+  },
+  "derived.new_arr": {
+   "title": "New ARR",
+   "body": "New ARR closed in the year, USD/year. A link of the cause-and-effect chain.",
+   "more": "Inputs: Competitor price cut, Market demand growth, Win-rate loss per unit of price increase, Annual new ARR in the sales pipeline, Price change over the year (from the month it applies), Roadmap done, Share of the pipeline that closes. Used by: Acquisition spend for the new clients, Revenue.",
+   "formula": "new_arr = pipeline * win_rate * (1 - k_win_price * price_eff) * (1 - competitor_cut) * (1 + demand_growth) * (0.8 + 0.2 * roadmap)",
+   "metric": "new_arr"
+  },
+  "derived.cac_cost": {
+   "title": "Acquisition spend for the new clients",
+   "body": "Acquisition spend for the new clients, USD/year. A link of the cause-and-effect chain.",
+   "more": "Inputs: Average annual contract value, Customer acquisition cost per new client, New ARR. Used by: Cost.",
+   "formula": "cac_cost = new_arr / acv * cac",
+   "metric": "cac_cost"
+  },
+  "derived.revenue": {
+   "title": "Revenue",
+   "body": "Revenue in the year (mid-year averages), USD/year. A link of the cause-and-effect chain.",
+   "more": "Inputs: Annual recurring revenue at the start, Client churn, New ARR, Price change over the year (from the month it applies). Used by: Cash, Monthly net burn (0 when profitable), Gross margin after the infrastructure and the delivery payroll.",
+   "formula": "revenue = arr0 * (1 + price_eff) * (1 - churn / 2) + new_arr / 2",
+   "metric": "revenue"
+  },
+  "derived.payroll_tax_cost": {
+   "title": "Extra payroll tax in the year (from the month it applies)",
+   "body": "Extra payroll tax in the year (from the month it applies), USD/year. A link of the cause-and-effect chain.",
+   "more": "Inputs: Annual gross payroll of the staff (salaries before employer taxes), Extra employer payroll tax on the gross payroll, Month when the extra payroll tax applies. Used by: Cost.",
+   "formula": "payroll_tax_cost = payroll_tax_add * payroll * maximum(12 - payroll_tax_month, 0) / 12",
+   "metric": "payroll_tax_cost"
+  },
+  "derived.cost": {
+   "title": "Cost",
+   "body": "Total cost in the year, USD/year. A link of the cause-and-effect chain.",
+   "more": "Inputs: Acquisition spend for the new clients, Cost increase from currency moves, Cost of the new hires in the year (from the month they join), Infrastructure cost, Operating cost without infrastructure and CAC (salaries, office), Extra payroll tax in the year (from the month it applies), New compliance cost. Used by: Cash, Monthly net burn (0 when profitable).",
+   "formula": "cost = opex * (1 + 0.5 * fx_shock) + infra_cost + regulation_cost + hire_cost + cac_cost + payroll_tax_cost",
+   "metric": "cost"
+  },
+  "derived.delivery_payroll": {
+   "title": "Delivery payroll: the delivery share of the operating cost and the new hires",
+   "body": "Delivery payroll: the delivery share of the operating cost and the new hires, USD/year. A link of the cause-and-effect chain.",
+   "more": "Inputs: Share of the operating cost that pays the delivery (engineers, delivery and support staff, subcontractors), Cost increase from currency moves, Cost of the new hires in the year (from the month they join), Operating cost without infrastructure and CAC (salaries, office). Used by: Gross margin after the infrastructure and the delivery payroll.",
+   "formula": "delivery_payroll = delivery_payroll_share * opex * (1 + 0.5 * fx_shock) + hire_cost",
+   "metric": "delivery_payroll"
+  },
+  "derived.cash_end": {
+   "title": "Cash",
+   "body": "Cash at the end of the year (after the receivables change), USD. A link of the cause-and-effect chain.",
+   "more": "Inputs: Receivables: days until clients pay, Cash at the start, Cost, Revenue. Used by: Runway, criterion cash.",
+   "formula": "cash_end = cash0 + revenue - cost - revenue * (ar_days - 60) / 365",
+   "metric": "cash_end"
+  },
+  "derived.burn": {
+   "title": "Monthly net burn (0 when profitable)",
+   "body": "Monthly net burn (0 when profitable), USD/month. A link of the cause-and-effect chain.",
+   "more": "Inputs: Cost, Revenue. Used by: Runway.",
+   "formula": "burn = maximum(cost - revenue, 0) / 12",
+   "metric": "burn"
+  },
+  "derived.runway": {
+   "title": "Runway",
+   "body": "Months of cash left at the end of the year (up to the cap, 60 by default), months. A link of the cause-and-effect chain.",
+   "more": "Inputs: Monthly net burn (0 when profitable), Cash, The most months of runway the model reports. Used by: criterion runway.",
+   "formula": "runway = minimum(maximum(cash_end, 0) / maximum(burn, 1), runway_cap)",
+   "metric": "runway"
+  },
+  "derived.gross_margin": {
+   "title": "Gross margin after the infrastructure and the delivery payroll",
+   "body": "Gross margin after the infrastructure and the delivery payroll, share. A link of the cause-and-effect chain.",
+   "more": "Inputs: Delivery payroll: the delivery share of the operating cost and the new hires, Infrastructure cost, Revenue. Used by: LTV / CAC.",
+   "formula": "gross_margin = (revenue - infra_cost - delivery_payroll) / maximum(revenue, 1)",
+   "metric": "gross_margin"
+  },
+  "derived.ltv_cac": {
+   "title": "LTV / CAC",
+   "body": "Client lifetime value / acquisition cost, ratio. A link of the cause-and-effect chain.",
+   "more": "Inputs: Average annual contract value, Customer acquisition cost per new client, Client churn, Gross margin after the infrastructure and the delivery payroll. Used by: none.",
+   "formula": "ltv_cac = acv * gross_margin / maximum(churn, 0.01) / cac",
+   "metric": "ltv_cac"
+  },
+  "variable.arr0": {
+   "title": "Annual recurring revenue at the start",
+   "body": "Default: 12M USD/year. Source: history at T: rev.arr = 1.20012e+07 (calibrated: the value equals it).",
+   "more": "Used by: Revenue.",
+   "metric": "arr0"
+  },
+  "variable.opex": {
+   "title": "Operating cost without infrastructure and CAC (salaries, office)",
+   "body": "Default: likely 8.8M, from 8.2M to 9.4M USD/year. Source: data: finance.",
+   "more": "Used by: Cost, Delivery payroll: the delivery share of the operating cost and the new hires.",
+   "metric": "opex"
+  },
+  "variable.cash0": {
+   "title": "Cash at the start",
+   "body": "Default: 2M USD. Source: history at T: fin.cash = 2e+06 (calibrated: the value equals it).",
+   "more": "Used by: Cash.",
+   "metric": "cash0"
+  },
+  "variable.budget": {
+   "title": "Annual cost budget",
+   "body": "Default: 11.2M USD/year. Source: data: finance.",
+   "more": "Used by: none.",
+   "metric": "budget"
+  },
+  "variable.acv": {
+   "title": "Average annual contract value",
+   "body": "Default: 120k USD. Source: data: CRM.",
+   "more": "Used by: Acquisition spend for the new clients, LTV / CAC.",
+   "metric": "acv"
+  },
+  "variable.cac": {
+   "title": "Customer acquisition cost per new client",
+   "body": "Default: likely 30k, from 20k to 45k USD. Source: data: CRM.",
+   "more": "Used by: Acquisition spend for the new clients, LTV / CAC.",
+   "metric": "cac"
+  },
+  "variable.ar_days": {
+   "title": "Receivables: days until clients pay",
+   "body": "Default: likely 62, from 47 to 92 days. Source: history at T: fin.dso = 62 (calibrated: the value equals it).",
+   "more": "Used by: Cash.",
+   "metric": "ar_days"
+  },
+  "variable.base_churn": {
+   "title": "Annual churn without the effects below",
+   "body": "Default: likely 0.09263, from 0.05263 to 0.1526 share. Source: history at T: rev.churn = 0.1234 (calibrated: the model's churn at T equals it).",
+   "more": "Used by: Client churn.",
+   "metric": "base_churn"
+  },
+  "variable.pipeline": {
+   "title": "Annual new ARR in the sales pipeline",
+   "body": "Default: likely 3M, from 2M to 4.5M USD/year. Source: data: CRM.",
+   "more": "Used by: New ARR.",
+   "metric": "pipeline"
+  },
+  "variable.win_rate": {
+   "title": "Share of the pipeline that closes",
+   "body": "Default: likely 0.25, from 0.2 to 0.32 share. Source: data: CRM.",
+   "more": "Used by: New ARR.",
+   "metric": "win_rate"
+  },
+  "variable.renewal_due": {
+   "title": "Share of ARR with a renewal this year",
+   "body": "Default: likely 0.4, from 0.3 to 0.5 share. Source: data: CRM.",
+   "more": "Used by: Client churn.",
+   "metric": "renewal_due"
+  },
+  "variable.overdue_base": {
+   "title": "Share of client implementations that are late",
+   "body": "Default: likely 0.1, from 0.05 to 0.18 share. Source: data: PMO.",
+   "more": "Used by: Late implementations.",
+   "metric": "overdue_base"
+  },
+  "variable.support_quality": {
+   "title": "Support quality score (0-1)",
+   "body": "Default: likely 0.7274, from 0.6274 to 0.8274 score. Source: history at T: cust.nps = 30.1 (calibrated: the model's nps at T equals it).",
+   "more": "Used by: NPS, Client churn.",
+   "metric": "support_quality"
+  },
+  "variable.tech_debt": {
+   "title": "Technical debt index (0 = none, 1 = severe)",
+   "body": "Default: likely 0.45, from 0.3 to 0.6 index. Source: data: code metrics (complexity, cycles, hot spots).",
+   "more": "Used by: Technical debt after the debt lever.",
+   "metric": "tech_debt"
+  },
+  "variable.infra_base": {
+   "title": "Annual infrastructure and GPU cost",
+   "body": "Default: likely 1.5M, from 1.2M to 1.9M USD/year. Source: data: cloud bills.",
+   "more": "Used by: Infrastructure cost.",
+   "metric": "infra_base"
+  },
+  "variable.latency_base": {
+   "title": "p95 API latency",
+   "body": "Default: likely 148.4, from 123.7 to 189.6 ms. Source: history at T: ops.latency = 181.8 (calibrated: the model's latency at T equals it).",
+   "more": "Used by: Latency.",
+   "metric": "latency_base"
+  },
+  "variable.latency_slo": {
+   "title": "Latency objective in the SLA",
+   "body": "Default: 250 ms. Source: data: contracts.",
+   "more": "Used by: Availability (SLA).",
+   "metric": "latency_slo"
+  },
+  "variable.sla_target": {
+   "title": "Availability promised in the SLA",
+   "body": "Default: 0.995 share. Source: data: contracts.",
+   "more": "Used by: NPS, Client churn.",
+   "metric": "sla_target"
+  },
+  "variable.incidents_base": {
+   "title": "Incidents per month at the average debt and load",
+   "body": "Default: likely 0.6871, from 0.3436 to 1.203 count. Source: history at T: ops.incidents = 1 (calibrated: the model's incidents at T equals it).",
+   "more": "Used by: Incidents.",
+   "metric": "incidents_base"
+  },
+  "variable.mttr_h": {
+   "title": "Mean time to restore",
+   "body": "Default: likely 1.796, from 0.8982 to 3.593 hours. Source: history at T: ops.mttr = 1.81 (calibrated: the model's mttr_eff at T equals it).",
+   "more": "Used by: Time to restore.",
+   "metric": "mttr_h"
+  },
+  "variable.deploy_freq": {
+   "title": "Deployments per week",
+   "body": "Default: likely 9.75, from 4.875 to 19.5 count. Source: history at T: ops.deploys = 9.75 (calibrated: the value equals it).",
+   "more": "Used by: Time to restore.",
+   "metric": "deploy_freq"
+  },
+  "variable.team_load": {
+   "title": "Planned work / capacity",
+   "body": "Default: likely 0.945, from 0.845 to 1.095 ratio. Source: history at T: ops.team_load = 0.945 (calibrated: the value equals it).",
+   "more": "Used by: Team load after the hires.",
+   "metric": "team_load"
+  },
+  "variable.blockers": {
+   "title": "Share of time lost to blockers",
+   "body": "Default: likely 0.1, from 0.05 to 0.2 share. Source: data: Jira.",
+   "more": "Used by: Delivery capacity.",
+   "metric": "blockers"
+  },
+  "variable.attrition": {
+   "title": "Annual staff attrition",
+   "body": "Default: likely 0.15, from 0.1 to 0.22 share. Source: data: HR.",
+   "more": "Used by: Delivery capacity.",
+   "metric": "attrition"
+  },
+  "variable.hiring_lead": {
+   "title": "Months to hire and onboard",
+   "body": "Default: likely 3, from 2 to 5 months. Source: data: HR.",
+   "more": "Used by: Month when the new hires join (their work and their cost start).",
+   "metric": "hiring_lead"
+  },
+  "variable.skills": {
+   "title": "Team skills index (1 = normal)",
+   "body": "Default: likely 1, from 0.9 to 1.1 index. Source: data: HR.",
+   "more": "Used by: Delivery capacity.",
+   "metric": "skills"
+  },
+  "variable.demand_growth": {
+   "title": "Market demand growth",
+   "body": "Default: likely 0.08, from -0.05 to 0.2 share. Source: web: market reports.",
+   "more": "Used by: New ARR. Shocks that change it: Macro downturn lowers demand.",
+   "metric": "demand_growth"
+  },
+  "variable.new_tech_gain": {
+   "title": "Productivity gain from new tools (for example AI assistants)",
+   "body": "Default: likely 0.05, from 0 to 0.12 share. Source: web: market reports.",
+   "more": "Used by: Delivery capacity.",
+   "metric": "new_tech_gain"
+  },
+  "variable.lever_debt": {
+   "title": "Lever: 15% of capacity pays down technical debt",
+   "body": "Default: 0 0/1. Source: decision.",
+   "more": "Used by: Technical debt after the debt lever, Delivery capacity.",
+   "metric": "lever_debt"
+  },
+  "variable.debt_share": {
+   "title": "Share of delivery capacity the debt work takes",
+   "body": "Default: 0.15 share. Source: decision.",
+   "more": "Used by: Delivery capacity.",
+   "metric": "debt_share"
+  },
+  "variable.lever_hire": {
+   "title": "Lever: hire 5 engineers",
+   "body": "Default: 0 0/1. Source: decision.",
+   "more": "Used by: Share of the year in which the new hires work.",
+   "metric": "lever_hire"
+  },
+  "variable.hire_count": {
+   "title": "Engineers the hiring lever hires",
+   "body": "Default: 5 count. Source: decision.",
+   "more": "Used by: Team load after the hires, Cost of the new hires in the year (from the month they join).",
+   "metric": "hire_count"
+  },
+  "variable.lever_gpu": {
+   "title": "Lever: reserved GPU capacity on a second cloud",
+   "body": "Default: 0 0/1. Source: decision.",
+   "more": "Used by: GPU shortage, Infrastructure cost.",
+   "metric": "lever_gpu"
+  },
+  "variable.gpu_reserve_cost": {
+   "title": "Annual cost of the reserved GPU capacity",
+   "body": "Default: 300k USD/year. Source: decision.",
+   "more": "Used by: Infrastructure cost.",
+   "metric": "gpu_reserve_cost"
+  },
+  "variable.price_change": {
+   "title": "Lever: list price change",
+   "body": "Default: 0 share. Source: decision.",
+   "more": "Used by: Price change over the year (from the month it applies).",
+   "metric": "price_change"
+  },
+  "variable.gpu_shortage": {
+   "title": "GPU shortage severity",
+   "body": "Default: 0 share. Source: assumption: external.",
+   "more": "Used by: GPU shortage: shock events + a placed event (rest of the year). Shocks that change it: GPU shortage at the cloud provider.",
+   "metric": "gpu_shortage"
+  },
+  "variable.vendor_price": {
+   "title": "Price rise by NVIDIA, AWS or another supplier",
+   "body": "Default: 0 share. Source: assumption: market.",
+   "more": "Used by: Supplier price rise: shock events + a placed event. Shocks that change it: NVIDIA, AWS or a supplier raises prices.",
+   "metric": "vendor_price"
+  },
+  "variable.fx_shock": {
+   "title": "Cost increase from currency moves",
+   "body": "Default: 0 share. Source: assumption: external.",
+   "more": "Used by: Infrastructure cost, Cost, Delivery payroll: the delivery share of the operating cost and the new hires. Shocks that change it: Currency move raises offshore cost.",
+   "metric": "fx_shock"
+  },
+  "variable.regulation_cost": {
+   "title": "New compliance cost",
+   "body": "Default: 0 USD/year. Source: assumption: external.",
+   "more": "Used by: Cost. Shocks that change it: New regulation needs compliance work.",
+   "metric": "regulation_cost"
+  },
+  "variable.competitor_cut": {
+   "title": "Competitor price cut",
+   "body": "Default: 0 share. Source: assumption: market.",
+   "more": "Used by: Client churn, New ARR. Shocks that change it: A competitor cuts prices.",
+   "metric": "competitor_cut"
+  },
+  "variable.key_person_exit": {
+   "title": "A key engineer leaves (1 = yes)",
+   "body": "Default: 0 0/1. Source: assumption: people.",
+   "more": "Used by: Key engineer gone: shock events + a placed event (share of the year). Shocks that change it: A key engineer leaves.",
+   "metric": "key_person_exit"
+  },
+  "variable.key_account_lost": {
+   "title": "Share of ARR lost with a key account",
+   "body": "Default: 0 share. Source: assumption: clients.",
+   "more": "Used by: ARR lost with key accounts: shock events + a placed event. Shocks that change it: A key account leaves.",
+   "metric": "key_account_lost"
+  },
+  "variable.reputation_hit": {
+   "title": "Extra churn from a reputation event",
+   "body": "Default: 0 share. Source: assumption: external.",
+   "more": "Used by: Client churn. Shocks that change it: A public incident hurts the reputation.",
+   "metric": "reputation_hit"
+  },
+  "variable.k_infra_gpu": {
+   "title": "Infra cost growth per unit of GPU shortage",
+   "body": "Default: 0.8 x. Source: assumption: link.",
+   "more": "Used by: Infrastructure cost.",
+   "metric": "k_infra_gpu"
+  },
+  "variable.k_lat_gpu": {
+   "title": "Latency growth per unit of GPU shortage",
+   "body": "Default: 0.6 x. Source: assumption: link.",
+   "more": "Used by: Latency.",
+   "metric": "k_lat_gpu"
+  },
+  "variable.k_lat_debt": {
+   "title": "Latency growth per unit of technical debt",
+   "body": "Default: 0.5 x. Source: assumption: link.",
+   "more": "Used by: Latency.",
+   "metric": "k_lat_debt"
+  },
+  "variable.k_inc_debt": {
+   "title": "Incident growth per unit of technical debt",
+   "body": "Default: 1.2 x. Source: assumption: link.",
+   "more": "Used by: Incidents.",
+   "metric": "k_inc_debt"
+  },
+  "variable.k_mttr_deploy": {
+   "title": "Elasticity of restore time to deploy frequency",
+   "body": "Default: 0.3 x. Source: assumption: link.",
+   "more": "Used by: Time to restore.",
+   "metric": "k_mttr_deploy"
+  },
+  "variable.k_churn_sla": {
+   "title": "Churn added per 0.1 pp of availability below the SLA",
+   "body": "Default: 0.01 share. Source: assumption: link.",
+   "more": "Used by: Client churn.",
+   "metric": "k_churn_sla"
+  },
+  "variable.k_churn_overdue": {
+   "title": "Churn added per unit of overdue implementations",
+   "body": "Default: 0.15 x. Source: assumption: link.",
+   "more": "Used by: Client churn.",
+   "metric": "k_churn_overdue"
+  },
+  "variable.k_churn_nps": {
+   "title": "Churn added per NPS point below 30, on the renewal share",
+   "body": "Default: 0.01 share. Source: assumption: link.",
+   "more": "Used by: Client churn.",
+   "metric": "k_churn_nps"
+  },
+  "variable.k_churn_price": {
+   "title": "Churn added per unit of price increase",
+   "body": "Default: 0.6 x. Source: assumption: link.",
+   "more": "Used by: Client churn.",
+   "metric": "k_churn_price"
+  },
+  "variable.k_churn_competitor": {
+   "title": "Churn added per unit of competitor price cut",
+   "body": "Default: 0.5 x. Source: assumption: link.",
+   "more": "Used by: Client churn.",
+   "metric": "k_churn_competitor"
+  },
+  "variable.k_win_price": {
+   "title": "Win-rate loss per unit of price increase",
+   "body": "Default: 1 x. Source: assumption: link.",
+   "more": "Used by: New ARR.",
+   "metric": "k_win_price"
+  },
+  "variable.m_price": {
+   "title": "Month when the new prices are announced",
+   "body": "Default: 0 month. Source: plan.",
+   "more": "Used by: New prices live.",
+   "metric": "m_price"
+  },
+  "variable.price_notice": {
+   "title": "Contract notice before new prices apply",
+   "body": "Default: likely 1.5, from 1 to 3 months. Source: assumption: contracts.",
+   "more": "Used by: New prices live.",
+   "metric": "price_notice"
+  },
+  "variable.m_debt": {
+   "title": "Month when the technical-debt work starts",
+   "body": "Default: 0 month. Source: plan.",
+   "more": "Used by: Month when the debt work shows an effect, Delivery capacity.",
+   "metric": "m_debt"
+  },
+  "variable.debt_lead": {
+   "title": "Months until the debt work shows an effect",
+   "body": "Default: likely 3, from 2 to 5 months. Source: assumption: engineering.",
+   "more": "Used by: Month when the debt work shows an effect.",
+   "metric": "debt_lead"
+  },
+  "variable.m_hire": {
+   "title": "Month when the hiring starts",
+   "body": "Default: 0 month. Source: plan.",
+   "more": "Used by: Month when the new hires join (their work and their cost start).",
+   "metric": "m_hire"
+  },
+  "variable.m_gpu": {
+   "title": "Month when the GPU reservation is ordered",
+   "body": "Default: 0 month. Source: plan.",
+   "more": "Used by: GPU capacity ready, Infrastructure cost.",
+   "metric": "m_gpu"
+  },
+  "variable.gpu_setup": {
+   "title": "Months to set up the second cloud",
+   "body": "Default: likely 2, from 1 to 3 months. Source: assumption: vendor.",
+   "more": "Used by: GPU capacity ready.",
+   "metric": "gpu_setup"
+  },
+  "variable.ev_gpu": {
+   "title": "Placed event: a GPU shortage (1 = yes)",
+   "body": "Default: 0 0/1. Source: event.",
+   "more": "Used by: GPU shortage: shock events + a placed event (rest of the year).",
+   "metric": "ev_gpu"
+  },
+  "variable.ev_gpu_month": {
+   "title": "Month of the GPU shortage",
+   "body": "Default: 4 month. Source: event.",
+   "more": "Used by: GPU shortage: shock events + a placed event (rest of the year).",
+   "metric": "ev_gpu_month"
+  },
+  "variable.ev_gpu_size": {
+   "title": "Size of the placed GPU shortage",
+   "body": "Default: 0.4 share. Source: event.",
+   "more": "Used by: GPU shortage: shock events + a placed event (rest of the year).",
+   "metric": "ev_gpu_size"
+  },
+  "variable.ev_vendor": {
+   "title": "Placed event: a supplier raises prices by 10% (1 = yes)",
+   "body": "Default: 0 0/1. Source: event.",
+   "more": "Used by: Supplier price rise: shock events + a placed event.",
+   "metric": "ev_vendor"
+  },
+  "variable.ev_vendor_month": {
+   "title": "Month of the supplier price rise",
+   "body": "Default: 3 month. Source: event.",
+   "more": "Used by: Supplier price rise: shock events + a placed event.",
+   "metric": "ev_vendor_month"
+  },
+  "variable.ev_vendor_size": {
+   "title": "Price rise of the placed supplier event",
+   "body": "Default: 0.1 share. Source: event.",
+   "more": "Used by: Supplier price rise: shock events + a placed event.",
+   "metric": "ev_vendor_size"
+  },
+  "variable.ev_account": {
+   "title": "Placed event: a key account (10% of ARR) leaves (1 = yes)",
+   "body": "Default: 0 0/1. Source: event.",
+   "more": "Used by: ARR lost with key accounts: shock events + a placed event.",
+   "metric": "ev_account"
+  },
+  "variable.ev_account_month": {
+   "title": "Month when the key account leaves",
+   "body": "Default: 6 month. Source: event.",
+   "more": "Used by: ARR lost with key accounts: shock events + a placed event.",
+   "metric": "ev_account_month"
+  },
+  "variable.ev_account_size": {
+   "title": "Share of ARR the placed key account takes",
+   "body": "Default: 0.08519 share. Source: event.",
+   "more": "Used by: ARR lost with key accounts: shock events + a placed event.",
+   "metric": "ev_account_size"
+  },
+  "variable.ev_kp": {
+   "title": "Placed event: a key engineer leaves (1 = yes)",
+   "body": "Default: 0 0/1. Source: event.",
+   "more": "Used by: Key engineer gone: shock events + a placed event (share of the year).",
+   "metric": "ev_kp"
+  },
+  "variable.ev_kp_month": {
+   "title": "Month when the key engineer leaves",
+   "body": "Default: 5 month. Source: event.",
+   "more": "Used by: Key engineer gone: shock events + a placed event (share of the year).",
+   "metric": "ev_kp_month"
+  },
+  "variable.ms_price": {
+   "title": "Milestone: new prices live",
+   "body": "Default: 3 month. Source: milestone.",
+   "more": "Used by: none.",
+   "metric": "ms_price"
+  },
+  "variable.ms_debt": {
+   "title": "Milestone: the debt work shows an effect",
+   "body": "Default: 5 month. Source: milestone.",
+   "more": "Used by: none.",
+   "metric": "ms_debt"
+  },
+  "variable.ms_hire": {
+   "title": "Milestone: the new hires are productive",
+   "body": "Default: 4 month. Source: milestone.",
+   "more": "Used by: none.",
+   "metric": "ms_hire"
+  },
+  "variable.ms_gpu": {
+   "title": "Milestone: GPU capacity on the second cloud ready",
+   "body": "Default: 3 month. Source: milestone.",
+   "more": "Used by: none.",
+   "metric": "ms_gpu"
+  },
+  "variable.g_cash": {
+   "title": "Goal: cash at year end at least",
+   "body": "Default: 1.5M USD. Source: goal.",
+   "more": "Used by: none.",
+   "metric": "g_cash"
+  },
+  "variable.g_churn": {
+   "title": "Goal and red limit: annual churn at most",
+   "body": "Default: 0.2 share. Source: goal.",
+   "more": "Used by: none.",
+   "metric": "g_churn"
+  },
+  "variable.headcount": {
+   "title": "Staff at the start of the year",
+   "body": "Default: 20 count. Source: data: HR.",
+   "more": "Used by: Team load after the hires.",
+   "metric": "headcount"
+  },
+  "variable.engineer_cost": {
+   "title": "Annual cost of one new engineer (salary, tax and overhead)",
+   "body": "Default: 150k USD/year. Source: data: HR.",
+   "more": "Used by: Cost of the new hires in the year (from the month they join).",
+   "metric": "engineer_cost"
+  },
+  "variable.delivery_payroll_share": {
+   "title": "Share of the operating cost that pays the delivery (engineers, delivery and support staff, subcontractors)",
+   "body": "Default: 0.85 share. Source: data: payroll and vendor bills.",
+   "more": "Used by: Delivery payroll: the delivery share of the operating cost and the new hires.",
+   "metric": "delivery_payroll_share"
+  },
+  "variable.burnout_load": {
+   "title": "Burnout: a team load after the hires above this level raises attrition",
+   "body": "Default: 1.05 ratio. Source: assumption: HR.",
+   "more": "Used by: none.",
+   "metric": "burnout_load"
+  },
+  "variable.burnout_attrition": {
+   "title": "Burnout: attrition added above the load level",
+   "body": "Default: 0.05 share. Source: assumption: HR.",
+   "more": "Used by: none.",
+   "metric": "burnout_attrition"
+  },
+  "variable.runway_cap": {
+   "title": "The most months of runway the model reports",
+   "body": "Default: 60 months. Source: assumption: finance.",
+   "more": "Used by: Runway.",
+   "metric": "runway_cap"
+  },
+  "variable.runway_green": {
+   "title": "Runway RAG: green from this many months",
+   "body": "Default: 18 months. Source: policy: finance.",
+   "more": "Used by: none.",
+   "metric": "runway_green"
+  },
+  "variable.runway_red": {
+   "title": "Runway RAG and check: fewer months are red and not acceptable",
+   "body": "Default: 6 months. Source: policy: finance.",
+   "more": "Used by: none.",
+   "metric": "runway_red"
+  },
+  "variable.md_cash": {
+   "title": "Meaningful difference of cash: under 1% of revenue, below one month of cost",
+   "body": "Default: 100k USD. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_cash"
+  },
+  "variable.md_runway": {
+   "title": "Meaningful difference of runway: the month is the planning step",
+   "body": "Default: 1 months. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_runway"
+  },
+  "variable.md_churn": {
+   "title": "Meaningful difference of churn: 0.5 pp is about $60k of ARR",
+   "body": "Default: 0.005 share. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_churn"
+  },
+  "variable.md_sla": {
+   "title": "Meaningful difference of availability: 0.05 pp is about 22 minutes a month",
+   "body": "Default: 0.0005 share. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_sla"
+  },
+  "variable.md_nps": {
+   "title": "Meaningful difference of NPS: the score is reported in whole points",
+   "body": "Default: 1 points. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_nps"
+  },
+  "variable.payroll": {
+   "title": "Annual gross payroll of the staff (salaries before employer taxes)",
+   "body": "Default: 2.4M USD/year. Source: history at T: gross salaries of the staff (company facts).",
+   "more": "Used by: Extra payroll tax in the year (from the month it applies).",
+   "metric": "payroll"
+  },
+  "variable.payroll_tax_add": {
+   "title": "Extra employer payroll tax on the gross payroll",
+   "body": "Default: 0 share. Source: assumption: regulation.",
+   "more": "Used by: Extra payroll tax in the year (from the month it applies).",
+   "metric": "payroll_tax_add"
+  },
+  "variable.payroll_tax_month": {
+   "title": "Month when the extra payroll tax applies",
+   "body": "Default: 8.15 month. Source: assumption: regulation.",
+   "more": "Used by: Extra payroll tax in the year (from the month it applies).",
+   "metric": "payroll_tax_month"
+  },
+  "risk.gpu_shortage_event": {
+   "title": "GPU shortage at the cloud provider",
+   "body": "Chance 25% in the horizon. When it occurs, it adds likely 0.4, from 0.2 to 0.7 to GPU shortage severity."
+  },
+  "risk.vendor_price_event": {
+   "title": "NVIDIA, AWS or a supplier raises prices",
+   "body": "Chance 20% in the horizon. When it occurs, it adds likely 0.1, from 0.05 to 0.25 to Price rise by NVIDIA, AWS or another supplier."
+  },
+  "risk.fx_event": {
+   "title": "Currency move raises offshore cost",
+   "body": "Chance 20% in the horizon. When it occurs, it adds likely 0.08, from 0.03 to 0.15 to Cost increase from currency moves."
+  },
+  "risk.regulation_event": {
+   "title": "New regulation needs compliance work",
+   "body": "Chance 15% in the horizon. When it occurs, it adds likely 250k, from 100k to 500k to New compliance cost."
+  },
+  "risk.competitor_event": {
+   "title": "A competitor cuts prices",
+   "body": "Chance 30% in the horizon. When it occurs, it adds likely 0.1, from 0.05 to 0.2 to Competitor price cut."
+  },
+  "risk.key_person_event": {
+   "title": "A key engineer leaves",
+   "body": "Chance 20% in the horizon. When it occurs, it adds 1 to A key engineer leaves (1 = yes)."
+  },
+  "risk.key_account_event": {
+   "title": "A key account leaves",
+   "body": "Chance 10% in the horizon. When it occurs, it adds likely 0.1, from 0.05 to 0.15 to Share of ARR lost with a key account."
+  },
+  "risk.reputation_event": {
+   "title": "A public incident hurts the reputation",
+   "body": "Chance 10% in the horizon. When it occurs, it adds likely 0.03, from 0.01 to 0.06 to Extra churn from a reputation event."
+  },
+  "risk.macro_event": {
+   "title": "Macro downturn lowers demand",
+   "body": "Chance 20% in the horizon. When it occurs, it adds likely -0.1, from -0.15 to -0.05 to Market demand growth."
+  },
+  "timeline.start_cash": {
+   "title": "Cash at the start",
+   "body": "The value at the start.",
+   "formula": "cash0",
+   "more": "month 0"
+  },
+  "timeline.start_arr": {
+   "title": "ARR at the start",
+   "body": "The value at the start.",
+   "formula": "arr0",
+   "more": "month 0"
+  },
+  "timeline.price_start": {
+   "title": "New prices announced",
+   "body": "When this intervention starts. Drag it to another month.",
+   "more": "month variable m_price"
+  },
+  "timeline.debt_start": {
+   "title": "Debt work starts",
+   "body": "When this intervention starts. Drag it to another month.",
+   "more": "month variable m_debt"
+  },
+  "timeline.hire_start": {
+   "title": "Hiring starts",
+   "body": "When this intervention starts. Drag it to another month.",
+   "more": "month variable m_hire"
+  },
+  "timeline.gpu_start": {
+   "title": "GPU reservation ordered",
+   "body": "When this intervention starts. Drag it to another month.",
+   "more": "month variable m_gpu"
+  },
+  "timeline.gpu_event": {
+   "title": "GPU shortage",
+   "body": "40% shortage from that month: infra cost and latency rise.",
+   "more": "month variable ev_gpu_month"
+  },
+  "timeline.vendor_event": {
+   "title": "Supplier raises prices 10%",
+   "body": "A certain event from its month. Place it, then move it.",
+   "more": "month variable ev_vendor_month"
+  },
+  "timeline.account_event": {
+   "title": "Key account leaves",
+   "body": "10% of ARR from that month.",
+   "more": "month variable ev_account_month"
+  },
+  "timeline.kp_event": {
+   "title": "Key engineer leaves",
+   "body": "A certain event from its month. Place it, then move it.",
+   "more": "month variable ev_kp_month"
+  },
+  "timeline.price_live": {
+   "title": "New prices live",
+   "body": "Met when the forecast month is not later than the marker. Target: 80% of the scenarios.",
+   "formula": "price_live <= ms_price",
+   "more": "month variable ms_price"
+  },
+  "timeline.debt_done": {
+   "title": "Debt work shows an effect",
+   "body": "Met when the forecast month is not later than the marker. Target: 80% of the scenarios.",
+   "formula": "debt_ready <= ms_debt",
+   "more": "month variable ms_debt"
+  },
+  "timeline.hires_ready": {
+   "title": "New hires productive",
+   "body": "Met when the forecast month is not later than the marker. Target: 80% of the scenarios.",
+   "formula": "hire_ready <= ms_hire",
+   "more": "month variable ms_hire"
+  },
+  "timeline.gpu_ready": {
+   "title": "GPU capacity ready",
+   "body": "Met when the forecast month is not later than the marker. Target: 80% of the scenarios.",
+   "formula": "gpu_ready <= ms_gpu",
+   "more": "month variable ms_gpu"
+  },
+  "timeline.cash_goal": {
+   "title": "Cash at year end at least the goal",
+   "body": "Met when the condition holds at the horizon. Target: 80% of the scenarios.",
+   "formula": "cash >= g_cash",
+   "more": "month 12"
+  },
+  "timeline.churn_goal": {
+   "title": "Churn at most the goal",
+   "body": "Met when the condition holds at the horizon. Target: 80% of the scenarios.",
+   "formula": "churn <= g_churn",
+   "more": "month 12"
+  },
+  "lever.m_price": {
+   "title": "Announce the new prices by month",
+   "body": "From 0 to 6 month in steps of 0.5; the plan prefers the later value among equal results."
+  },
+  "lever.m_debt": {
+   "title": "Start the debt work by month",
+   "body": "From 0 to 6 month in steps of 0.5; the plan prefers the later value among equal results."
+  },
+  "lever.m_hire": {
+   "title": "Start hiring by month",
+   "body": "From 0 to 6 month in steps of 0.5; the plan prefers the later value among equal results."
+  },
+  "lever.m_gpu": {
+   "title": "Order the GPU reservation by month",
+   "body": "From 0 to 6 month in steps of 0.5; the plan prefers the later value among equal results."
+  },
+  "metric.cash": {
+   "title": "Cash",
+   "body": "Cash balance at the end of each month, USD. Preview data."
+  },
+  "metric.churn": {
+   "title": "Churn, year to date",
+   "body": "Share of ARR lost since the start of the year (year to date). Preview data."
+  },
+  "metric.sla": {
+   "title": "Availability, year to date",
+   "body": "Availability since the start of the year (year to date). Preview data."
+  },
+  "metric.nps": {
+   "title": "NPS",
+   "body": "Net promoter score at the end of each month. Preview data."
+  },
+  "metric.runway": {
+   "title": "Runway",
+   "body": "Months of cash left at the burn rate of the year (capped at 60 months). Preview data."
+  },
+  "check.cash_negative": {
+   "title": "Cash below zero",
+   "body": "Chance that cash goes below zero by each month. Preview data."
+  },
+  "check.runway_low": {
+   "title": "Runway below 6 months",
+   "body": "Chance that the runway falls below 6 months by each month (the check fails). Preview data."
+  },
+  "check.sla_breach": {
+   "title": "SLA breach",
+   "body": "Chance of at least one month with availability below the SLA target by each month. Preview data."
+  },
+  "check.churn_high": {
+   "title": "Churn above 20%",
+   "body": "Chance that churn since the start of the year passes 20% (the churn goal) by each month. Preview data."
+  },
+  "check.over_budget": {
+   "title": "Cost above budget",
+   "body": "Chance that the cost to date runs above the budget to date by each month. Preview data."
+  },
+  "check.price_live": {
+   "title": "New prices late",
+   "body": "Chance that the new prices are not live by their milestone month. Preview data."
+  },
+  "check.debt_done": {
+   "title": "Debt work late",
+   "body": "Chance that the debt work shows no effect by its milestone month. Preview data."
+  },
+  "check.hires_ready": {
+   "title": "Hires late",
+   "body": "Chance that the new hires are not productive by their milestone month. Preview data."
+  },
+  "check.gpu_ready": {
+   "title": "GPU capacity late",
+   "body": "Chance that the GPU capacity on the second cloud is not ready by its milestone month. Preview data."
+  }
+ },
+ "steps": [
+  {
+   "id": "forks",
+   "index": 1,
+   "title": "Forks",
+   "question": "Which options and world hypotheses do we compare?",
+   "help": "step.forks"
+  },
+  {
+   "id": "month",
+   "index": 2,
+   "title": "Month",
+   "question": "Which fork gives the best result, and why?",
+   "help": "step.month"
+  },
+  {
+   "id": "week",
+   "index": 3,
+   "title": "Week",
+   "question": "How do the weeks unfold for the chosen forks?",
+   "help": "step.week"
+  },
+  {
+   "id": "day",
+   "index": 4,
+   "title": "Day",
+   "question": "What does it look like day by day?",
+   "help": "step.day"
+  }
+ ],
+ "sections": [
+  {
+   "id": "world",
+   "step": "forks",
+   "title": "World",
+   "question": "What may the world do around our decision?",
+   "summary": "World hypotheses as layers: price war, GPU shortage, a big client leaving and more.",
+   "help": "section.world",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "activePresets"
+   ]
+  },
+  {
+   "id": "forks",
+   "step": "forks",
+   "title": "Forks",
+   "question": "Which options do we compare, and when does each start?",
+   "summary": "The forks you compare and the timeline of their interventions, events and dates.",
+   "help": "section.forks",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "edits",
+    "timeline"
+   ]
+  },
+  {
+   "id": "stays",
+   "step": "forks",
+   "title": "As before",
+   "question": "What stays as it was?",
+   "summary": "The common ground of all options: the values that no fork, hypothesis or event changes. Correct them only when the data is wrong.",
+   "help": "section.stays",
+   "collapsed": true,
+   "preview": false,
+   "resets": []
+  },
+  {
+   "id": "month-answer",
+   "step": "month",
+   "title": "Answer",
+   "question": "What should we choose?",
+   "summary": "The best fork in one sentence, its expected result and the three main risks.",
+   "help": "section.month-answer",
+   "collapsed": false,
+   "preview": false,
+   "resets": []
+  },
+  {
+   "id": "month-compare",
+   "step": "month",
+   "title": "Compare",
+   "question": "How do the forks compare?",
+   "summary": "Ranking, criteria per fork and your priorities; a priority change reranks at once.",
+   "help": "section.month-compare",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "prefs"
+   ]
+  },
+  {
+   "id": "month-time",
+   "step": "month",
+   "title": "Over time",
+   "question": "How will it go month by month?",
+   "summary": "Monthly fans per fork and the risk calendar: when cash, runway, SLA, churn, cost or a milestone can fail.",
+   "help": "section.month-time",
+   "collapsed": false,
+   "preview": true,
+   "resets": []
+  },
+  {
+   "id": "month-plan",
+   "step": "month",
+   "title": "Plan",
+   "question": "Can we make it, and what do we need?",
+   "summary": "Milestones and goals with their chance, the inputs in conflict and a plan of levers.",
+   "help": "section.month-plan",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "timeline",
+    "timelineOption"
+   ]
+  },
+  {
+   "id": "month-why",
+   "step": "month",
+   "title": "Why",
+   "question": "What does the result depend on?",
+   "summary": "The cause-and-effect chain per fork from GPU capacity to cash, the main drivers and the rules.",
+   "help": "section.month-why",
+   "collapsed": false,
+   "preview": false,
+   "resets": []
+  },
+  {
+   "id": "month-details",
+   "step": "month",
+   "title": "Details",
+   "question": "For the analyst",
+   "summary": "Box plots, RAG detail with its limits, histograms and the run data.",
+   "help": "section.month-details",
+   "collapsed": true,
+   "preview": false,
+   "resets": [
+    "n",
+    "seed"
+   ]
+  },
+  {
+   "id": "week-review",
+   "step": "week",
+   "title": "Review",
+   "question": "Which forks go on to the weeks?",
+   "summary": "Keep the forks worth a closer look; a fork whose range overlaps the leader is marked.",
+   "help": "section.week-review",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "selectedForks"
+   ]
+  },
+  {
+   "id": "week",
+   "step": "week",
+   "title": "Paths",
+   "question": "How do the weeks unfold?",
+   "summary": "Pick a fork and see how its year can go, week by week: the common paths, the bad branches to watch, and how far the numbers can spread.",
+   "help": "section.week",
+   "collapsed": false,
+   "preview": true,
+   "resets": []
+  },
+  {
+   "id": "day-review",
+   "step": "day",
+   "title": "Review",
+   "question": "Which forks do we see day by day?",
+   "summary": "Pick one or two forks for the example days.",
+   "help": "section.day-review",
+   "collapsed": false,
+   "preview": false,
+   "resets": []
+  },
+  {
+   "id": "day",
+   "step": "day",
+   "title": "Examples",
+   "question": "What does it look like day by day?",
+   "summary": "Three example scenarios (bad, typical, good): daily cash, load, incidents and events.",
+   "help": "section.day",
+   "collapsed": false,
+   "preview": true,
+   "resets": []
+  }
+ ],
+ "labels": {
+  "arr0": "Annual recurring revenue at the start",
+  "opex": "Operating cost without infrastructure and CAC (salaries, office)",
+  "cash0": "Cash at the start",
+  "budget": "Annual cost budget",
+  "acv": "Average annual contract value",
+  "cac": "Customer acquisition cost per new client",
+  "ar_days": "Receivables: days until clients pay",
+  "base_churn": "Annual churn without the effects below",
+  "pipeline": "Annual new ARR in the sales pipeline",
+  "win_rate": "Share of the pipeline that closes",
+  "renewal_due": "Share of ARR with a renewal this year",
+  "overdue_base": "Share of client implementations that are late",
+  "support_quality": "Support quality score (0-1)",
+  "tech_debt": "Technical debt index (0 = none, 1 = severe)",
+  "infra_base": "Annual infrastructure and GPU cost",
+  "latency_base": "p95 API latency",
+  "latency_slo": "Latency objective in the SLA",
+  "sla_target": "Availability promised in the SLA",
+  "incidents_base": "Incidents per month at the average debt and load",
+  "mttr_h": "Mean time to restore",
+  "deploy_freq": "Deployments per week",
+  "team_load": "Planned work / capacity",
+  "blockers": "Share of time lost to blockers",
+  "attrition": "Annual staff attrition",
+  "hiring_lead": "Months to hire and onboard",
+  "skills": "Team skills index (1 = normal)",
+  "demand_growth": "Market demand growth",
+  "new_tech_gain": "Productivity gain from new tools (for example AI assistants)",
+  "lever_debt": "Lever: 15% of capacity pays down technical debt",
+  "debt_share": "Share of delivery capacity the debt work takes",
+  "lever_hire": "Lever: hire 5 engineers",
+  "hire_count": "Engineers the hiring lever hires",
+  "lever_gpu": "Lever: reserved GPU capacity on a second cloud",
+  "gpu_reserve_cost": "Annual cost of the reserved GPU capacity",
+  "price_change": "Lever: list price change",
+  "gpu_shortage": "GPU shortage severity",
+  "vendor_price": "Price rise by NVIDIA, AWS or another supplier",
+  "fx_shock": "Cost increase from currency moves",
+  "regulation_cost": "New compliance cost",
+  "competitor_cut": "Competitor price cut",
+  "key_person_exit": "A key engineer leaves (1 = yes)",
+  "key_account_lost": "Share of ARR lost with a key account",
+  "reputation_hit": "Extra churn from a reputation event",
+  "k_infra_gpu": "Infra cost growth per unit of GPU shortage",
+  "k_lat_gpu": "Latency growth per unit of GPU shortage",
+  "k_lat_debt": "Latency growth per unit of technical debt",
+  "k_inc_debt": "Incident growth per unit of technical debt",
+  "k_mttr_deploy": "Elasticity of restore time to deploy frequency",
+  "k_churn_sla": "Churn added per 0.1 pp of availability below the SLA",
+  "k_churn_overdue": "Churn added per unit of overdue implementations",
+  "k_churn_nps": "Churn added per NPS point below 30, on the renewal share",
+  "k_churn_price": "Churn added per unit of price increase",
+  "k_churn_competitor": "Churn added per unit of competitor price cut",
+  "k_win_price": "Win-rate loss per unit of price increase",
+  "m_price": "Month when the new prices are announced",
+  "price_notice": "Contract notice before new prices apply",
+  "m_debt": "Month when the technical-debt work starts",
+  "debt_lead": "Months until the debt work shows an effect",
+  "m_hire": "Month when the hiring starts",
+  "m_gpu": "Month when the GPU reservation is ordered",
+  "gpu_setup": "Months to set up the second cloud",
+  "ev_gpu": "Placed event: a GPU shortage (1 = yes)",
+  "ev_gpu_month": "Month of the GPU shortage",
+  "ev_gpu_size": "Size of the placed GPU shortage",
+  "ev_vendor": "Placed event: a supplier raises prices by 10% (1 = yes)",
+  "ev_vendor_month": "Month of the supplier price rise",
+  "ev_vendor_size": "Price rise of the placed supplier event",
+  "ev_account": "Placed event: a key account (10% of ARR) leaves (1 = yes)",
+  "ev_account_month": "Month when the key account leaves",
+  "ev_account_size": "Share of ARR the placed key account takes",
+  "ev_kp": "Placed event: a key engineer leaves (1 = yes)",
+  "ev_kp_month": "Month when the key engineer leaves",
+  "ms_price": "Milestone: new prices live",
+  "ms_debt": "Milestone: the debt work shows an effect",
+  "ms_hire": "Milestone: the new hires are productive",
+  "ms_gpu": "Milestone: GPU capacity on the second cloud ready",
+  "g_cash": "Goal: cash at year end at least",
+  "g_churn": "Goal and red limit: annual churn at most",
+  "headcount": "Staff at the start of the year",
+  "engineer_cost": "Annual cost of one new engineer (salary, tax and overhead)",
+  "delivery_payroll_share": "Share of the operating cost that pays the delivery (engineers, delivery and support staff, subcontractors)",
+  "burnout_load": "Burnout: a team load after the hires above this level raises attrition",
+  "burnout_attrition": "Burnout: attrition added above the load level",
+  "runway_cap": "The most months of runway the model reports",
+  "runway_green": "Runway RAG: green from this many months",
+  "runway_red": "Runway RAG and check: fewer months are red and not acceptable",
+  "md_cash": "Meaningful difference of cash: under 1% of revenue, below one month of cost",
+  "md_runway": "Meaningful difference of runway: the month is the planning step",
+  "md_churn": "Meaningful difference of churn: 0.5 pp is about $60k of ARR",
+  "md_sla": "Meaningful difference of availability: 0.05 pp is about 22 minutes a month",
+  "md_nps": "Meaningful difference of NPS: the score is reported in whole points",
+  "payroll": "Annual gross payroll of the staff (salaries before employer taxes)",
+  "payroll_tax_add": "Extra employer payroll tax on the gross payroll",
+  "payroll_tax_month": "Month when the extra payroll tax applies",
+  "price_live": "New prices live",
+  "debt_ready": "Month when the debt work shows an effect",
+  "hire_ready": "Month when the new hires join (their work and their cost start)",
+  "gpu_ready": "GPU capacity ready",
+  "price_eff": "Price change over the year (from the month it applies)",
+  "gpu_total": "GPU shortage: shock events + a placed event (rest of the year)",
+  "vendor_total": "Supplier price rise: shock events + a placed event",
+  "account_total": "ARR lost with key accounts: shock events + a placed event",
+  "kp_total": "Key engineer gone: shock events + a placed event (share of the year)",
+  "hire_effect": "Share of the year in which the new hires work",
+  "debt_eff": "Technical debt after the debt lever",
+  "load": "Team load after the hires",
+  "hire_cost": "Cost of the new hires in the year (from the month they join)",
+  "capacity": "Delivery capacity",
+  "gpu_hit": "GPU shortage",
+  "infra_cost": "Infrastructure cost",
+  "latency": "Latency",
+  "incidents": "Incidents",
+  "mttr_eff": "Time to restore",
+  "sla": "Availability (SLA)",
+  "overdue": "Late implementations",
+  "nps": "NPS",
+  "churn": "Client churn",
+  "roadmap": "Roadmap done",
+  "new_arr": "New ARR",
+  "cac_cost": "Acquisition spend for the new clients",
+  "revenue": "Revenue",
+  "payroll_tax_cost": "Extra payroll tax in the year (from the month it applies)",
+  "cost": "Cost",
+  "delivery_payroll": "Delivery payroll: the delivery share of the operating cost and the new hires",
+  "cash_end": "Cash",
+  "burn": "Monthly net burn (0 when profitable)",
+  "runway": "Runway",
+  "gross_margin": "Gross margin after the infrastructure and the delivery payroll",
+  "ltv_cac": "LTV / CAC",
+  "gpu_shortage_event": "GPU shortage at the cloud provider",
+  "vendor_price_event": "NVIDIA, AWS or a supplier raises prices",
+  "fx_event": "Currency move raises offshore cost",
+  "regulation_event": "New regulation needs compliance work",
+  "competitor_event": "A competitor cuts prices",
+  "key_person_event": "A key engineer leaves",
+  "key_account_event": "A key account leaves",
+  "reputation_event": "A public incident hurts the reputation",
+  "macro_event": "Macro downturn lowers demand",
+  "burnout": "Burnout raises attrition",
+  "runway_low": "Runway below 6 months",
+  "sla_breach": "SLA breach",
+  "over_budget": "Cost above budget",
+  "churn_high": "High churn",
+  "status_quo": "Keep the plan",
+  "pay_tech_debt": "Reduce tech debt",
+  "hire_5": "Hire 5 engineers",
+  "reserve_gpu": "Reserve GPU capacity",
+  "raise_prices_8": "Raise prices 8%",
+  "cash": "Cash at year end",
+  "start_cash": "Cash at the start",
+  "start_arr": "ARR at the start",
+  "price_start": "New prices announced",
+  "debt_start": "Debt work starts",
+  "hire_start": "Hiring starts",
+  "gpu_start": "GPU reservation ordered",
+  "gpu_event": "GPU shortage",
+  "vendor_event": "Supplier raises prices 10%",
+  "account_event": "Key account leaves",
+  "kp_event": "Key engineer leaves",
+  "debt_done": "Debt work shows an effect",
+  "hires_ready": "New hires productive",
+  "cash_goal": "Cash at year end at least the goal",
+  "churn_goal": "Churn at most the goal"
+ }
+}

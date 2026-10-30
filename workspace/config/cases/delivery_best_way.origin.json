@@ -1,0 +1,48 @@
+{
+  "schema": "variator-case-origin/1",
+  "caseId": "delivery_best_way",
+  "request": "We have to deliver a new platform for a client, with the go-live promised for month 9 and a budget of about $100k a month. I see three ways to build it: our own in-house team of 8, the nearshore vendor Vistula Code Works on time and materials with 10 people, or the offshore vendor Kaveri Tech Services at a fixed price plus change requests with 16 people. Over 24 months I care about the money the platform brings after its cost, the go-live date, the months we are late and the management effort it takes from us. Requirements may change often, priorities may shift, key people may leave, the budget may get tight, the deadline may be fixed and vendor rates may rise. Which way should we take?",
+  "qa": [
+    {
+      "slot": "goal",
+      "q": "Is there a money goal for the platform at month 24?",
+      "a": "Yes: at least $1.5M of value after the delivery cost."
+    },
+    {
+      "slot": "priority",
+      "q": "What matters most: money, time or your own effort?",
+      "a": "Money and an early go-live first, months late next, our management effort least."
+    }
+  ],
+  "author": "LW-E01",
+  "authorName": "Avery Collins",
+  "authorTitle": "Chief Executive Officer",
+  "requestedOn": "forkDate",
+  "frozenOn": "forkDate",
+  "drafted": {
+    "forks": [
+      "in_house",
+      "nearshore_tm",
+      "offshore_fixed"
+    ],
+    "hypotheses": [
+      "requirements_change",
+      "priorities_shift",
+      "key_people_leave",
+      "tight_budget",
+      "fixed_deadline",
+      "vendor_rates_rise"
+    ],
+    "criteria": [
+      "money",
+      "time",
+      "resources",
+      "delay_months"
+    ]
+  },
+  "reviewEdits": [
+    "Set the beta milestone to month 6 and the load-test environment to month 4.",
+    "Moved the start of the load-test environment work to month 1.",
+    "Set no extra people by default: you add them on the timeline when you need them."
+  ]
+}

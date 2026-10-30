@@ -1,0 +1,4 @@
+option,description,capex_low,capex_likely,capex_high,added_capacity_low,added_capacity_high,lead_time_months,notes
+second_warehouse,Lease and fit out a second DC near the south region,1800000,2200000,3200000,300000,360000,12,Shorter last mile to the south cuts in-house cost per order by ~8%
+expand_current,Add a mezzanine and a second shift at the current DC,700000,900000,1400000,90000,130000,6,Growth above the added capacity is lost or sent to spot 3PL
+outsource_3pl,Route all growth above today's volume to a contract 3PL,30000,45000,80000,250000,500000,3,Capex is WMS integration only; fees per order in tpl_quotes

@@ -1,0 +1,40 @@
+{
+  "id": "wp3sample",
+  "tenant": "wp3sample",
+  "name": "WP3 Sample Co",
+  "sector": "Software",
+  "headcount": 6,
+  "timezone": "Europe/Berlin",
+  "ownDomain": "wp3sample.example",
+  "language": "en",
+  "currency": "EUR",
+  "engineeringDepartment": "Engineering",
+  "roles": [
+    {
+      "id": "ceo",
+      "label": "CEO",
+      "title": "Chief Executive Officer",
+      "name": "Olivia Grant",
+      "personId": "person.wp-e01",
+      "principal": "user:o.grant",
+      "metadata": true
+    },
+    {
+      "id": "sales",
+      "label": "Head of sales",
+      "title": "Head of Sales",
+      "name": "Sam Rivera",
+      "personId": "person.wp-e02",
+      "principal": "user:s.rivera",
+      "metadata": true
+    },
+    {
+      "id": "engineering",
+      "label": "Head of engineering",
+      "title": "Head of Engineering",
+      "name": "Maya Chen",
+      "personId": "person.wp-e03",
+      "principal": "user:m.chen"
+    }
+  ]
+}

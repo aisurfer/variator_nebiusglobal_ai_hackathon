@@ -1,0 +1,2886 @@
+{
+ "schema": "variator-case/1",
+ "id": "delivery_best_way",
+ "letter": "A",
+ "title": "Best way to deliver",
+ "company": "Larchwood Systems",
+ "lead": "Larchwood Systems delivers a new platform with a target go-live in month 9 and a budget of $100k a month. Which way gives the best result over 24 months: in-house, nearshore time and materials, or offshore fixed price?",
+ "owner": "LW-E03",
+ "forkDate": "2026-10-26",
+ "horizonMonths": 24.0,
+ "template": "delivery_model",
+ "previewFile": "delivery_best_way.preview.json",
+ "question": "How should Larchwood Systems deliver the new platform: an in-house team, the nearshore vendor on time and materials, or the offshore vendor at a fixed price?",
+ "variables": [
+  {
+   "name": "scope_points",
+   "desc": "Size of the backlog",
+   "unit": "story points",
+   "block": "scope",
+   "source": "data: backlog export",
+   "dist": {
+    "kind": "pert",
+    "low": 450.0,
+    "mode": 600.0,
+    "high": 900.0
+   }
+  },
+  {
+   "name": "productivity",
+   "desc": "Delivered points per FTE-month",
+   "unit": "points/FTE-month",
+   "block": "team",
+   "source": "assumption",
+   "dist": {
+    "kind": "pert",
+    "low": 8.0,
+    "mode": 10.0,
+    "high": 12.0
+   }
+  },
+  {
+   "name": "team_size",
+   "desc": "Delivery team size",
+   "unit": "FTE",
+   "block": "team",
+   "source": "assumption",
+   "dist": {
+    "kind": "fixed",
+    "value": 8.0
+   }
+  },
+  {
+   "name": "rate",
+   "desc": "Fully loaded cost per FTE-month",
+   "unit": "USD",
+   "block": "team",
+   "source": "data: vendor_rates.csv",
+   "dist": {
+    "kind": "pert",
+    "low": 11000.0,
+    "mode": 12500.0,
+    "high": 14000.0
+   }
+  },
+  {
+   "name": "ramp_up_months",
+   "desc": "Hiring or onboarding time",
+   "unit": "months",
+   "block": "team",
+   "source": "assumption",
+   "dist": {
+    "kind": "pert",
+    "low": 2.0,
+    "mode": 3.0,
+    "high": 5.0
+   }
+  },
+  {
+   "name": "rework_share",
+   "desc": "Extra work for defects and changes",
+   "unit": "share",
+   "block": "quality",
+   "source": "assumption",
+   "dist": {
+    "kind": "pert",
+    "low": 0.05,
+    "mode": 0.08,
+    "high": 0.12
+   }
+  },
+  {
+   "name": "mgmt_ratio",
+   "desc": "Internal management FTE per delivery month",
+   "unit": "FTE",
+   "block": "team",
+   "source": "assumption",
+   "dist": {
+    "kind": "pert",
+    "low": 0.5,
+    "mode": 0.7,
+    "high": 1.0
+   }
+  },
+  {
+   "name": "fixed_quote",
+   "desc": "Fixed-price quote",
+   "unit": "USD",
+   "block": "vendor",
+   "source": "data: vendor quote",
+   "dist": {
+    "kind": "pert",
+    "low": 280000.0,
+    "mode": 320000.0,
+    "high": 420000.0
+   }
+  },
+  {
+   "name": "change_share",
+   "desc": "Change requests on top of the fixed price",
+   "unit": "share",
+   "block": "scope",
+   "source": "assumption",
+   "dist": {
+    "kind": "pert",
+    "low": 0.05,
+    "mode": 0.15,
+    "high": 0.35
+   }
+  },
+  {
+   "name": "value_per_month",
+   "desc": "Business value when live",
+   "unit": "USD/month",
+   "block": "money",
+   "source": "assumption",
+   "dist": {
+    "kind": "fixed",
+    "value": 200000.0
+   }
+  },
+  {
+   "name": "target_months",
+   "desc": "Target go-live",
+   "unit": "months",
+   "block": "timeline",
+   "source": "assumption",
+   "dist": {
+    "kind": "fixed",
+    "value": 9.0
+   }
+  },
+  {
+   "name": "budget_per_month",
+   "desc": "Monthly budget limit",
+   "unit": "USD",
+   "block": "money",
+   "source": "assumption",
+   "dist": {
+    "kind": "fixed",
+    "value": 100000.0
+   }
+  },
+  {
+   "name": "risk_delay_months",
+   "desc": "Delay from RAID items (risk events add to it)",
+   "unit": "months",
+   "block": "risk",
+   "source": "assumption",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "add_fte",
+   "desc": "Extra people added during the project",
+   "unit": "FTE",
+   "block": "lever",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "add_month",
+   "desc": "Month when you request the extra people",
+   "unit": "month",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 1.0
+   }
+  },
+  {
+   "name": "add_outsourced",
+   "desc": "Extra people come from a vendor (1) or are hired (0)",
+   "unit": "0/1",
+   "block": "lever",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "hire_onboard",
+   "desc": "Months to hire and onboard a new employee",
+   "unit": "months",
+   "block": "team",
+   "source": "timeline",
+   "dist": {
+    "kind": "pert",
+    "low": 2.0,
+    "mode": 3.0,
+    "high": 5.0
+   }
+  },
+  {
+   "name": "vendor_onboard",
+   "desc": "Months to onboard people from a vendor",
+   "unit": "months",
+   "block": "vendor",
+   "source": "timeline",
+   "dist": {
+    "kind": "pert",
+    "low": 0.5,
+    "mode": 1.0,
+    "high": 1.5
+   }
+  },
+  {
+   "name": "add_rate_premium",
+   "desc": "Extra rate for people from a vendor",
+   "unit": "share",
+   "block": "vendor",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.2
+   }
+  },
+  {
+   "name": "env_start",
+   "desc": "Month when the load-test environment work starts",
+   "unit": "month",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 1.0
+   }
+  },
+  {
+   "name": "env_lead",
+   "desc": "Months to build the load-test environment",
+   "unit": "months",
+   "block": "quality",
+   "source": "timeline",
+   "dist": {
+    "kind": "pert",
+    "low": 1.5,
+    "mode": 2.0,
+    "high": 3.5
+   }
+  },
+  {
+   "name": "load_test_months",
+   "desc": "Load tests after the environment is ready, before the go-live",
+   "unit": "months",
+   "block": "quality",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.5
+   }
+  },
+  {
+   "name": "ev_scope_points",
+   "desc": "Scope added by a change event",
+   "unit": "story points",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "ev_scope_month",
+   "desc": "Month of the scope change",
+   "unit": "month",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 5.0
+   }
+  },
+  {
+   "name": "ev_kp",
+   "desc": "A key person leaves (1 = yes)",
+   "unit": "0/1",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.0
+   }
+  },
+  {
+   "name": "ev_kp_month",
+   "desc": "Month when the key person leaves",
+   "unit": "month",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 4.0
+   }
+  },
+  {
+   "name": "m_beta",
+   "desc": "Milestone: beta (half of the work done)",
+   "unit": "month",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 6.0
+   }
+  },
+  {
+   "name": "m_env",
+   "desc": "Milestone: load-test environment ready",
+   "unit": "month",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 4.0
+   }
+  },
+  {
+   "name": "g_money",
+   "desc": "Goal: money at the horizon at least",
+   "unit": "USD",
+   "block": "timeline",
+   "source": "timeline",
+   "dist": {
+    "kind": "fixed",
+    "value": 1500000.0
+   }
+  },
+  {
+   "name": "md_money",
+   "desc": "Meaningful difference of money: one month of the budget, half a month of value",
+   "unit": "USD",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 100000.0
+   }
+  },
+  {
+   "name": "md_time",
+   "desc": "Meaningful difference of the go-live: two weeks",
+   "unit": "months",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.5
+   }
+  },
+  {
+   "name": "md_resources",
+   "desc": "Meaningful difference of effort: half a month of one manager",
+   "unit": "FTE-months",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.5
+   }
+  },
+  {
+   "name": "md_delay_months",
+   "desc": "Meaningful difference of months late: two weeks",
+   "unit": "months",
+   "block": "limits",
+   "source": "policy: decision",
+   "dist": {
+    "kind": "fixed",
+    "value": 0.5
+   }
+  }
+ ],
+ "derived": [
+  {
+   "name": "cap",
+   "desc": "Team throughput",
+   "unit": "points/month",
+   "formula": "team_size * productivity"
+  },
+  {
+   "name": "add_cap",
+   "desc": "Throughput of the extra people",
+   "unit": "points/month",
+   "formula": "add_fte * productivity"
+  },
+  {
+   "name": "onboard",
+   "desc": "Onboarding time of the extra people",
+   "unit": "months",
+   "formula": "where(add_outsourced > 0.5, vendor_onboard, hire_onboard)"
+  },
+  {
+   "name": "t_add",
+   "desc": "Month when the extra people work at full speed",
+   "unit": "months",
+   "formula": "maximum(add_month + onboard, ramp_up_months)"
+  },
+  {
+   "name": "work",
+   "desc": "Scope plus rework; a scope change counts when it comes before the planned go-live",
+   "unit": "points",
+   "formula": "(scope_points + ev_scope_points * (ev_scope_month < ramp_up_months + scope_points * (1 + rework_share) / cap)) * (1 + rework_share)"
+  },
+  {
+   "name": "build_time",
+   "desc": "Month when all work is done",
+   "unit": "months",
+   "formula": "minimum(ramp_up_months + work / cap, t_add + (work - cap * (t_add - ramp_up_months)) / (cap + add_cap))"
+  },
+  {
+   "name": "duration",
+   "desc": "Build time, plus 14% of the remaining time after a key person leaves, plus RAID delay; not before the load tests end (blocker: environment ready + load tests)",
+   "unit": "months",
+   "formula": "maximum(build_time + ev_kp * 0.14 * maximum(build_time - ev_kp_month, 0) + risk_delay_months, env_ready + load_test_months)"
+  },
+  {
+   "name": "beta_time",
+   "desc": "Month when half of the work is done",
+   "unit": "months",
+   "formula": "minimum(ramp_up_months + 0.5 * work / cap, t_add + (0.5 * work - cap * (t_add - ramp_up_months)) / (cap + add_cap)) + ev_kp * 0.14 * maximum(minimum(ramp_up_months + 0.5 * work / cap, t_add + (0.5 * work - cap * (t_add - ramp_up_months)) / (cap + add_cap)) - ev_kp_month, 0)"
+  },
+  {
+   "name": "env_ready",
+   "desc": "Month when the load-test environment is ready",
+   "unit": "months",
+   "formula": "env_start + env_lead"
+  },
+  {
+   "name": "add_cost",
+   "desc": "Cost of the extra people from the request month",
+   "unit": "USD",
+   "formula": "add_fte * rate * (1 + add_rate_premium * add_outsourced) * maximum(duration - add_month, 0)"
+  },
+  {
+   "name": "value",
+   "desc": "Business value until month 24",
+   "unit": "USD",
+   "formula": "value_per_month * maximum(24 - duration, 0)"
+  },
+  {
+   "name": "tm_cost",
+   "desc": "Time-and-materials cost",
+   "unit": "USD",
+   "formula": "team_size * rate * duration + add_cost"
+  }
+ ],
+ "options": [
+  {
+   "name": "in_house",
+   "desc": "Hire and run an internal team",
+   "formula": "value - tm_cost",
+   "metrics": {
+    "time": "duration",
+    "resources": "mgmt_ratio * duration",
+    "delay_months": "maximum(duration - target_months, 0)"
+   },
+   "overrides": {}
+  },
+  {
+   "name": "nearshore_tm",
+   "desc": "Nearshore vendor, time and materials",
+   "formula": "value - tm_cost",
+   "metrics": {
+    "time": "duration",
+    "resources": "mgmt_ratio * duration",
+    "delay_months": "maximum(duration - target_months, 0)"
+   },
+   "overrides": {
+    "team_size": {
+     "kind": "fixed",
+     "value": 10.0
+    },
+    "productivity": {
+     "kind": "pert",
+     "low": 8.0,
+     "mode": 9.5,
+     "high": 11.0
+    },
+    "rate": {
+     "kind": "pert",
+     "low": 9000.0,
+     "mode": 10500.0,
+     "high": 12000.0
+    },
+    "ramp_up_months": {
+     "kind": "pert",
+     "low": 0.5,
+     "mode": 1.0,
+     "high": 2.0
+    },
+    "rework_share": {
+     "kind": "pert",
+     "low": 0.08,
+     "mode": 0.12,
+     "high": 0.18
+    },
+    "mgmt_ratio": {
+     "kind": "pert",
+     "low": 0.8,
+     "mode": 1.0,
+     "high": 1.3
+    }
+   }
+  },
+  {
+   "name": "offshore_fixed",
+   "desc": "Offshore vendor, fixed price plus change requests",
+   "formula": "value - fixed_quote * (1 + change_share) - add_cost",
+   "metrics": {
+    "time": "duration",
+    "resources": "mgmt_ratio * duration",
+    "delay_months": "maximum(duration - target_months, 0)"
+   },
+   "overrides": {
+    "team_size": {
+     "kind": "fixed",
+     "value": 16.0
+    },
+    "productivity": {
+     "kind": "pert",
+     "low": 4.0,
+     "mode": 6.5,
+     "high": 9.0
+    },
+    "rate": {
+     "kind": "pert",
+     "low": 3500.0,
+     "mode": 4200.0,
+     "high": 5200.0
+    },
+    "ramp_up_months": {
+     "kind": "pert",
+     "low": 1.0,
+     "mode": 1.5,
+     "high": 3.0
+    },
+    "rework_share": {
+     "kind": "pert",
+     "low": 0.15,
+     "mode": 0.28,
+     "high": 0.6
+    },
+    "mgmt_ratio": {
+     "kind": "pert",
+     "low": 1.0,
+     "mode": 1.3,
+     "high": 1.8
+    }
+   }
+  }
+ ],
+ "criteria": [
+  {
+   "name": "money",
+   "desc": "Value over 24 months minus delivery cost",
+   "unit": "USD",
+   "higher": true,
+   "weight": 1.0,
+   "tie": "md_money"
+  },
+  {
+   "name": "time",
+   "desc": "Months to go live",
+   "unit": "months",
+   "higher": false,
+   "weight": 1.0,
+   "tie": "md_time"
+  },
+  {
+   "name": "resources",
+   "desc": "Internal management effort",
+   "unit": "FTE-months",
+   "higher": false,
+   "weight": 0.5,
+   "tie": "md_resources"
+  },
+  {
+   "name": "delay_months",
+   "desc": "Months late against the target date",
+   "unit": "months",
+   "higher": false,
+   "weight": 0.75,
+   "tie": "md_delay_months"
+  }
+ ],
+ "risks": [
+  {
+   "name": "key_person_loss",
+   "desc": "A senior engineer leaves",
+   "p": 0.2,
+   "variable": "productivity",
+   "effect": "multiply",
+   "options": [
+    "in_house"
+   ],
+   "magnitude": {
+    "kind": "pert",
+    "low": -0.2,
+    "mode": -0.12,
+    "high": -0.05
+   }
+  },
+  {
+   "name": "vendor_turnover",
+   "desc": "Vendor rotates the team",
+   "p": 0.25,
+   "variable": "productivity",
+   "effect": "multiply",
+   "options": [
+    "nearshore_tm",
+    "offshore_fixed"
+   ],
+   "magnitude": {
+    "kind": "pert",
+    "low": -0.25,
+    "mode": -0.15,
+    "high": -0.05
+   }
+  },
+  {
+   "name": "scope_creep",
+   "desc": "The business adds features",
+   "p": 0.35,
+   "variable": "scope_points",
+   "effect": "multiply",
+   "options": null,
+   "magnitude": {
+    "kind": "pert",
+    "low": 0.05,
+    "mode": 0.15,
+    "high": 0.3
+   }
+  }
+ ],
+ "rules": [
+  {
+   "id": "small_team_big_scope",
+   "pack": "outsourcing_basic",
+   "kind": "effect",
+   "desc": "A large scope with a small team causes more rework",
+   "branches": [
+    {
+     "if": "scope_points > 750 and team_size < 10",
+     "then": {
+      "set": {
+       "rework_share": "rework_share * 1.25"
+      },
+      "fail": null,
+      "flag": null,
+      "criterion": null
+     }
+    }
+   ],
+   "else": null,
+   "options": null
+  },
+  {
+   "id": "burn_over_budget",
+   "pack": "outsourcing_basic",
+   "kind": "check",
+   "desc": "Monthly burn of the team and the extra people",
+   "branches": [
+    {
+     "if": "team_size * rate + add_fte * rate * (1 + add_rate_premium * add_outsourced) > budget_per_month",
+     "then": {
+      "set": {},
+      "fail": "Monthly burn is more than the budget",
+      "flag": null,
+      "criterion": null
+     }
+    }
+   ],
+   "else": null,
+   "options": [
+    "in_house",
+    "nearshore_tm"
+   ]
+  },
+  {
+   "id": "change_requests",
+   "pack": "outsourcing_basic",
+   "kind": "flag",
+   "desc": "",
+   "branches": [
+    {
+     "if": "change_share > 0.3",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "red",
+      "criterion": "money"
+     }
+    },
+    {
+     "if": "change_share > 0.2",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "amber",
+      "criterion": "money"
+     }
+    }
+   ],
+   "else": null,
+   "options": [
+    "offshore_fixed"
+   ]
+  },
+  {
+   "id": "high_rework",
+   "pack": "outsourcing_basic",
+   "kind": "flag",
+   "desc": "",
+   "branches": [
+    {
+     "if": "rework_share > 0.22",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "amber",
+      "criterion": "delay_months"
+     }
+    }
+   ],
+   "else": null,
+   "options": null
+  },
+  {
+   "id": "late_go_live",
+   "pack": "outsourcing_basic",
+   "kind": "flag",
+   "desc": "Uses the derived duration",
+   "branches": [
+    {
+     "if": "duration > target_months + 6",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "red",
+      "criterion": "time"
+     }
+    },
+    {
+     "if": "duration > target_months + 3",
+     "then": {
+      "set": {},
+      "fail": null,
+      "flag": "amber",
+      "criterion": "time"
+     }
+    }
+   ],
+   "else": null,
+   "options": null
+  }
+ ],
+ "assumptions": [
+  "Value starts at go-live and is flat",
+  "No discounting inside 24 months"
+ ],
+ "page": {
+  "title": "IT Delivery Simulator",
+  "eyebrow": "VARIATOR · IT delivery · one platform",
+  "lead": "Larchwood Systems delivers a new platform for a client: target go-live in month 9, a budget of $100k a month. Who builds it: an in-house team of 8, the nearshore vendor Vistula Code Works on time and materials (10 people), or the offshore vendor Kaveri Tech Services at a fixed price plus change requests (16 people)? Money is the business value over 24 months minus the delivery cost.",
+  "change": [
+   "Your preference: weights of money, time to go-live, management effort and months late; risk aversion.",
+   "Scope, productivity, rates, ramp-up, rework, change requests, the fixed quote, the budget and the target go-live: a fixed value or a range (low, likely, high).",
+   "Each fork has its own team size, rates, productivity, ramp-up, rework and management effort.",
+   "Timeline: when the load-test environment work starts, and how many extra people to request and when."
+  ],
+  "real": [
+   "Each input has a real source: the backlog export, the vendor rate cards and quotes, the HR lead times, the budget.",
+   "The numbers are a plausible example, not real data. Put in your own numbers to model your project.",
+   "The chain matters more than the list: team throughput and the scope give the build time; the load-test environment can block the go-live; the value starts at go-live.",
+   "Rework, change requests and vendor rotation are assumptions. Calibrate them with past projects."
+  ],
+  "metrics": [
+   "Outputs: money at month 24 (value minus cost), time to go-live, management effort, months late; score, P(best), feasible share, RAG.",
+   "Chain values: throughput, work, build time, environment ready, go-live month, beta month, cost of the extra people, business value.",
+   "Rules: a small team with a big scope reworks more; a monthly cost above the budget fails (in-house and nearshore); change requests, rework and a late go-live are flagged.",
+   "Not on this page: the RAID log and the codebase metrics of the hand-made delivery page."
+  ],
+  "labels": {
+   "in_house": "In-house team",
+   "nearshore_tm": "Nearshore T&M",
+   "offshore_fixed": "Offshore fixed price",
+   "money": "Money at month 24",
+   "time": "Time to go-live",
+   "resources": "Management effort",
+   "delay_months": "Months late",
+   "burn_over_budget": "Monthly cost above budget",
+   "small_team_big_scope": "Small team, big scope",
+   "change_requests": "Many change requests",
+   "high_rework": "High rework",
+   "late_go_live": "Go-live far beyond target"
+  },
+  "risks": {
+   "money": "The business case can fail: value minus cost falls short",
+   "time": "The go-live comes late and the value starts later",
+   "resources": "Your managers can get overloaded",
+   "delay_months": "You can miss the promised date: penalties and lost trust",
+   "burn_over_budget": "The monthly cost can go over budget: the plan needs more money"
+  },
+  "chain": [
+   "cap",
+   "add_cap",
+   "t_add",
+   "work",
+   "build_time",
+   "env_ready",
+   "duration",
+   "beta_time",
+   "add_cost",
+   "tm_cost",
+   "value"
+  ]
+ },
+ "scenarios": [
+  {
+   "name": "requirements_change",
+   "label": "Requirements change often",
+   "emoji": "🔁",
+   "description": "The client changes requirements: the chance of scope creep rises from 35% to 61%, and it is 1.5 times larger; more change requests and rework.",
+   "ops": [
+    {
+     "kind": "risk",
+     "target": "scope_creep",
+     "probability": 0.4
+    },
+    {
+     "kind": "risk",
+     "target": "scope_creep",
+     "scale": 1.5
+    },
+    {
+     "kind": "variable",
+     "target": "change_share",
+     "scale": 1.5
+    },
+    {
+     "kind": "variable",
+     "target": "rework_share",
+     "scale": 1.15
+    }
+   ]
+  },
+  {
+   "name": "priorities_shift",
+   "label": "Priorities shift",
+   "emoji": "🔀",
+   "description": "Priorities move during the release: context switches cut productivity by 10%, rework grows by 20%, and the go-live moves by about half a month.",
+   "ops": [
+    {
+     "kind": "variable",
+     "target": "productivity",
+     "scale": 0.9
+    },
+    {
+     "kind": "variable",
+     "target": "rework_share",
+     "scale": 1.2
+    },
+    {
+     "kind": "variable",
+     "target": "risk_delay_months",
+     "shift": 0.5
+    }
+   ]
+  },
+  {
+   "name": "key_people_leave",
+   "label": "Key people leave",
+   "emoji": "🚪",
+   "description": "A tight labour market: the chance of a key-person loss in-house rises from 20% to 44%, and of a vendor team rotation from 25% to 48%.",
+   "ops": [
+    {
+     "kind": "risk",
+     "target": "key_person_loss",
+     "probability": 0.3
+    },
+    {
+     "kind": "risk",
+     "target": "vendor_turnover",
+     "probability": 0.3
+    }
+   ]
+  },
+  {
+   "name": "tight_budget",
+   "label": "Tight budget",
+   "emoji": "💸",
+   "description": "The monthly budget is cut by 15%; the budget check fails more often.",
+   "ops": [
+    {
+     "kind": "variable",
+     "target": "budget_per_month",
+     "scale": 0.85
+    }
+   ]
+  },
+  {
+   "name": "fixed_deadline",
+   "label": "Fixed deadline",
+   "emoji": "⏰",
+   "description": "The go-live date moves 2 months earlier, and delay counts twice as much.",
+   "ops": [
+    {
+     "kind": "variable",
+     "target": "target_months",
+     "shift": -2.0
+    },
+    {
+     "kind": "weight",
+     "target": "delay_months",
+     "scale": 2.0
+    }
+   ]
+  },
+  {
+   "name": "vendor_rates_rise",
+   "label": "Vendor rates rise",
+   "emoji": "📈",
+   "description": "Vendors raise rates and quotes by 10% (in-house cost stays).",
+   "ops": [
+    {
+     "kind": "variable",
+     "target": "rate",
+     "scale": 1.1,
+     "options": [
+      "nearshore_tm",
+      "offshore_fixed"
+     ]
+    },
+    {
+     "kind": "variable",
+     "target": "fixed_quote",
+     "scale": 1.1
+    }
+   ]
+  }
+ ],
+ "timeline": {
+  "horizon": 24.0,
+  "items": [
+   {
+    "name": "start_team",
+    "label": "Team at the start",
+    "kind": "start",
+    "emoji": "👥",
+    "description": "",
+    "month": 0.0,
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": "team_size",
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "start_scope",
+    "label": "Scope at the start",
+    "kind": "start",
+    "emoji": "📋",
+    "description": "",
+    "month": 0.0,
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": "scope_points",
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "env_work",
+    "label": "Load-test environment work starts",
+    "kind": "plan",
+    "emoji": "🧪",
+    "description": "Start earlier to have the environment sooner.",
+    "month": "env_start",
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": null,
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "extra_people",
+    "label": "Extra people requested",
+    "kind": "plan",
+    "emoji": "➕",
+    "description": "Hires start after 2-5 months; vendor people after 0.5-1.5 months (+20% rate).",
+    "month": "add_month",
+    "condition": null,
+    "target": 0.8,
+    "place": {},
+    "show": "t_add",
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "scope_change",
+    "label": "Scope change (+100 points)",
+    "kind": "event",
+    "emoji": "🔁",
+    "description": "The client adds 100 story points. It counts before the planned go-live only.",
+    "month": "ev_scope_month",
+    "condition": null,
+    "target": 0.8,
+    "place": {
+     "ev_scope_points": 100.0
+    },
+    "show": null,
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "key_person_leaves",
+    "label": "A key person leaves",
+    "kind": "event",
+    "emoji": "🚪",
+    "description": "The rest of the work takes 14% longer from that month.",
+    "month": "ev_kp_month",
+    "condition": null,
+    "target": 0.8,
+    "place": {
+     "ev_kp": 1.0
+    },
+    "show": null,
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "beta",
+    "label": "Beta: half of the work done",
+    "kind": "milestone",
+    "emoji": "🧩",
+    "description": "",
+    "month": "m_beta",
+    "condition": "beta_time <= m_beta",
+    "target": 0.8,
+    "place": {},
+    "show": "beta_time",
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "load_test_env",
+    "label": "Load-test environment ready",
+    "kind": "milestone",
+    "emoji": "🧪",
+    "description": "",
+    "month": "m_env",
+    "condition": "env_ready <= m_env",
+    "target": 0.8,
+    "place": {},
+    "show": "env_ready",
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "go_live",
+    "label": "Go-live",
+    "kind": "milestone",
+    "emoji": "🚀",
+    "description": "",
+    "month": "target_months",
+    "condition": "duration <= target_months",
+    "target": 0.8,
+    "place": {},
+    "show": "duration",
+    "options": null,
+    "depends": []
+   },
+   {
+    "name": "money_goal",
+    "label": "Money at month 24 at least the goal",
+    "kind": "goal",
+    "emoji": "💰",
+    "description": "",
+    "month": 24.0,
+    "condition": "money >= g_money",
+    "target": 0.8,
+    "place": {},
+    "show": null,
+    "options": null,
+    "depends": []
+   }
+  ],
+  "levers": [
+   {
+    "variable": "env_start",
+    "label": "Start the load-test environment work by month",
+    "low": 0.0,
+    "high": 6.0,
+    "step": 0.5,
+    "unit": "month",
+    "mode": null,
+    "modes": {},
+    "prefer": "high",
+    "needs": null,
+    "options": null
+   },
+   {
+    "variable": "add_fte",
+    "label": "Extra people",
+    "low": 0.0,
+    "high": 8.0,
+    "step": 1.0,
+    "unit": "FTE",
+    "mode": "add_outsourced",
+    "modes": {
+     "hire": 0.0,
+     "outsource": 1.0
+    },
+    "prefer": "low",
+    "needs": null,
+    "options": null
+   },
+   {
+    "variable": "add_month",
+    "label": "Request the extra people by month",
+    "low": 0.0,
+    "high": 8.0,
+    "step": 1.0,
+    "unit": "month",
+    "mode": null,
+    "modes": {},
+    "prefer": "high",
+    "needs": "add_fte",
+    "options": null
+   }
+  ]
+ },
+ "defaults": {
+  "weights": {
+   "money": 1.0,
+   "time": 1.0,
+   "resources": 0.5,
+   "delay_months": 0.75
+  },
+  "riskAversion": 0.25,
+  "n": 4096,
+  "seed": 42,
+  "activePresets": [],
+  "edits": {}
+ },
+ "priorityPresets": [
+  {
+   "id": "balanced",
+   "label": "Balanced",
+   "description": "The model defaults: money and time first, then months late and management effort.",
+   "weights": {
+    "money": 1.0,
+    "time": 1.0,
+    "resources": 0.5,
+    "delay_months": 0.75
+   }
+  },
+  {
+   "id": "money_first",
+   "label": "Money first",
+   "description": "Money at month 24 counts most; time and effort count less.",
+   "weights": {
+    "money": 2.0,
+    "time": 0.5,
+    "resources": 0.25,
+    "delay_months": 0.5
+   }
+  },
+  {
+   "id": "speed_first",
+   "label": "Speed first",
+   "description": "Time to go-live and months late count most; money counts less.",
+   "weights": {
+    "money": 0.5,
+    "time": 2.0,
+    "resources": 0.25,
+    "delay_months": 1.5
+   }
+  },
+  {
+   "id": "low_effort",
+   "label": "Low effort",
+   "description": "Management effort counts most: the team should run with little oversight.",
+   "weights": {
+    "money": 0.5,
+    "time": 0.5,
+    "resources": 2.0,
+    "delay_months": 0.5
+   }
+  }
+ ],
+ "caution": [
+  {
+   "id": "average",
+   "label": "On average",
+   "description": "Rank by the mean result of all scenarios.",
+   "value": 0.0
+  },
+  {
+   "id": "margin",
+   "label": "With a margin",
+   "description": "Mostly the mean, with a quarter of the weight on the worst 5% (the default).",
+   "value": 0.25
+  },
+  {
+   "id": "worst",
+   "label": "Worst 5%",
+   "description": "Rank by the mean of the worst 5% of the scenarios only.",
+   "value": 1.0
+  }
+ ],
+ "hypotheses": [
+  {
+   "id": "requirements_change",
+   "kind": "hypothesis",
+   "label": "Requirements change often",
+   "description": "The client changes requirements: the chance of scope creep rises from 35% to 61%, and it is 1.5 times larger; more change requests and rework.",
+   "emoji": "",
+   "icon": "repeat",
+   "effects": [
+    "The business adds features: chance 35% -> 61%",
+    "The business adds features: size x 1.5",
+    "Change requests on top of the fixed price: x 1.5",
+    "Extra work for defects and changes: x 1.15"
+   ]
+  },
+  {
+   "id": "priorities_shift",
+   "kind": "hypothesis",
+   "label": "Priorities shift",
+   "description": "Priorities move during the release: context switches cut productivity by 10%, rework grows by 20%, and the go-live moves by about half a month.",
+   "emoji": "",
+   "icon": "shuffle",
+   "effects": [
+    "Delivered points per FTE-month: x 0.9",
+    "Extra work for defects and changes: x 1.2",
+    "Delay from RAID items (risk events add to it): + 0.5 months"
+   ]
+  },
+  {
+   "id": "key_people_leave",
+   "kind": "hypothesis",
+   "label": "Key people leave",
+   "description": "A tight labour market: the chance of a key-person loss in-house rises from 20% to 44%, and of a vendor team rotation from 25% to 48%.",
+   "emoji": "",
+   "icon": "user-minus",
+   "effects": [
+    "A senior engineer leaves: chance 20% -> 44%",
+    "Vendor rotates the team: chance 25% -> 48%"
+   ]
+  },
+  {
+   "id": "tight_budget",
+   "kind": "hypothesis",
+   "label": "Tight budget",
+   "description": "The monthly budget is cut by 15%; the budget check fails more often.",
+   "emoji": "",
+   "icon": "wallet",
+   "effects": [
+    "Monthly budget limit: x 0.85"
+   ]
+  },
+  {
+   "id": "fixed_deadline",
+   "kind": "hypothesis",
+   "label": "Fixed deadline",
+   "description": "The go-live date moves 2 months earlier, and delay counts twice as much.",
+   "emoji": "",
+   "icon": "calendar-clock",
+   "effects": [
+    "Target go-live: - 2 months",
+    "Weight of Months late: x 2"
+   ]
+  },
+  {
+   "id": "vendor_rates_rise",
+   "kind": "hypothesis",
+   "label": "Vendor rates rise",
+   "description": "Vendors raise rates and quotes by 10% (in-house cost stays).",
+   "emoji": "",
+   "icon": "trending-up",
+   "effects": [
+    "Fully loaded cost per FTE-month: x 1.1 (Nearshore T&M, Offshore fixed price)",
+    "Fixed-price quote: x 1.1"
+   ]
+  }
+ ],
+ "forks": [
+  {
+   "id": "in_house",
+   "kind": "decision",
+   "label": "In-house team",
+   "description": "Hire and run an internal team of 8",
+   "icon": "building-2",
+   "color": 0,
+   "levers": {},
+   "interventions": [],
+   "baseline": true,
+   "recompute": null
+  },
+  {
+   "id": "nearshore_tm",
+   "kind": "decision",
+   "label": "Nearshore T&M",
+   "description": "Vistula Code Works, nearshore, time and materials, 10 people",
+   "icon": "globe",
+   "color": 1,
+   "levers": {
+    "team_size": 10.0,
+    "productivity": 9.5,
+    "rate": 10500.0,
+    "ramp_up_months": 1.0,
+    "rework_share": 0.12,
+    "mgmt_ratio": 1.0
+   },
+   "interventions": [],
+   "baseline": false,
+   "recompute": "structural"
+  },
+  {
+   "id": "offshore_fixed",
+   "kind": "decision",
+   "label": "Offshore fixed price",
+   "description": "Kaveri Tech Services, offshore, fixed price plus change requests, 16 people",
+   "icon": "file-signature",
+   "color": 2,
+   "levers": {
+    "team_size": 16.0,
+    "productivity": 6.5,
+    "rate": 4200.0,
+    "ramp_up_months": 1.5,
+    "rework_share": 0.28,
+    "mgmt_ratio": 1.3
+   },
+   "interventions": [],
+   "baseline": false,
+   "recompute": "structural"
+  }
+ ],
+ "people": [
+  {
+   "id": "LW-E03",
+   "name": "Jordan Patel",
+   "title": "Head of Delivery",
+   "entityId": "person.lw-e03"
+  },
+  {
+   "id": "LW-E01",
+   "name": "Avery Collins",
+   "title": "Chief Executive Officer",
+   "entityId": "person.lw-e01"
+  },
+  {
+   "id": "LW-E02",
+   "name": "Morgan Reyes",
+   "title": "Head of Finance",
+   "entityId": "person.lw-e02"
+  },
+  {
+   "id": "LW-E04",
+   "name": "Hannah Okafor",
+   "title": "Project Manager",
+   "entityId": "person.lw-e04"
+  },
+  {
+   "id": "LW-E06",
+   "name": "Daniel Kowalski",
+   "title": "Lead Backend Engineer",
+   "entityId": "person.lw-e06"
+  },
+  {
+   "id": "LW-E22",
+   "name": "Victor Osei",
+   "title": "DevOps Engineer",
+   "entityId": "person.lw-e22"
+  }
+ ],
+ "items": {
+  "env_work": {
+   "kind": "lever",
+   "lane": "decisions",
+   "label": "Load-test environment work starts",
+   "description": "Work on the load-test environment starts. The go-live waits for the environment and two weeks of load tests.",
+   "owner": "LW-E22",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "env_ready",
+     "label": "Environment ready"
+    },
+    {
+     "id": "duration",
+     "label": "Go-live month"
+    }
+   ],
+   "shock": null,
+   "valuePath": null,
+   "value": null,
+   "range": "env_lead",
+   "source": "plan · DevOps estimate"
+  },
+  "extra_people": {
+   "kind": "lever",
+   "lane": "decisions",
+   "label": "Extra people requested",
+   "description": "Request extra people. Hires start after 2-5 months; vendor people after 0.5-1.5 months at a 20% higher rate.",
+   "owner": "LW-E03",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "add_cap",
+     "label": "Extra throughput"
+    },
+    {
+     "id": "duration",
+     "label": "Go-live month"
+    },
+    {
+     "id": "add_cost",
+     "label": "Cost of extra people"
+    }
+   ],
+   "shock": null,
+   "valuePath": "v|add_fte|value",
+   "value": {
+    "path": "v|add_fte|value",
+    "variable": "add_fte",
+    "label": "Extra people",
+    "unit": "FTE",
+    "min": 0,
+    "max": 8,
+    "step": 1
+   },
+   "range": "hire_onboard",
+   "source": "plan · HR and vendor terms"
+  },
+  "scope_change": {
+   "kind": "event",
+   "lane": "clients_vendors",
+   "label": "The client adds 100 points of scope",
+   "description": "The client adds 100 story points. It counts only when it comes before the planned go-live.",
+   "owner": "LW-E04",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "work",
+     "label": "Work"
+    },
+    {
+     "id": "duration",
+     "label": "Go-live month"
+    }
+   ],
+   "shock": "scope_creep",
+   "valuePath": null,
+   "value": null,
+   "range": null,
+   "source": "event · backlog export"
+  },
+  "key_person_leaves": {
+   "kind": "event",
+   "lane": "people",
+   "label": "Daniel Kowalski leaves",
+   "description": "A key person of the team leaves: the rest of the work takes 14% longer from that month.",
+   "owner": "LW-E03",
+   "person": "LW-E06",
+   "entityId": "person.lw-e06",
+   "affects": [
+    {
+     "id": "build_time",
+     "label": "Build time"
+    },
+    {
+     "id": "duration",
+     "label": "Go-live month"
+    }
+   ],
+   "shock": "key_person_loss",
+   "valuePath": null,
+   "value": null,
+   "range": null,
+   "source": "event · assumption"
+  }
+ },
+ "shocks": {
+  "key_person_loss": {
+   "label": "A senior engineer of the in-house team leaves",
+   "lane": "people",
+   "owner": "LW-E03",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "cap",
+     "label": "Team throughput"
+    },
+    {
+     "id": "duration",
+     "label": "Go-live month"
+    }
+   ],
+   "event": "key_person_leaves"
+  },
+  "vendor_turnover": {
+   "label": "The vendor rotates its team",
+   "lane": "clients_vendors",
+   "owner": "LW-E03",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "cap",
+     "label": "Team throughput"
+    },
+    {
+     "id": "duration",
+     "label": "Go-live month"
+    }
+   ],
+   "event": null
+  },
+  "scope_creep": {
+   "label": "The business adds features",
+   "lane": "clients_vendors",
+   "owner": "LW-E04",
+   "person": null,
+   "entityId": null,
+   "affects": [
+    {
+     "id": "work",
+     "label": "Work"
+    },
+    {
+     "id": "duration",
+     "label": "Go-live month"
+    }
+   ],
+   "event": "scope_change"
+  }
+ },
+ "chainPath": [
+  [
+   "cap"
+  ],
+  [
+   "work"
+  ],
+  [
+   "build_time",
+   "env_ready"
+  ],
+  [
+   "duration"
+  ],
+  [
+   "value"
+  ]
+ ],
+ "chainHigher": {
+  "cap": true,
+  "add_cap": true,
+  "t_add": false,
+  "work": false,
+  "build_time": false,
+  "env_ready": false,
+  "duration": false,
+  "beta_time": false,
+  "add_cost": false,
+  "tm_cost": false,
+  "value": true
+ },
+ "blocks": [
+  {
+   "id": "scope",
+   "label": "Scope"
+  },
+  {
+   "id": "team",
+   "label": "Team and rates"
+  },
+  {
+   "id": "vendor",
+   "label": "Vendor terms"
+  },
+  {
+   "id": "quality",
+   "label": "Quality and tests"
+  },
+  {
+   "id": "money",
+   "label": "Value and budget"
+  },
+  {
+   "id": "risk",
+   "label": "Delivery risks"
+  },
+  {
+   "id": "lever",
+   "label": "Levers"
+  },
+  {
+   "id": "limits",
+   "label": "Limits and thresholds"
+  },
+  {
+   "id": "timeline",
+   "label": "Timeline and events"
+  }
+ ],
+ "stays": [
+  "vendor_onboard",
+  "add_rate_premium",
+  "load_test_months",
+  "value_per_month"
+ ],
+ "goals": {
+  "money": {
+   "value": 1500000.0,
+   "label": "Goal $1.50M"
+  },
+  "time": {
+   "value": 9.0,
+   "label": "Target month 9"
+  },
+  "delay_months": {
+   "value": 0,
+   "label": "On time"
+  }
+ },
+ "riskRows": {
+  "fragile": "budget_overrun",
+  "burn_over_budget": "budget_overrun",
+  "go_live": "go_live",
+  "time": "go_live",
+  "delay_months": "go_live",
+  "money": "money_goal",
+  "money_goal": "money_goal",
+  "beta": "beta",
+  "load_test_env": "load_test_env"
+ },
+ "helpKeys": {
+  "pBest": "kpi.pBest",
+  "feasible": "kpi.feasible",
+  "score": "kpi.score",
+  "rag": "kpi.overallRag",
+  "priorities": "control.priorityPresets",
+  "caution": "control.caution",
+  "changesIf": "kpi.breaks",
+  "expected": "kpi.expected",
+  "risks": "kpi.risks",
+  "tradeoff": "kpi.tradeoff",
+  "criteriaTable": "kpi.vsBase",
+  "fan": "kpi.fan",
+  "calendar": "kpi.riskCalendar",
+  "goalsMet": "kpi.pMet",
+  "timeline": "kpi.forecastBand",
+  "pmet": "kpi.pMet",
+  "spare": "kpi.spare",
+  "conflicts": "kpi.conflicts",
+  "levers": "kpi.plan",
+  "suggest": "control.suggestDates",
+  "chain": "kpi.chainValue",
+  "drivers": "kpi.drivers",
+  "range": "kpi.range",
+  "rules": "kpi.ruleShare",
+  "boxplot": "kpi.boxplot",
+  "ragTable": "kpi.ragTable",
+  "review": "control.forkSelection",
+  "dayReview": "control.dayForks",
+  "tree": "kpi.weekTree",
+  "weekly": "kpi.weekNode",
+  "examples": "kpi.dayExample",
+  "exampleChoice": "control.exampleChoice",
+  "daily": "kpi.dayEvents",
+  "hypotheses": "control.hypotheses",
+  "interventions": "control.dragMarker",
+  "events": "control.eventButtons",
+  "inspector": "control.inspector",
+  "compareOriginal": "control.compare",
+  "returnOriginal": "control.resetAll",
+  "modelSettings": "control.modelSettings",
+  "simulation": "kpi.simulationBadge",
+  "preview": "kpi.preview",
+  "openInKb": "control.openInKb",
+  "stays": "section.stays",
+  "world": "section.world",
+  "limits": "kpi.limits",
+  "histogram": "kpi.histogram",
+  "runMeta": "kpi.runMeta",
+  "medianFirstMonth": "kpi.medianFirstMonth",
+  "weights": "control.weights",
+  "resetField": "control.resetField",
+  "resetSection": "control.resetSection",
+  "undo": "control.undo",
+  "n": "control.n",
+  "seed": "control.seed",
+  "whiskers": "control.whiskers"
+ },
+ "help": {
+  "section.world": {
+   "title": "World",
+   "body": "Typical situations of the world around the decision. Turn on one or more: they add up as layers in a fixed order, and your own edits stay on top. The forks are compared inside the world you choose.",
+   "more": "World hypotheses as layers: requirements change, key people leave, a tight budget and more."
+  },
+  "section.forks": {
+   "title": "Forks",
+   "body": "Each fork is one decision to compare. The timeline below shows when each intervention starts, and the events you can place. Drag a marker to move its date; select it to edit its value in the inspector.",
+   "more": "Larchwood Systems delivers a new platform for a client: target go-live in month 9, a budget of $100k a month. Who builds it: an in-house team of 8, the nearshore vendor Vistula Code Works on time and materials (10 people), or the offshore vendor Kaveri Tech Services at a fixed price plus change requests (16 people)? Money is the business value over 24 months minus the delivery cost. Your preference: weights of money, time to go-live, management effort and months late; risk aversion. Scope, productivity, rates, ramp-up, rework, change requests, the fixed quote, the budget and the target go-live: a fixed value or a range (low, likely, high). Each fork has its own team size, rates, productivity, ramp-up, rework and management effort. Timeline: when the load-test environment work starts, and how many extra people to request and when."
+  },
+  "section.stays": {
+   "title": "As before",
+   "body": "These inputs keep their values from the data. They still vary inside their ranges in each scenario, but no fork, hypothesis or event on this page moves them. Change them in Model settings.",
+   "more": "The common ground of all options: the values that no fork, hypothesis or event changes. Correct them only when the data is wrong."
+  },
+  "section.month-answer": {
+   "title": "Answer",
+   "body": "The fork with the best score times the share of feasible scenarios. The sentence says what you aim for, what to choose and when to look again. The cards show the median and the 5%-95% range of each criterion; the risks come as consequences with their odds.",
+   "more": "The best fork in one sentence, its expected result and the three main risks."
+  },
+  "section.month-compare": {
+   "title": "Compare",
+   "body": "Each criterion is scaled 0-1 across the forks, weighted and summed. The order uses score x feasible share. Change the priorities or the caution level: the ranking changes at once, without a new simulation.",
+   "more": "Ranking, criteria per fork and your priorities; a priority change reranks at once."
+  },
+  "section.month-time": {
+   "title": "Over time",
+   "body": "A preview: monthly paths drawn to end at the results of the model at month 24. The fan shows the median and the 25-75% and 10-90% ranges. The risk calendar shows the chance, by each month, that the spend passes the project budget, a milestone or the go-live is late, or the money goal is missed.",
+   "more": "Monthly fans per fork and the risk calendar: when the budget, a milestone, the go-live or the money goal can fail."
+  },
+  "section.month-plan": {
+   "title": "Plan",
+   "body": "Each milestone and goal is met in a share of the scenarios; 80% is the target. Drag a marker to move its date. When a goal is missed, the inputs in conflict and a plan of levers (what, how much, when) show what to change.",
+   "more": "Milestones and goals with their chance, the inputs in conflict and a plan of levers."
+  },
+  "section.month-why": {
+   "title": "Why",
+   "body": "The chain shows how the team and the scope set the go-live: throughput and work give the build time; the build time, the load-test environment and the delivery risks give the go-live month; the value starts at go-live. Values are means over all scenarios, per fork. The drivers are the inputs that move the money most.",
+   "more": "Each input has a real source: the backlog export, the vendor rate cards and quotes, the HR lead times, the budget. The numbers are a plausible example, not real data. Put in your own numbers to model your project. The chain matters more than the list: team throughput and the scope give the build time; the load-test environment can block the go-live; the value starts at go-live. Rework, change requests and vendor rotation are assumptions. Calibrate them with past projects."
+  },
+  "section.month-details": {
+   "title": "Details",
+   "body": "For the analyst: the spread of each criterion per fork (box plots), the RAG shares with their limits, histograms, and the number of scenarios and the seed of the run.",
+   "more": "Outputs: money at month 24 (value minus cost), time to go-live, management effort, months late; score, P(best), feasible share, RAG. Chain values: throughput, work, build time, environment ready, go-live month, beta month, cost of the extra people, business value. Rules: a small team with a big scope reworks more; a monthly cost above the budget fails (in-house and nearshore); change requests, rework and a late go-live are flagged. Not on this page: the RAID log and the codebase metrics of the hand-made delivery page."
+  },
+  "section.week-review": {
+   "title": "Review",
+   "body": "Choose the forks for the week and day steps. A fork whose range of results overlaps the leader is marked: better keep it, it can still win.",
+   "more": "Keep the forks worth a closer look; a fork whose range overlaps the leader is marked."
+  },
+  "section.week": {
+   "title": "Paths",
+   "body": "A preview: weekly paths as a tree. Each node gives 3 variants of the next week; each level keeps at most 60 nodes, so the tree stays a fair sample. A thicker branch carries more paths.",
+   "more": "Pick a fork and see how its year can go, week by week: the common paths, the bad branches to watch, and how far the numbers can spread."
+  },
+  "section.day-review": {
+   "title": "Review",
+   "body": "The day level shows three example scenarios of each fork you pick: pessimistic, median and optimistic. Pick one or two forks.",
+   "more": "Pick one or two forks for the example days."
+  },
+  "section.day": {
+   "title": "Examples",
+   "body": "A preview: three example scenarios of a fork, from the bad, the typical and the good part of the scenarios. Each shows daily progress, spend and defects for the first 60 working days, and the events.",
+   "more": "Three example scenarios (bad, typical, good): daily progress, spend, defects and events."
+  },
+  "step.forks": {
+   "title": "Forks",
+   "body": "Step 1: choose what to compare. Changes here make the later steps out of date until they run again."
+  },
+  "step.month": {
+   "title": "Month",
+   "body": "Step 2: the horizon as a Monte Carlo of the cause-and-effect model, per fork."
+  },
+  "step.week": {
+   "title": "Week",
+   "body": "Step 3: weekly paths for the forks you choose in the review card."
+  },
+  "step.day": {
+   "title": "Day",
+   "body": "Step 4: example days of 1-2 forks."
+  },
+  "kpi.decision": {
+   "title": "Decision",
+   "body": "The fork with the highest score x feasible share at your priorities."
+  },
+  "kpi.strategy": {
+   "title": "Strategy",
+   "body": "What you aim for, what to choose, and when to examine the choice again, in 1-2 sentences."
+  },
+  "kpi.score": {
+   "title": "Score",
+   "body": "Each criterion scaled 0-1 on fixed anchors (the 1st to 99th percentile of the baseline fork), times its weight, summed. A change of one fork changes only its own score. A gap to the baseline counts only beyond the meaningful difference of the criterion (inputs under Limits and thresholds)."
+  },
+  "kpi.pBest": {
+   "title": "P(best)",
+   "body": "Share of scenarios where the fork has the highest weighted score of all the forks compared (the same fixed anchors as the score). The label beside it says how many forks that is («of 5 forks»): the review before the week or the day lists only some forks, but each one's P(best) is still out of all of them. Two forks equal on every criterion share the scenarios they win, so the verdict gives them together («together best in»). Failed scenarios do not count for it. In each scenario, gaps below the meaningful difference of a criterion are ties."
+  },
+  "kpi.feasible": {
+   "title": "Feasible",
+   "body": "Share of scenarios where no check rule fails (for example: the monthly cost above the budget)."
+  },
+  "kpi.overallRag": {
+   "title": "Overall RAG",
+   "body": "Per scenario, the worst colour over the weighted criteria: green, amber or red."
+  },
+  "kpi.limits": {
+   "title": "RAG limits",
+   "body": "From the baseline fork (the in-house team): green = its median; red = its worst 10%. Flags make a colour worse; a failed check makes it red."
+  },
+  "kpi.expected": {
+   "title": "Expected result",
+   "body": "Median and the range of 90% of the outcomes (5% to 95%) of each criterion for the chosen fork."
+  },
+  "kpi.breaks": {
+   "title": "Changes if",
+   "body": "Single changes after which another fork leads clearly (by more than 0.02 of score): one weight halved or doubled, or another caution level."
+  },
+  "kpi.risks": {
+   "title": "Risks to watch",
+   "body": "Consequences for you, most important first: the odds in words, a fork that makes it less likely, and the input to watch."
+  },
+  "kpi.odds": {
+   "title": "Odds",
+   "body": "The share of scenarios in words: 3 in 10, 1 in 12, below 1 in 50."
+  },
+  "kpi.watch": {
+   "title": "What to watch",
+   "body": "The input whose values correlate most with the bad outcome (|r| at least 0.1)."
+  },
+  "kpi.tradeoff": {
+   "title": "Trade-off",
+   "body": "On which criteria the leader is better than the second fork (and by how much on average), the reverse, and where the two are equal within the meaningful difference."
+  },
+  "kpi.vsBase": {
+   "title": "Compared with the base",
+   "body": "The difference to the run without your changes: up = better, down = worse."
+  },
+  "kpi.pMet": {
+   "title": "P(met)",
+   "body": "Share of scenarios where the milestone or goal is met by its date. Target: 80%."
+  },
+  "kpi.forecastBand": {
+   "title": "Forecast",
+   "body": "In 80% of the scenarios the milestone is reached in this range of months; the line is the median month. Your date does not change the forecast."
+  },
+  "kpi.spare": {
+   "title": "Months spare",
+   "body": "Your date minus the month that 8 of 10 scenarios meet: positive = spare time, negative = more time needed."
+  },
+  "kpi.conflicts": {
+   "title": "Inputs in conflict",
+   "body": "For a missed goal, the random inputs that correlate most with the miss (C1-C3). Too high or too low gives the direction."
+  },
+  "kpi.plan": {
+   "title": "Plan",
+   "body": "Levers of the fork in order (what, how much, when). Each takes the value with the most goals met, then the latest start."
+  },
+  "kpi.chainValue": {
+   "title": "Chain value",
+   "body": "The mean of a link of the cause-and-effect chain over all scenarios, per fork."
+  },
+  "kpi.drivers": {
+   "title": "Main drivers",
+   "body": "Inputs that move the money most for this fork.",
+   "more": "The correlation of each uncertain input with the money at month 24 over the scenarios. A bar to the right: higher values give more money; to the left: they cost money."
+  },
+  "kpi.range": {
+   "title": "Range",
+   "body": "Low, likely and high value of an uncertain input.",
+   "more": "Each scenario draws a value from this range. Most draws fall near the likely value; the curve shows the shape (a PERT distribution)."
+  },
+  "kpi.ruleShare": {
+   "title": "Rule share",
+   "body": "Share of scenarios where the rule fired, per fork."
+  },
+  "kpi.boxplot": {
+   "title": "Box plot",
+   "body": "Box = middle 50% of the scenarios; whiskers = the range of the slider; thick line = median; dot = mean; dashed lines = RAG limits."
+  },
+  "kpi.ragTable": {
+   "title": "RAG detail",
+   "body": "Per criterion and fork, the share of green, amber and red scenarios."
+  },
+  "kpi.histogram": {
+   "title": "Histogram",
+   "body": "How often each value occurs, one line per fork; dashed lines are the RAG limits."
+  },
+  "kpi.runMeta": {
+   "title": "Run",
+   "body": "Number of scenarios, the seed and the time of the last simulation. The same seed gives the same result."
+  },
+  "kpi.fan": {
+   "title": "Fan",
+   "body": "Median line; the dark band holds 50% of the paths (25-75%), the light band 80% (10-90%). Preview data."
+  },
+  "kpi.riskCalendar": {
+   "title": "Risk calendar",
+   "body": "Chance that the check, limit, milestone or goal has failed by each month (cumulative). Preview data."
+  },
+  "kpi.medianFirstMonth": {
+   "title": "Typical month",
+   "body": "Among the scenarios where it fails, the median month of the first failure."
+  },
+  "kpi.weekTree": {
+   "title": "Week tree",
+   "body": "Weeks on the axis; a branch is a group of paths; a thicker branch carries more paths. Click a node for the week summary. Preview data."
+  },
+  "kpi.weekNode": {
+   "title": "Week node",
+   "body": "One week of one group of paths: work done, spend to date and defects, and a short summary."
+  },
+  "kpi.dayExample": {
+   "title": "Example future",
+   "body": "A scenario of the model from the bad (10%), typical (50%) or good (90%) part of the money at month 24. Preview data."
+  },
+  "kpi.dayEvents": {
+   "title": "Events",
+   "body": "What happens on each day of the example: decisions, vendor and client events, payments, milestones and defects. A link opens the record in the knowledge base."
+  },
+  "kpi.simulationBadge": {
+   "title": "Simulation",
+   "body": "These numbers are a simulated future, not recorded data."
+  },
+  "kpi.preview": {
+   "title": "Preview",
+   "body": "Stand-in data drawn to match the model at the horizon, until the month-by-month simulation on actors is ready."
+  },
+  "kpi.stale": {
+   "title": "Out of date",
+   "body": "An input changed after this result. It updates after the next run."
+  },
+  "control.hypotheses": {
+   "title": "World hypotheses",
+   "body": "Typical situations as layers. Turn on one or more: they add up in a fixed order. Your own edits stay on top."
+  },
+  "control.priorityPresets": {
+   "title": "Priorities",
+   "body": "Ready weight sets. Balanced = the model defaults. A preset sets all weights; you can then move each one."
+  },
+  "control.weights": {
+   "title": "Weights",
+   "body": "How much each criterion counts in the score, 0-3. Only the ratios matter."
+  },
+  "control.caution": {
+   "title": "How careful?",
+   "body": "On average = rank by the mean; with a margin = a quarter of the weight on the worst 5%; worst 5% = rank by the bad cases only."
+  },
+  "control.compare": {
+   "title": "Compare with the start",
+   "body": "Shows the difference to a run without your changes and hypotheses."
+  },
+  "control.timelineOption": {
+   "title": "Show for",
+   "body": "The fork whose timeline, conflicts and plan are shown; default: the best fork."
+  },
+  "control.eventButtons": {
+   "title": "Events",
+   "body": "Place a certain event (the client adds scope, a key person leaves) on the timeline, then move it to its month."
+  },
+  "control.dragMarker": {
+   "title": "Move a date",
+   "body": "Drag a marker, or focus it and press the arrow keys (half a month; Shift: a month). Esc during a drag moves it back."
+  },
+  "control.suggestDates": {
+   "title": "Suggest dates",
+   "body": "Each milestone moves to the month that 8 of 10 scenarios meet, rounded up to half a month."
+  },
+  "control.applyPlan": {
+   "title": "Apply the plan",
+   "body": "Sets the levers of the plan (the start months) on the timeline."
+  },
+  "control.deleteItem": {
+   "title": "Delete",
+   "body": "Removes the milestone or goal from the evaluation. Restore it from the list."
+  },
+  "control.restoreItem": {
+   "title": "Restore",
+   "body": "Brings a deleted milestone or goal back."
+  },
+  "control.resetField": {
+   "title": "Back to the default",
+   "body": "Removes your edit of this value; a hypothesis value stays."
+  },
+  "control.resetSection": {
+   "title": "Reset the section",
+   "body": "Removes your changes in this section only."
+  },
+  "control.resetAll": {
+   "title": "Back to the start",
+   "body": "Removes all your changes and hypotheses. You can undo it in the notification."
+  },
+  "control.undo": {
+   "title": "Undo",
+   "body": "Restores the value before this change."
+  },
+  "control.modelSettings": {
+   "title": "Model settings",
+   "body": "All inputs by block, the link coefficients, the shocks and the levers. A changed value has a dot; a hypothesis value has a mark."
+  },
+  "control.inspector": {
+   "title": "Intervention",
+   "body": "The value and its range (low, likely, high) of the selected intervention, its source, its owner and what it changes."
+  },
+  "control.n": {
+   "title": "Scenarios",
+   "body": "Number of simulated scenarios. More gives smoother numbers and takes longer."
+  },
+  "control.seed": {
+   "title": "Seed",
+   "body": "Start of the random numbers. The same seed gives the same result."
+  },
+  "control.whiskers": {
+   "title": "Whiskers",
+   "body": "The range of the box-plot whiskers, from 1%-99% to 25%-75%."
+  },
+  "control.forkSelection": {
+   "title": "Forks for the next steps",
+   "body": "Choose the forks for the week and day steps. A fork whose range overlaps the leader is marked: better keep it."
+  },
+  "control.dayForks": {
+   "title": "Forks for the day level",
+   "body": "Pick one or two forks to see day by day.",
+   "more": "The day level shows three example scenarios of each fork you pick: pessimistic, median and optimistic."
+  },
+  "control.exampleChoice": {
+   "title": "Example future",
+   "body": "Choose the pessimistic, the median or the optimistic example.",
+   "more": "The examples are scenarios of the model from the bad (10%), the typical (50%) and the good (90%) part of the first criterion."
+  },
+  "control.openInKb": {
+   "title": "Open in the knowledge base",
+   "body": "Shows the brief, dossiers and questions on this example branch, marked as a simulation."
+  },
+  "recompute.baseline": {
+   "title": "Baseline",
+   "body": "The fork every delta is measured against.",
+   "more": "The baseline is always compared, and every vs-baseline delta on the page is measured against it. Its RAG limits are the green and red lines of the other forks."
+  },
+  "recompute.overlay": {
+   "title": "Overlay",
+   "body": "Recomputed as an overlay on the same paths: instant.",
+   "more": "An overlay fork changes only prices or values on top of the same scenario paths; no actor reacts to the change by itself. The recompute is instant."
+  },
+  "recompute.from_date": {
+   "title": "Rerun from its date",
+   "body": "The paths are rerun from the start date of the fork.",
+   "more": "This fork changes how the company works from its start month. The scenarios are rerun from that month on; earlier months stay the same."
+  },
+  "recompute.structural": {
+   "title": "Structural",
+   "body": "New actors or rules: the whole horizon is rerun.",
+   "more": "This fork adds something new to the company or the project, for example a second cloud or a vendor team. The whole horizon is rerun, and the ranges are wider."
+  },
+  "lane.decisions": {
+   "title": "Decisions",
+   "body": "What you decide and when it starts: the levers of the forks."
+  },
+  "lane.people": {
+   "title": "People",
+   "body": "Events about people: a key engineer leaves, a hire starts later."
+  },
+  "lane.clients_vendors": {
+   "title": "Clients and vendors",
+   "body": "Events at clients and suppliers: a client gives notice, a vendor raises prices or rotates its team."
+  },
+  "lane.factors": {
+   "title": "Factors",
+   "body": "Outside factors: shortages, markets, currency and regulation."
+  },
+  "criterion.money": {
+   "title": "Money at month 24",
+   "body": "Value over 24 months minus delivery cost, USD; higher is better. Default weight 1.",
+   "more": "The business case can fail: value minus cost falls short",
+   "formula": "money = value - tm_cost",
+   "metric": "money"
+  },
+  "criterion.time": {
+   "title": "Time to go-live",
+   "body": "Months to go live, months; lower is better. Default weight 1.",
+   "more": "The go-live comes late and the value starts later",
+   "formula": "time = duration",
+   "metric": "time"
+  },
+  "criterion.resources": {
+   "title": "Management effort",
+   "body": "Internal management effort, FTE-months; lower is better. Default weight 0.5.",
+   "more": "Your managers can get overloaded",
+   "formula": "resources = mgmt_ratio * duration",
+   "metric": "resources"
+  },
+  "criterion.delay_months": {
+   "title": "Months late",
+   "body": "Months late against the target date, months; lower is better. Default weight 0.75.",
+   "more": "You can miss the promised date: penalties and lost trust",
+   "formula": "delay_months = maximum(duration - target_months, 0)",
+   "metric": "delay_months"
+  },
+  "fork.in_house": {
+   "title": "In-house team",
+   "body": "Hire and run an internal team of 8.",
+   "more": "Sets: no lever: the baseline."
+  },
+  "fork.nearshore_tm": {
+   "title": "Nearshore T&M",
+   "body": "Vistula Code Works, nearshore, time and materials, 10 people.",
+   "more": "Sets: Delivery team size = 10, Delivered points per FTE-month = 9.5, Fully loaded cost per FTE-month = 10500, Hiring or onboarding time = 1, Extra work for defects and changes = 0.12, Internal management FTE per delivery month = 1."
+  },
+  "fork.offshore_fixed": {
+   "title": "Offshore fixed price",
+   "body": "Kaveri Tech Services, offshore, fixed price plus change requests, 16 people.",
+   "more": "Sets: Delivery team size = 16, Delivered points per FTE-month = 6.5, Fully loaded cost per FTE-month = 4200, Hiring or onboarding time = 1.5, Extra work for defects and changes = 0.28, Internal management FTE per delivery month = 1.3."
+  },
+  "hypothesis.requirements_change": {
+   "title": "Requirements change often",
+   "body": "The client changes requirements: the chance of scope creep rises from 35% to 61%, and it is 1.5 times larger; more change requests and rework.",
+   "more": "The business adds features: chance 35% -> 61%; The business adds features: size x 1.5; Change requests on top of the fixed price: x 1.5; Extra work for defects and changes: x 1.15."
+  },
+  "hypothesis.priorities_shift": {
+   "title": "Priorities shift",
+   "body": "Priorities move during the release: context switches cut productivity by 10%, rework grows by 20%, and the go-live moves by about half a month.",
+   "more": "Delivered points per FTE-month: x 0.9; Extra work for defects and changes: x 1.2; Delay from RAID items (risk events add to it): + 0.5 months."
+  },
+  "hypothesis.key_people_leave": {
+   "title": "Key people leave",
+   "body": "A tight labour market: the chance of a key-person loss in-house rises from 20% to 44%, and of a vendor team rotation from 25% to 48%.",
+   "more": "A senior engineer leaves: chance 20% -> 44%; Vendor rotates the team: chance 25% -> 48%."
+  },
+  "hypothesis.tight_budget": {
+   "title": "Tight budget",
+   "body": "The monthly budget is cut by 15%; the budget check fails more often.",
+   "more": "Monthly budget limit: x 0.85."
+  },
+  "hypothesis.fixed_deadline": {
+   "title": "Fixed deadline",
+   "body": "The go-live date moves 2 months earlier, and delay counts twice as much.",
+   "more": "Target go-live: - 2 months; Weight of Months late: x 2."
+  },
+  "hypothesis.vendor_rates_rise": {
+   "title": "Vendor rates rise",
+   "body": "Vendors raise rates and quotes by 10% (in-house cost stays).",
+   "more": "Fully loaded cost per FTE-month: x 1.1 (Nearshore T&M, Offshore fixed price); Fixed-price quote: x 1.1."
+  },
+  "priority.balanced": {
+   "title": "Balanced",
+   "body": "The model defaults: money and time first, then months late and management effort."
+  },
+  "priority.money_first": {
+   "title": "Money first",
+   "body": "Money at month 24 counts most; time and effort count less."
+  },
+  "priority.speed_first": {
+   "title": "Speed first",
+   "body": "Time to go-live and months late count most; money counts less."
+  },
+  "priority.low_effort": {
+   "title": "Low effort",
+   "body": "Management effort counts most: the team should run with little oversight."
+  },
+  "caution.average": {
+   "title": "On average",
+   "body": "Rank by the mean result of all scenarios."
+  },
+  "caution.margin": {
+   "title": "With a margin",
+   "body": "Mostly the mean, with a quarter of the weight on the worst 5% (the default)."
+  },
+  "caution.worst": {
+   "title": "Worst 5%",
+   "body": "Rank by the mean of the worst 5% of the scenarios only."
+  },
+  "rule.small_team_big_scope": {
+   "title": "Small team, big scope",
+   "body": "A large scope with a small team causes more rework. An effect rule changes an input when its condition is true.",
+   "formula": "if scope_points > 750 and team_size < 10: rework_share = rework_share * 1.25"
+  },
+  "rule.burn_over_budget": {
+   "title": "Monthly cost above budget",
+   "body": "Monthly burn of the team and the extra people. A check rule: when it fails, the scenario is not acceptable (infeasible).",
+   "formula": "if team_size * rate + add_fte * rate * (1 + add_rate_premium * add_outsourced) > budget_per_month: fail: Monthly burn is more than the budget"
+  },
+  "rule.change_requests": {
+   "title": "Many change requests",
+   "body": "A flag rule sets a RAG colour on a criterion.",
+   "formula": "if change_share > 0.3: red on money\nelif change_share > 0.2: amber on money"
+  },
+  "rule.high_rework": {
+   "title": "High rework",
+   "body": "A flag rule sets a RAG colour on a criterion.",
+   "formula": "if rework_share > 0.22: amber on delay_months"
+  },
+  "rule.late_go_live": {
+   "title": "Go-live far beyond target",
+   "body": "Uses the derived duration. A flag rule sets a RAG colour on a criterion.",
+   "formula": "if duration > target_months + 6: red on time\nelif duration > target_months + 3: amber on time"
+  },
+  "derived.cap": {
+   "title": "Team throughput",
+   "body": "Team throughput, points/month. A link of the cause-and-effect chain.",
+   "more": "Inputs: Delivered points per FTE-month, Delivery team size. Used by: Work, Build time, Beta month.",
+   "formula": "cap = team_size * productivity",
+   "metric": "cap"
+  },
+  "derived.add_cap": {
+   "title": "Extra throughput",
+   "body": "Throughput of the extra people, points/month. A link of the cause-and-effect chain.",
+   "more": "Inputs: Extra people added during the project, Delivered points per FTE-month. Used by: Build time, Beta month.",
+   "formula": "add_cap = add_fte * productivity",
+   "metric": "add_cap"
+  },
+  "derived.onboard": {
+   "title": "Onboarding time of the extra people",
+   "body": "Onboarding time of the extra people, months. A link of the cause-and-effect chain.",
+   "more": "Inputs: Extra people come from a vendor (1) or are hired (0), Months to hire and onboard a new employee, Months to onboard people from a vendor. Used by: Extra people at full speed.",
+   "formula": "onboard = where(add_outsourced > 0.5, vendor_onboard, hire_onboard)",
+   "metric": "onboard"
+  },
+  "derived.t_add": {
+   "title": "Extra people at full speed",
+   "body": "Month when the extra people work at full speed, months. A link of the cause-and-effect chain.",
+   "more": "Inputs: Month when you request the extra people, Onboarding time of the extra people, Hiring or onboarding time. Used by: Build time, Beta month.",
+   "formula": "t_add = maximum(add_month + onboard, ramp_up_months)",
+   "metric": "t_add"
+  },
+  "derived.work": {
+   "title": "Work",
+   "body": "Scope plus rework; a scope change counts when it comes before the planned go-live, points. A link of the cause-and-effect chain.",
+   "more": "Inputs: Team throughput, Month of the scope change, Scope added by a change event, Hiring or onboarding time, Extra work for defects and changes, Size of the backlog. Used by: Build time, Beta month.",
+   "formula": "work = (scope_points + ev_scope_points * (ev_scope_month < ramp_up_months + scope_points * (1 + rework_share) / cap)) * (1 + rework_share)",
+   "metric": "work"
+  },
+  "derived.build_time": {
+   "title": "Build time",
+   "body": "Month when all work is done, months. A link of the cause-and-effect chain.",
+   "more": "Inputs: Extra throughput, Team throughput, Hiring or onboarding time, Extra people at full speed, Work. Used by: Go-live month.",
+   "formula": "build_time = minimum(ramp_up_months + work / cap, t_add + (work - cap * (t_add - ramp_up_months)) / (cap + add_cap))",
+   "metric": "build_time"
+  },
+  "derived.duration": {
+   "title": "Go-live month",
+   "body": "Build time, plus 14% of the remaining time after a key person leaves, plus RAID delay; not before the load tests end (blocker: environment ready + load tests), months. A link of the cause-and-effect chain.",
+   "more": "Inputs: Build time, Environment ready, A key person leaves (1 = yes), Month when the key person leaves, Load tests after the environment is ready, before the go-live, Delay from RAID items (risk events add to it). Used by: Cost of extra people, Business value, Time-and-materials cost, criterion time, criterion resources, criterion delay_months.",
+   "formula": "duration = maximum(build_time + ev_kp * 0.14 * maximum(build_time - ev_kp_month, 0) + risk_delay_months, env_ready + load_test_months)",
+   "metric": "duration"
+  },
+  "derived.beta_time": {
+   "title": "Beta month",
+   "body": "Month when half of the work is done, months. A link of the cause-and-effect chain.",
+   "more": "Inputs: Extra throughput, Team throughput, A key person leaves (1 = yes), Month when the key person leaves, Hiring or onboarding time, Extra people at full speed, Work. Used by: none.",
+   "formula": "beta_time = minimum(ramp_up_months + 0.5 * work / cap, t_add + (0.5 * work - cap * (t_add - ramp_up_months)) / (cap + add_cap)) + ev_kp * 0.14 * maximum(minimum(ramp_up_months + 0.5 * work / cap, t_add + (0.5 * work - cap * (t_add - ramp_up_months)) / (cap + add_cap)) - ev_kp_month, 0)",
+   "metric": "beta_time"
+  },
+  "derived.env_ready": {
+   "title": "Environment ready",
+   "body": "Month when the load-test environment is ready, months. A link of the cause-and-effect chain.",
+   "more": "Inputs: Months to build the load-test environment, Month when the load-test environment work starts. Used by: Go-live month.",
+   "formula": "env_ready = env_start + env_lead",
+   "metric": "env_ready"
+  },
+  "derived.add_cost": {
+   "title": "Cost of extra people",
+   "body": "Cost of the extra people from the request month, USD. A link of the cause-and-effect chain.",
+   "more": "Inputs: Extra people added during the project, Month when you request the extra people, Extra people come from a vendor (1) or are hired (0), Extra rate for people from a vendor, Go-live month, Fully loaded cost per FTE-month. Used by: Time-and-materials cost.",
+   "formula": "add_cost = add_fte * rate * (1 + add_rate_premium * add_outsourced) * maximum(duration - add_month, 0)",
+   "metric": "add_cost"
+  },
+  "derived.value": {
+   "title": "Business value",
+   "body": "Business value until month 24, USD. A link of the cause-and-effect chain.",
+   "more": "Inputs: Go-live month, Business value when live. Used by: criterion money.",
+   "formula": "value = value_per_month * maximum(24 - duration, 0)",
+   "metric": "value"
+  },
+  "derived.tm_cost": {
+   "title": "Time-and-materials cost",
+   "body": "Time-and-materials cost, USD. A link of the cause-and-effect chain.",
+   "more": "Inputs: Cost of extra people, Go-live month, Fully loaded cost per FTE-month, Delivery team size. Used by: criterion money.",
+   "formula": "tm_cost = team_size * rate * duration + add_cost",
+   "metric": "tm_cost"
+  },
+  "variable.scope_points": {
+   "title": "Size of the backlog",
+   "body": "Default: likely 600, from 450 to 900 story points. Source: data: backlog export.",
+   "more": "Used by: Work. Shocks that change it: The business adds features.",
+   "metric": "scope_points"
+  },
+  "variable.productivity": {
+   "title": "Delivered points per FTE-month",
+   "body": "Default: likely 10, from 8 to 12 points/FTE-month. Source: assumption.",
+   "more": "Used by: Team throughput, Extra throughput. Shocks that change it: A senior engineer leaves; Vendor rotates the team.",
+   "metric": "productivity"
+  },
+  "variable.team_size": {
+   "title": "Delivery team size",
+   "body": "Default: 8 FTE. Source: assumption.",
+   "more": "Used by: Team throughput, Time-and-materials cost.",
+   "metric": "team_size"
+  },
+  "variable.rate": {
+   "title": "Fully loaded cost per FTE-month",
+   "body": "Default: likely 12.5k, from 11k to 14k USD. Source: data: vendor_rates.csv.",
+   "more": "Used by: Cost of extra people, Time-and-materials cost.",
+   "metric": "rate"
+  },
+  "variable.ramp_up_months": {
+   "title": "Hiring or onboarding time",
+   "body": "Default: likely 3, from 2 to 5 months. Source: assumption.",
+   "more": "Used by: Extra people at full speed, Work, Build time, Beta month.",
+   "metric": "ramp_up_months"
+  },
+  "variable.rework_share": {
+   "title": "Extra work for defects and changes",
+   "body": "Default: likely 0.08, from 0.05 to 0.12 share. Source: assumption.",
+   "more": "Used by: Work.",
+   "metric": "rework_share"
+  },
+  "variable.mgmt_ratio": {
+   "title": "Internal management FTE per delivery month",
+   "body": "Default: likely 0.7, from 0.5 to 1 FTE. Source: assumption.",
+   "more": "Used by: criterion resources.",
+   "metric": "mgmt_ratio"
+  },
+  "variable.fixed_quote": {
+   "title": "Fixed-price quote",
+   "body": "Default: likely 320k, from 280k to 420k USD. Source: data: vendor quote.",
+   "more": "Used by: none.",
+   "metric": "fixed_quote"
+  },
+  "variable.change_share": {
+   "title": "Change requests on top of the fixed price",
+   "body": "Default: likely 0.15, from 0.05 to 0.35 share. Source: assumption.",
+   "more": "Used by: none.",
+   "metric": "change_share"
+  },
+  "variable.value_per_month": {
+   "title": "Business value when live",
+   "body": "Default: 200k USD/month. Source: assumption.",
+   "more": "Used by: Business value.",
+   "metric": "value_per_month"
+  },
+  "variable.target_months": {
+   "title": "Target go-live",
+   "body": "Default: 9 months. Source: assumption.",
+   "more": "Used by: criterion delay_months.",
+   "metric": "target_months"
+  },
+  "variable.budget_per_month": {
+   "title": "Monthly budget limit",
+   "body": "Default: 100k USD. Source: assumption.",
+   "more": "Used by: none.",
+   "metric": "budget_per_month"
+  },
+  "variable.risk_delay_months": {
+   "title": "Delay from RAID items (risk events add to it)",
+   "body": "Default: 0 months. Source: assumption.",
+   "more": "Used by: Go-live month.",
+   "metric": "risk_delay_months"
+  },
+  "variable.add_fte": {
+   "title": "Extra people added during the project",
+   "body": "Default: 0 FTE. Source: timeline.",
+   "more": "Used by: Extra throughput, Cost of extra people.",
+   "metric": "add_fte"
+  },
+  "variable.add_month": {
+   "title": "Month when you request the extra people",
+   "body": "Default: 1 month. Source: timeline.",
+   "more": "Used by: Extra people at full speed, Cost of extra people.",
+   "metric": "add_month"
+  },
+  "variable.add_outsourced": {
+   "title": "Extra people come from a vendor (1) or are hired (0)",
+   "body": "Default: 0 0/1. Source: timeline.",
+   "more": "Used by: Onboarding time of the extra people, Cost of extra people.",
+   "metric": "add_outsourced"
+  },
+  "variable.hire_onboard": {
+   "title": "Months to hire and onboard a new employee",
+   "body": "Default: likely 3, from 2 to 5 months. Source: timeline.",
+   "more": "Used by: Onboarding time of the extra people.",
+   "metric": "hire_onboard"
+  },
+  "variable.vendor_onboard": {
+   "title": "Months to onboard people from a vendor",
+   "body": "Default: likely 1, from 0.5 to 1.5 months. Source: timeline.",
+   "more": "Used by: Onboarding time of the extra people.",
+   "metric": "vendor_onboard"
+  },
+  "variable.add_rate_premium": {
+   "title": "Extra rate for people from a vendor",
+   "body": "Default: 0.2 share. Source: timeline.",
+   "more": "Used by: Cost of extra people.",
+   "metric": "add_rate_premium"
+  },
+  "variable.env_start": {
+   "title": "Month when the load-test environment work starts",
+   "body": "Default: 1 month. Source: timeline.",
+   "more": "Used by: Environment ready.",
+   "metric": "env_start"
+  },
+  "variable.env_lead": {
+   "title": "Months to build the load-test environment",
+   "body": "Default: likely 2, from 1.5 to 3.5 months. Source: timeline.",
+   "more": "Used by: Environment ready.",
+   "metric": "env_lead"
+  },
+  "variable.load_test_months": {
+   "title": "Load tests after the environment is ready, before the go-live",
+   "body": "Default: 0.5 months. Source: timeline.",
+   "more": "Used by: Go-live month.",
+   "metric": "load_test_months"
+  },
+  "variable.ev_scope_points": {
+   "title": "Scope added by a change event",
+   "body": "Default: 0 story points. Source: timeline.",
+   "more": "Used by: Work.",
+   "metric": "ev_scope_points"
+  },
+  "variable.ev_scope_month": {
+   "title": "Month of the scope change",
+   "body": "Default: 5 month. Source: timeline.",
+   "more": "Used by: Work.",
+   "metric": "ev_scope_month"
+  },
+  "variable.ev_kp": {
+   "title": "A key person leaves (1 = yes)",
+   "body": "Default: 0 0/1. Source: timeline.",
+   "more": "Used by: Go-live month, Beta month.",
+   "metric": "ev_kp"
+  },
+  "variable.ev_kp_month": {
+   "title": "Month when the key person leaves",
+   "body": "Default: 4 month. Source: timeline.",
+   "more": "Used by: Go-live month, Beta month.",
+   "metric": "ev_kp_month"
+  },
+  "variable.m_beta": {
+   "title": "Milestone: beta (half of the work done)",
+   "body": "Default: 6 month. Source: timeline.",
+   "more": "Used by: none.",
+   "metric": "m_beta"
+  },
+  "variable.m_env": {
+   "title": "Milestone: load-test environment ready",
+   "body": "Default: 4 month. Source: timeline.",
+   "more": "Used by: none.",
+   "metric": "m_env"
+  },
+  "variable.g_money": {
+   "title": "Goal: money at the horizon at least",
+   "body": "Default: 1.5M USD. Source: timeline.",
+   "more": "Used by: none.",
+   "metric": "g_money"
+  },
+  "variable.md_money": {
+   "title": "Meaningful difference of money: one month of the budget, half a month of value",
+   "body": "Default: 100k USD. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_money"
+  },
+  "variable.md_time": {
+   "title": "Meaningful difference of the go-live: two weeks",
+   "body": "Default: 0.5 months. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_time"
+  },
+  "variable.md_resources": {
+   "title": "Meaningful difference of effort: half a month of one manager",
+   "body": "Default: 0.5 FTE-months. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_resources"
+  },
+  "variable.md_delay_months": {
+   "title": "Meaningful difference of months late: two weeks",
+   "body": "Default: 0.5 months. Source: policy: decision.",
+   "more": "Used by: none.",
+   "metric": "md_delay_months"
+  },
+  "risk.key_person_loss": {
+   "title": "A senior engineer leaves",
+   "body": "Chance 20% in the horizon. When it occurs, it multiplies likely -0.12, from -0.2 to -0.05 (relative) to Delivered points per FTE-month. Only for: In-house team."
+  },
+  "risk.vendor_turnover": {
+   "title": "Vendor rotates the team",
+   "body": "Chance 25% in the horizon. When it occurs, it multiplies likely -0.15, from -0.25 to -0.05 (relative) to Delivered points per FTE-month. Only for: Nearshore T&M, Offshore fixed price."
+  },
+  "risk.scope_creep": {
+   "title": "The business adds features",
+   "body": "Chance 35% in the horizon. When it occurs, it multiplies likely 0.15, from 0.05 to 0.3 (relative) to Size of the backlog."
+  },
+  "timeline.start_team": {
+   "title": "Team at the start",
+   "body": "The value at the start.",
+   "formula": "team_size",
+   "more": "month 0"
+  },
+  "timeline.start_scope": {
+   "title": "Scope at the start",
+   "body": "The value at the start.",
+   "formula": "scope_points",
+   "more": "month 0"
+  },
+  "timeline.env_work": {
+   "title": "Load-test environment work starts",
+   "body": "Start earlier to have the environment sooner.",
+   "more": "month variable env_start"
+  },
+  "timeline.extra_people": {
+   "title": "Extra people requested",
+   "body": "Hires start after 2-5 months; vendor people after 0.5-1.5 months (+20% rate).",
+   "formula": "t_add",
+   "more": "month variable add_month"
+  },
+  "timeline.scope_change": {
+   "title": "Scope change (+100 points)",
+   "body": "The client adds 100 story points. It counts before the planned go-live only.",
+   "more": "month variable ev_scope_month"
+  },
+  "timeline.key_person_leaves": {
+   "title": "A key person leaves",
+   "body": "The rest of the work takes 14% longer from that month.",
+   "more": "month variable ev_kp_month"
+  },
+  "timeline.beta": {
+   "title": "Beta: half of the work done",
+   "body": "Met when the forecast month is not later than the marker. Target: 80% of the scenarios.",
+   "formula": "beta_time <= m_beta",
+   "more": "month variable m_beta"
+  },
+  "timeline.load_test_env": {
+   "title": "Load-test environment ready",
+   "body": "Met when the forecast month is not later than the marker. Target: 80% of the scenarios.",
+   "formula": "env_ready <= m_env",
+   "more": "month variable m_env"
+  },
+  "timeline.go_live": {
+   "title": "Go-live",
+   "body": "Met when the forecast month is not later than the marker. Target: 80% of the scenarios.",
+   "formula": "duration <= target_months",
+   "more": "month variable target_months"
+  },
+  "timeline.money_goal": {
+   "title": "Money at month 24 at least the goal",
+   "body": "Met when the condition holds at the horizon. Target: 80% of the scenarios.",
+   "formula": "money >= g_money",
+   "more": "month 24"
+  },
+  "lever.env_start": {
+   "title": "Start the load-test environment work by month",
+   "body": "From 0 to 6 month in steps of 0.5; the plan prefers the later value among equal results."
+  },
+  "lever.add_fte": {
+   "title": "Extra people",
+   "body": "From 0 to 8 FTE in steps of 1; the plan prefers the lower value among equal results."
+  },
+  "lever.add_month": {
+   "title": "Request the extra people by month",
+   "body": "From 0 to 8 month in steps of 1; the plan prefers the later value among equal results."
+  },
+  "metric.money": {
+   "title": "Money to date",
+   "body": "Business value earned minus the delivery cost paid to the end of each month, USD; month 24 is the money criterion. Preview data."
+  },
+  "metric.progress": {
+   "title": "Work done",
+   "body": "Share of the work done by the end of each month. Preview data."
+  },
+  "metric.spend": {
+   "title": "Spend to date",
+   "body": "Delivery cost paid to the end of each month, USD. Preview data."
+  },
+  "check.go_live": {
+   "title": "Go-live late",
+   "body": "Chance that the go-live misses its target month. Preview data."
+  },
+  "check.budget_overrun": {
+   "title": "Spend above the project budget",
+   "body": "Chance that the spend to date passes the project budget (the monthly budget times the target months) by each month. Preview data."
+  },
+  "check.money_goal": {
+   "title": "Money goal missed",
+   "body": "Chance that the money at month 24 is below the goal. Preview data."
+  },
+  "check.beta": {
+   "title": "Beta late",
+   "body": "Chance that half of the work is not done by the beta milestone. Preview data."
+  },
+  "check.load_test_env": {
+   "title": "Load-test environment late",
+   "body": "Chance that the load-test environment is not ready by its milestone. Preview data."
+  }
+ },
+ "steps": [
+  {
+   "id": "forks",
+   "index": 1,
+   "title": "Forks",
+   "question": "Which options and world hypotheses do we compare?",
+   "help": "step.forks"
+  },
+  {
+   "id": "month",
+   "index": 2,
+   "title": "Month",
+   "question": "Which fork gives the best result, and why?",
+   "help": "step.month"
+  },
+  {
+   "id": "week",
+   "index": 3,
+   "title": "Week",
+   "question": "How do the weeks unfold for the chosen forks?",
+   "help": "step.week"
+  },
+  {
+   "id": "day",
+   "index": 4,
+   "title": "Day",
+   "question": "What does it look like day by day?",
+   "help": "step.day"
+  }
+ ],
+ "sections": [
+  {
+   "id": "world",
+   "step": "forks",
+   "title": "World",
+   "question": "What may the world do around our decision?",
+   "summary": "World hypotheses as layers: requirements change, key people leave, a tight budget and more.",
+   "help": "section.world",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "activePresets"
+   ]
+  },
+  {
+   "id": "forks",
+   "step": "forks",
+   "title": "Forks",
+   "question": "Which options do we compare, and when does each start?",
+   "summary": "The forks you compare and the timeline of their interventions, events and dates.",
+   "help": "section.forks",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "edits",
+    "timeline"
+   ]
+  },
+  {
+   "id": "stays",
+   "step": "forks",
+   "title": "As before",
+   "question": "What stays as it was?",
+   "summary": "The common ground of all options: the values that no fork, hypothesis or event changes. Correct them only when the data is wrong.",
+   "help": "section.stays",
+   "collapsed": true,
+   "preview": false,
+   "resets": []
+  },
+  {
+   "id": "month-answer",
+   "step": "month",
+   "title": "Answer",
+   "question": "What should we choose?",
+   "summary": "The best fork in one sentence, its expected result and the three main risks.",
+   "help": "section.month-answer",
+   "collapsed": false,
+   "preview": false,
+   "resets": []
+  },
+  {
+   "id": "month-compare",
+   "step": "month",
+   "title": "Compare",
+   "question": "How do the forks compare?",
+   "summary": "Ranking, criteria per fork and your priorities; a priority change reranks at once.",
+   "help": "section.month-compare",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "prefs"
+   ]
+  },
+  {
+   "id": "month-time",
+   "step": "month",
+   "title": "Over time",
+   "question": "How will it go month by month?",
+   "summary": "Monthly fans per fork and the risk calendar: when the budget, a milestone, the go-live or the money goal can fail.",
+   "help": "section.month-time",
+   "collapsed": false,
+   "preview": true,
+   "resets": []
+  },
+  {
+   "id": "month-plan",
+   "step": "month",
+   "title": "Plan",
+   "question": "Can we make it, and what do we need?",
+   "summary": "Milestones and goals with their chance, the inputs in conflict and a plan of levers.",
+   "help": "section.month-plan",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "timeline",
+    "timelineOption"
+   ]
+  },
+  {
+   "id": "month-why",
+   "step": "month",
+   "title": "Why",
+   "question": "What does the result depend on?",
+   "summary": "The chain per fork from team throughput to the go-live month and the business value, the drivers and the rules.",
+   "help": "section.month-why",
+   "collapsed": false,
+   "preview": false,
+   "resets": []
+  },
+  {
+   "id": "month-details",
+   "step": "month",
+   "title": "Details",
+   "question": "For the analyst",
+   "summary": "Box plots, RAG detail with its limits, histograms and the run data.",
+   "help": "section.month-details",
+   "collapsed": true,
+   "preview": false,
+   "resets": [
+    "n",
+    "seed"
+   ]
+  },
+  {
+   "id": "week-review",
+   "step": "week",
+   "title": "Review",
+   "question": "Which forks go on to the weeks?",
+   "summary": "Keep the forks worth a closer look; a fork whose range overlaps the leader is marked.",
+   "help": "section.week-review",
+   "collapsed": false,
+   "preview": false,
+   "resets": [
+    "selectedForks"
+   ]
+  },
+  {
+   "id": "week",
+   "step": "week",
+   "title": "Paths",
+   "question": "How do the weeks unfold?",
+   "summary": "Pick a fork and see how its year can go, week by week: the common paths, the bad branches to watch, and how far the numbers can spread.",
+   "help": "section.week",
+   "collapsed": false,
+   "preview": true,
+   "resets": []
+  },
+  {
+   "id": "day-review",
+   "step": "day",
+   "title": "Review",
+   "question": "Which forks do we see day by day?",
+   "summary": "Pick one or two forks for the example days.",
+   "help": "section.day-review",
+   "collapsed": false,
+   "preview": false,
+   "resets": []
+  },
+  {
+   "id": "day",
+   "step": "day",
+   "title": "Examples",
+   "question": "What does it look like day by day?",
+   "summary": "Three example scenarios (bad, typical, good): daily progress, spend, defects and events.",
+   "help": "section.day",
+   "collapsed": false,
+   "preview": true,
+   "resets": []
+  }
+ ],
+ "labels": {
+  "scope_points": "Size of the backlog",
+  "productivity": "Delivered points per FTE-month",
+  "team_size": "Delivery team size",
+  "rate": "Fully loaded cost per FTE-month",
+  "ramp_up_months": "Hiring or onboarding time",
+  "rework_share": "Extra work for defects and changes",
+  "mgmt_ratio": "Internal management FTE per delivery month",
+  "fixed_quote": "Fixed-price quote",
+  "change_share": "Change requests on top of the fixed price",
+  "value_per_month": "Business value when live",
+  "target_months": "Target go-live",
+  "budget_per_month": "Monthly budget limit",
+  "risk_delay_months": "Delay from RAID items (risk events add to it)",
+  "add_fte": "Extra people added during the project",
+  "add_month": "Month when you request the extra people",
+  "add_outsourced": "Extra people come from a vendor (1) or are hired (0)",
+  "hire_onboard": "Months to hire and onboard a new employee",
+  "vendor_onboard": "Months to onboard people from a vendor",
+  "add_rate_premium": "Extra rate for people from a vendor",
+  "env_start": "Month when the load-test environment work starts",
+  "env_lead": "Months to build the load-test environment",
+  "load_test_months": "Load tests after the environment is ready, before the go-live",
+  "ev_scope_points": "Scope added by a change event",
+  "ev_scope_month": "Month of the scope change",
+  "ev_kp": "A key person leaves (1 = yes)",
+  "ev_kp_month": "Month when the key person leaves",
+  "m_beta": "Milestone: beta (half of the work done)",
+  "m_env": "Milestone: load-test environment ready",
+  "g_money": "Goal: money at the horizon at least",
+  "md_money": "Meaningful difference of money: one month of the budget, half a month of value",
+  "md_time": "Meaningful difference of the go-live: two weeks",
+  "md_resources": "Meaningful difference of effort: half a month of one manager",
+  "md_delay_months": "Meaningful difference of months late: two weeks",
+  "cap": "Team throughput",
+  "add_cap": "Extra throughput",
+  "onboard": "Onboarding time of the extra people",
+  "t_add": "Extra people at full speed",
+  "work": "Work",
+  "build_time": "Build time",
+  "duration": "Go-live month",
+  "beta_time": "Beta month",
+  "env_ready": "Environment ready",
+  "add_cost": "Cost of extra people",
+  "value": "Business value",
+  "tm_cost": "Time-and-materials cost",
+  "key_person_loss": "A senior engineer leaves",
+  "vendor_turnover": "Vendor rotates the team",
+  "scope_creep": "The business adds features",
+  "small_team_big_scope": "Small team, big scope",
+  "burn_over_budget": "Monthly cost above budget",
+  "change_requests": "Many change requests",
+  "high_rework": "High rework",
+  "late_go_live": "Go-live far beyond target",
+  "in_house": "In-house team",
+  "nearshore_tm": "Nearshore T&M",
+  "offshore_fixed": "Offshore fixed price",
+  "money": "Money at month 24",
+  "time": "Time to go-live",
+  "resources": "Management effort",
+  "delay_months": "Months late",
+  "start_team": "Team at the start",
+  "start_scope": "Scope at the start",
+  "env_work": "Load-test environment work starts",
+  "extra_people": "Extra people requested",
+  "scope_change": "Scope change (+100 points)",
+  "key_person_leaves": "A key person leaves",
+  "beta": "Beta: half of the work done",
+  "load_test_env": "Load-test environment ready",
+  "go_live": "Go-live",
+  "money_goal": "Money at month 24 at least the goal"
+ }
+}

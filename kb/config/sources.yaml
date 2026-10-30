@@ -1,0 +1,88 @@
+# Sample tenant (Vector Forge, English demo organisation) used by the unit and integration tests and as the
+# default config. The MVP tenant `company` gets its own config in config/tenants/company/ (written by kbsim export).
+# Source instances of the tenant (02 §4.1, §11). Connectors are simulated: replay feeds
+# fixtures/<tenant>/timeline.yaml through the same ingest path a real connector would use.
+# Container ACLs are the connector's ACL sync result; an object may narrow them with its own ACL.
+tenant:
+  id: vectorforge
+  name: Vector Forge
+  timezone: Europe/Moscow
+
+sources:
+  - id: jira-vf
+    provider: jira
+    name: Jira Cloud — Vector Forge
+    base_url: https://vectorforge.atlassian.net
+    sync: {mode: webhook+reconcile, reconcile_cron: "0 3 * * *"}
+    containers:
+      FP: {name: FlowPilot, acl: [grp:flowpilot, grp:product, grp:exec]}
+      EXP: {name: Product experiments, acl: [grp:product, grp:flowpilot, grp:exec]}
+      ATL: {name: Atlas Ledger modernization, acl: [grp:atlas, grp:exec]}
+
+  - id: confluence-vf
+    provider: confluence
+    name: Confluence Cloud — Vector Forge
+    base_url: https://vectorforge.atlassian.net/wiki
+    sync: {mode: webhook+reconcile, reconcile_cron: "30 3 * * *"}
+    containers:
+      PROD: {name: Product, acl: [grp:all-staff]}
+      LEAD: {name: Leadership, acl: [grp:exec]}
+      ATL: {name: Atlas delivery, acl: [grp:atlas, grp:exec]}
+
+  - id: gitlab-vf
+    provider: gitlab
+    name: GitLab — Vector Forge
+    base_url: https://gitlab.vectorforge.io
+    sync: {mode: webhook+reconcile, reconcile_cron: "0 4 * * *"}
+    # Jira project keys recognised in MR/commit text ("Closes FP-105") by the GitLab-Jira integration.
+    jira_source: jira-vf
+    jira_keys: [FP, EXP, ATL]
+    containers:
+      flowpilot/app: {name: FlowPilot app, acl: [grp:engineering, grp:flowpilot, grp:exec]}
+
+  # xwiki-vf and liferay-vf have no adapter in this copy (the XWiki and Liferay connectors were not copied); they stay
+  # as journal-level sources because the integration test stories write records with these source ids.
+  - id: xwiki-vf
+    provider: xwiki
+    name: XWiki — Vector Forge knowledge base
+    base_url: https://kb.vectorforge.io
+    sync: {mode: poll, interval_min: 15}
+    containers:
+      Policies: {name: Policies, acl: [grp:all-staff]}
+      ADR: {name: Architecture decisions, acl: [grp:engineering, grp:exec]}
+      HR: {name: People operations, acl: [grp:hr, grp:exec]}
+
+  - id: liferay-vf
+    provider: liferay
+    name: Liferay — Customer success knowledge base
+    base_url: https://support.vectorforge.io
+    sync: {mode: poll, interval_min: 60}
+    containers:
+      cs-playbooks: {name: Customer success playbooks, acl: [grp:commercial, grp:product, grp:exec]}
+
+  - id: mail-vf
+    provider: email
+    name: Corporate mail — vectorforge.io
+    sync: {mode: graph-delta, interval_min: 5}
+    mail_domain: vectorforge.io
+
+  # Structured business records of the organisation simulator (kb.connectors.sim): the payload of a line is the
+  # simulator's event envelope; object types contract, invoice, payment, bank_entry, deal, employee_event,
+  # requisition, payroll, incident, deploy, support_ticket, cloud_bill, tax_payment, decision and the cause catalog
+  # (hypothesis, life_event, habit, rule, process). A line names its container (or carries its own acl).
+  - id: sim-vf
+    provider: sim
+    name: Organisation simulator — Vector Forge
+    containers:
+      finance: {name: Finance, acl: [grp:exec]}
+      sales: {name: Sales, acl: [grp:commercial, grp:exec]}
+      people: {name: People operations, acl: [grp:hr, grp:exec]}
+      engineering: {name: Engineering operations, acl: [grp:engineering, grp:exec]}
+      support: {name: Customer support, acl: [grp:all-staff]}
+      management: {name: Management, acl: [grp:exec]}
+
+  - id: directory-vf
+    provider: directory
+    name: People directory (HR roster)
+    containers:
+      people: {name: People, acl: [grp:all-staff]}

@@ -1,0 +1,39 @@
+pack: outsourcing_basic
+description: Delivery rules for the software outsourcing template
+templates: [delivery_model]
+rules:
+  - id: small_team_big_scope
+    kind: effect
+    description: A large scope with a small team causes more rework
+    if: scope_points > 750 and team_size < 10
+    then: {set: {rework_share: "rework_share * 1.25"}}
+
+  - id: burn_over_budget
+    kind: check
+    description: Monthly burn of the team and the extra people
+    if: team_size * rate + add_fte * rate * (1 + add_rate_premium * add_outsourced) > budget_per_month
+    then: {fail: "Monthly burn is more than the budget"}
+    options: [in_house, nearshore_tm]
+
+  - id: change_requests
+    kind: flag
+    if: change_share > 0.3
+    then: {flag: red, criterion: money}
+    elif:
+      - if: change_share > 0.2
+        then: {flag: amber, criterion: money}
+    options: [offshore_fixed]
+
+  - id: high_rework
+    kind: flag
+    if: rework_share > 0.22
+    then: {flag: amber, criterion: delay_months}
+
+  - id: late_go_live
+    kind: flag
+    description: Uses the derived duration
+    if: duration > target_months + 6
+    then: {flag: red, criterion: time}
+    elif:
+      - if: duration > target_months + 3
+        then: {flag: amber, criterion: time}

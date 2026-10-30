@@ -1,0 +1,27 @@
+pack: logistics_basic
+description: Capacity and 3PL rules for the warehouse template
+rules:
+  - id: expansion_too_small
+    kind: check
+    description: High growth fills the expanded site too early
+    if: demand_growth > 0.2 and capacity_orders < 100000
+    then: {fail: "Expansion capacity is too small for the growth rate"}
+    options: [expand_current]
+
+  - id: tpl_price_high
+    kind: flag
+    if: tpl_cost_per_order > 4.4
+    then: {flag: red, criterion: money}
+    elif:
+      - if: tpl_cost_per_order > 4.1
+        then: {flag: amber, criterion: money}
+    options: [outsource_3pl]
+
+  - id: long_setup_hurts_service
+    kind: effect
+    description: A long project delays the service improvement
+    if: setup_months > 14
+    then: {set: {service_level: "service_level - 0.01"}}
+    elif:
+      - if: setup_months > 10
+        then: {set: {service_level: "service_level - 0.005"}}

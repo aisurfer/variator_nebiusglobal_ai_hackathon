@@ -1,0 +1,2 @@
+The security risk register has an owner and a mitigation date.
+The compliance review remains visible to the management group.

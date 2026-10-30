@@ -1,0 +1,1656 @@
+{
+ "version": "2026-10-22",
+ "sources": {
+  "devlake": {
+   "name": "Apache DevLake",
+   "license": "Apache-2.0",
+   "home": "https://devlake.apache.org/docs/Metrics/",
+   "kind": "verbatim excerpts",
+   "commit": "360b51c9b35dbd73d729ab267194affec055034b",
+   "date": "2026-10-22"
+  },
+  "dora": {
+   "name": "DORA (Google Cloud)",
+   "license": "public definitions",
+   "home": "https://dora.dev/guides/dora-metrics-four-keys/",
+   "kind": "verbatim definition"
+  },
+  "scorecard": {
+   "name": "OpenSSF Scorecard",
+   "license": "Apache-2.0",
+   "home": "https://github.com/ossf/scorecard",
+   "kind": "verbatim check questions",
+   "commit": "83b2069eee6e3c2fe7ae3b3eb745faa62224e618"
+  },
+  "chaoss": {
+   "name": "CHAOSS",
+   "license": "MIT (metric definitions)",
+   "home": "https://chaoss.community/kbtopic/all-metrics/",
+   "kind": "short paraphrase"
+  },
+  "classic": {
+   "name": "Classic code metrics",
+   "license": "public definitions",
+   "home": "https://en.wikipedia.org/wiki/Software_metric",
+   "kind": "short paraphrase"
+  }
+ },
+ "metrics": [
+  {
+   "id": "added_loc",
+   "name": "Added Lines of Code",
+   "source": "devlake",
+   "group": "code",
+   "unit": "lines",
+   "direction": "neutral",
+   "used_by": [
+    "codebase.git_churn"
+   ],
+   "definition": "The accumulated number of added lines of code.",
+   "why": "1. identify potential bottlenecks that may affect the output 2. Encourage the team to implement a development model that matches the business requirements; develop excellent coding habits",
+   "calculation": "This metric is calculated by summing the additions of commits in the given data range.",
+   "data_sources": [
+    "This metric relies on `commits` collected from GitHub, GitLab or BitBucket."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the project/team dimension, observe the accumulated change in added lines to assess the team activity and code growth rate",
+    "From version cycle dimension, observe the active time distribution of code changes, and evaluate the effectiveness of project development model.",
+    "From the member dimension, observe the trend and stability of code output of each member, and identify the key points that affect code output by comparison."
+   ],
+   "sql_example": "SELECT\n  sum(c.additions) as added_lines_of_code\nFROM \n  commits c\n  LEFT JOIN repo_commits rc ON c.sha = rc.commit_sha\n  LEFT JOIN repos r ON r.id = rc.repo_id\nWHERE\n  -- please replace the repo ids with your own, or create a '$repo_id' variable in Grafana\n  r.id in ('repo-1','repo-2')\n  and message not like '%Merge%'\n  and $__timeFilter(c.authored_date)\n  -- the following condition will remove the month with incomplete data\n  and c.authored_date >= DATE_ADD(DATE_ADD($__timeFrom(), INTERVAL -DAY($__timeFrom())+1 DAY), INTERVAL +1 MONTH)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/AddedLinesOfCode",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/AddedLinesOfCode.md"
+  },
+  {
+   "id": "bug_age",
+   "name": "Bug Age",
+   "source": "devlake",
+   "group": "bugs_incidents",
+   "unit": "days",
+   "direction": "lower",
+   "used_by": [
+    "jira_synth"
+   ],
+   "definition": "The amount of time it takes a bug to fix.",
+   "why": "1. Help the team to establish an effective hierarchical response mechanism for bugs. Focus on the resolution of important problems in the backlog. 2. Improve team's and individual's bug fixing efficiency. Identify good/to-be-improved practices that affect bug age age",
+   "calculation": "Similar to requirement lead time, this metric equals `resolution_date - created_date` of issues in type \"BUG\".",
+   "data_sources": [
+    "This metric relies on `issues` collected from Jira, GitHub, or TAPD."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Observe the trend of bug age and locate the key reasons.",
+    "Compare the age of bugs by severity levels, types (business, functional classification), affected components, etc."
+   ],
+   "sql_example": "-- lead_time_minutes is a pre-calculated field whose value equals 'resolution_date - created_date'\nSELECT\n  lead_time_minutes/1440 as bug_age_in_days\nFROM\n  issues\nWHERE\n  type = 'BUG'",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/BugAge",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/BugAge.md"
+  },
+  {
+   "id": "bug_count_per_1k_loc",
+   "name": "Bug Count per 1k Lines of Code",
+   "source": "devlake",
+   "group": "bugs_incidents",
+   "unit": "bugs/kLOC",
+   "direction": "lower",
+   "used_by": [
+    "codebase",
+    "delivery_model.rework_share"
+   ],
+   "definition": "Amount of bugs per 1,000 lines of code.",
+   "why": "1. Defect drill-down analysis to inform the development of design and code review strategies and to improve the internal QA process 2. Assist teams to locate projects/modules with higher defect severity and density, and clean up technical debts 3. Identify good/to-be-improved practices that affect defect count or defect rate, to reduce the number of future defects",
+   "calculation": "The number of bugs divided by the total accumulated lines of code (additions + deletions) in the given data range. Data sources required - `issues` collected from Jira, GitHub or TAPD. - `commits` collected from GitHub, GitLab or BitBucket. Data Transformation Required This metric relies on the 'type-bug' configuration in Jira, GitHub or TAPD's transformation rules while adding/editing a blueprint. This configuration tells DevLake what issues are `bugs`. SQL Queries If you want to measure the monthly trend of `Bugs per 1k lines of code` in the screenshot below, please run the following SQL in Grafana. ``` with _line_of_code as ( select DATE_ADD(date(authored_date), INTERVAL -DAY(date(authored_date))+1 DAY) as time, sum(additions + deletions) as line_count from commits where message not like 'Merge%' and $__timeFilter(authored_date) group by 1 ), _bug_count as( select DATE_ADD(date(created_date), INTERVAL -DAY(date(created_date))+1 DAY) as time, count(*) as bug_count from issues i where type = 'Bug' and $__timeFilter(created_date) group by 1 ), _bug_count_per_1k_loc as( select loc.time, 1.0 * bc.bug_count / loc.line_count * 1000 as bug_count_per_1k_loc from _line_of_code loc left join _bug_count bc on bc.time = loc.time where bc.bug_count is not null and loc.line_count is not null and loc.line_count != 0 ) select date_format(time,'%M %Y') as month, bug_count_per_1k_loc as 'Bug Count per 1000 Lines of Code' from _bug_count_per_1k_loc order by time; ```",
+   "data_sources": [
+    ""
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the project or team dimension, observe the statistics on the total number of defects, the distribution of the number of defects in each severity level/type/owner, the cumulative trend of defects, and the change trend of the defect rate in thousands of lines, etc.",
+    "From version cycle dimension, observe the statistics on the cumulative trend of the number of defects/defect rate, which can be used to determine whether the growth rate of defects is slowing down, showing a flat convergence trend, and is an important reference for judging the stability of software version quality",
+    "From the time dimension, analyze the trend of the number of test defects, defect rate to locate the key items/key points",
+    "Evaluate whether the software quality and test plan are reasonable by referring to CMMI standard values"
+   ],
+   "sql_example": "with _line_of_code as (\n\tselect \n\t  DATE_ADD(date(authored_date), INTERVAL -DAY(date(authored_date))+1 DAY) as time,\n\t  sum(additions + deletions) as line_count\n\tfrom \n\t  commits\n\twhere \n\t  message not like 'Merge%'\n\t  and $__timeFilter(authored_date)\n\tgroup by 1\n),\n\n\n_bug_count as(\n  select \n    DATE_ADD(date(created_date), INTERVAL -DAY(date(created_date))+1 DAY) as time,\n    count(*) as bug_count\n  from issues i\n  where \n    type = 'Bug'\n    and $__timeFilter(created_date)\n  group by 1\n),\n\n\n_bug_count_per_1k_loc as(\n  select \n    loc.time,\n    1.0 * bc.bug_count / loc.line_count * 1000 as bug_count_per_1k_loc\n  from \n    _line_of_code loc\n    left join _bug_count bc on bc.time = loc.time\n  where\n    bc.bug_count is not null \n    and loc.line_count is not null \n    and loc.line_count != 0\n)\n\nselect \n  date_format(time,'%M %Y') as month,\n  bug_count_per_1k_loc as 'Bug Count per 1000 Lines of Code'\nfrom _bug_count_per_1k_loc \norder by time;",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/BugCountPer1kLinesOfCode",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/BugCountPer1kLinesOfCode.md"
+  },
+  {
+   "id": "build_count",
+   "name": "Build Count",
+   "source": "devlake",
+   "group": "builds",
+   "unit": "builds",
+   "direction": "neutral",
+   "used_by": [],
+   "definition": "The number of successful builds.",
+   "why": "1. As a process indicator, it reflects the value flow efficiency of upstream production and research links 2. Identify excellent/to-be-improved practices that impact the build, and drive the team to precipitate reusable tools and mechanisms to build infrastructure for fast and high-frequency delivery",
+   "calculation": "This metric is calculated by counting the number of successful cicd_pipelines, such as Jenkins builds, GitLab pipelines and GitHub workflow runs in the given data range.",
+   "data_sources": [
+    "This metric relies on Jenkins builds, GitLab pipelines or GitHub workflow runs."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the project dimension, compare the number of builds and success rate by combining the project phase and the complexity of tasks.",
+    "From the time dimension, analyze the trend of the number of builds and success rate to see if it has improved over time."
+   ],
+   "sql_example": "SELECT\n  count(*)\nFROM \n  cicd_pipelines\nWHERE\n  result = 'SUCCESS'\n  and $__timeFilter(finished_date)\nORDER BY 1",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/BuildCount",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/BuildCount.md"
+  },
+  {
+   "id": "build_duration",
+   "name": "Build Duration",
+   "source": "devlake",
+   "group": "builds",
+   "unit": "minutes",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The duration of successful builds.",
+   "why": "1. As a process indicator, it reflects the value flow efficiency of upstream production and research links 2. Identify excellent/to-be-improved practices that impact the build, and drive the team to precipitate reusable tools and mechanisms to build infrastructure for fast and high-frequency delivery",
+   "calculation": "This metric is calculated by getting the duration of successful cicd_pipelines, such as Jenkins builds, GitLab pipelines and GitHub workflow runs in the given data range.",
+   "data_sources": [
+    "This metric relies on Jenkins builds, GitLab pipelines or GitHub workflow runs."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the project dimension, compare the number of builds and success rate by combining the project phase and the complexity of tasks.",
+    "From the time dimension, analyze the trend of the number of builds and success rate to see if it has improved over time."
+   ],
+   "sql_example": "SELECT\n  avg(duration_sec/60) as duration_in_minutes\nFROM cicd_pipelines\nWHERE\n  result = 'SUCCESS'\n  and $__timeFilter(finished_date)\nORDER BY 1",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/BuildDuration",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/BuildDuration.md"
+  },
+  {
+   "id": "build_success_rate",
+   "name": "Build Success Rate",
+   "source": "devlake",
+   "group": "builds",
+   "unit": "share",
+   "direction": "higher",
+   "used_by": [],
+   "definition": "The ratio of successful builds to all builds.",
+   "why": "1. As a process indicator, it reflects the value flow efficiency of upstream production and research links 2. Identify excellent/to-be-improved practices that impact the build, and drive the team to precipitate reusable tools and mechanisms to build infrastructure for fast and high-frequency delivery",
+   "calculation": "The number of successful builds divided by the total number of builds in the given data range.",
+   "data_sources": [
+    "This metric relies on Jenkins builds, GitLab pipelines or GitHub workflow runs."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the project dimension, compare the number of builds and success rate by combining the project phase and the complexity of tasks.",
+    "From the time dimension, analyze the trend of the number of builds and success rate to see if it has improved over time."
+   ],
+   "sql_example": "SELECT\n  1.0 * sum(case when result = 'SUCCESS' then 1 else 0 end)/ count(*) as \"Build Success Rate\"\nFROM \n  cicd_pipelines\nWHERE\n  $__timeFilter(finished_date)\nORDER BY 1",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/BuildSuccessRate",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/BuildSuccessRate.md"
+  },
+  {
+   "id": "dora_change_failure_rate",
+   "name": "DORA - Change Failure Rate",
+   "source": "devlake",
+   "group": "dora",
+   "unit": "share",
+   "direction": "lower",
+   "used_by": [
+    "delivery_model.rework_share",
+    "company_model"
+   ],
+   "definition": "The percentage of changes that were made to a code that then resulted in incidents, rollbacks, or any type of production failure.",
+   "why": "Unlike Deployment Frequency and Lead Time for Changes that measure the throughput, Change Failure Rate measures the stability and quality of software delivery. A high CFR reflects a bad end-user experience as the production failure is relatively high.",
+   "calculation": "The number of deployments affected by incidents/total number of deployments. For example, if there are five deployments and two deployments cause one or more incidents, that is a 40% change failure rate. When there are multiple deployments triggered by one pipeline, tools like GitLab and BitBucket will generate more than one deployment. In these cases, DevLake will consider these deployments as ONE deployment and use the last deployment's finished date as the deployment finished date. Below are the 2023 DORA benchmarks for different development teams from Google's report. However, it's difficult to tell which group a team falls into when the team's change failure rate is between 15% and 64%. Therefore, DevLake provides its own benchmarks to address this problem:",
+   "data_sources": [
+    "`Deployments` from Jenkins, GitLab CI, GitHub Action, BitBucket Pipelines, or Webhook, etc.",
+    "`Incidents` from Jira issues, GitHub issues, TAPD issues, PagerDuty Incidents, etc."
+   ],
+   "benchmarks": [
+    {
+     "group": "Elite performers",
+     "dora": "5%",
+     "devlake": "(0, 5%]"
+    },
+    {
+     "group": "High performers",
+     "dora": "10%",
+     "devlake": "(5%, 10%]"
+    },
+    {
+     "group": "Medium performers",
+     "dora": "15%",
+     "devlake": "(10%, 15%]"
+    },
+    {
+     "group": "Low performers",
+     "dora": "64%",
+     "devlake": "(15%, 100%]"
+    }
+   ],
+   "improve": [
+    "Add unit tests for all new feature",
+    "\"Shift left\", start QA early and introduce more automated tests",
+    "Enforce code review if it's not strictly executed"
+   ],
+   "sql_example": "-- Metric 4: change failure rate per month\nwith _deployments as (\n-- When deploying multiple commits in one pipeline, GitLab and BitBucket may generate more than one deployment. However, DevLake consider these deployments as ONE production deployment and use the last one's finished_date as the finished date.\n\tSELECT\n\t\tcdc.cicd_deployment_id as deployment_id,\n\t\tmax(cdc.finished_date) as deployment_finished_date\n\tFROM \n\t\tcicd_deployment_commits cdc\n\t\tJOIN project_mapping pm on cdc.cicd_scope_id = pm.row_id and pm.`table` = 'cicd_scopes'\n\tWHERE\n\t\tpm.project_name in (${project:sqlstring}+'')\n\t\tand cdc.result = 'SUCCESS'\n\t\tand cdc.environment = 'PRODUCTION'\n\tGROUP BY 1\n\tHAVING $__timeFilter(max(cdc.finished_date))\n),\n\n_failure_caused_by_deployments as (\n-- calculate the number of incidents caused by each deployment\n\tSELECT\n\t\td.deployment_id,\n\t\td.deployment_finished_date,\n\t\tcount(distinct case when i.type = 'INCIDENT' then d.deployment_id else null end) as has_incident\n\tFROM\n\t\t_deployments d\n\t\tleft join project_issue_metrics pim on d.deployment_id = pim.deployment_id\n\t\tleft join issues i on pim.id = i.id\n\tGROUP BY 1,2\n),\n\n_change_failure_rate_for_each_month as (\n\tSELECT \n\t\tdate_format(deployment_finished_date,'%y/%m') as month,\n\t\tcase \n\t\t\twhen count(deployment_id) is null then null\n\t\t\telse sum(has_incident)/count(deployment_id) end as change_failure_rate\n\tFROM\n\t\t_failure_caused_by_deployments\n\tGROUP BY 1\n)\n\nSELECT \n\tcm.month,\n\tcfr.change_failure_rate\nFROM \n\tcalendar_months cm\n\tLEFT JOIN _change_failure_rate_for_each_month cfr on cm.month = cfr.month\n\tWHERE $__timeFilter(cm.month_timestamp)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/CFR",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/CFR.md",
+   "see_also": [
+    "https://dora.dev/guides/dora-metrics-four-keys/"
+   ]
+  },
+  {
+   "id": "commit_author_count",
+   "name": "Commit Author Count",
+   "source": "devlake",
+   "group": "code",
+   "unit": "authors",
+   "direction": "neutral",
+   "used_by": [
+    "codebase"
+   ],
+   "definition": "The number of commit authors who have committed code.",
+   "why": "Take inventory of project/team R&D resource inputs, assess input-output ratio, and rationalize resource deployment.",
+   "calculation": "This metric is calculated by counting the number of commit authors in the given data range.",
+   "data_sources": [
+    "This metric relies on commits collected from GitHub, GitLab or BitBucket."
+   ],
+   "benchmarks": [],
+   "improve": [],
+   "sql_example": "SELECT\n  count(distinct c.author_id)\nFROM \n  commits c\n  LEFT JOIN repo_commits rc ON c.sha = rc.commit_sha\n  LEFT JOIN repos r ON r.id = rc.repo_id\nWHERE\n  -- please replace the repo ids with your own, or create a '$repo_id' variable in Grafana\n  r.id in ('repo-1', 'repo-2')\n  and message not like '%Merge%'\n  and $__timeFilter(c.authored_date)\n  -- the following condition will remove the month with incomplete data\n  and c.authored_date >= DATE_ADD(DATE_ADD($__timeFrom(), INTERVAL -DAY($__timeFrom())+1 DAY), INTERVAL +1 MONTH)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/CommitAuthorCount",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/CommitAuthorCount.md"
+  },
+  {
+   "id": "commit_count",
+   "name": "Commit Count",
+   "source": "devlake",
+   "group": "code",
+   "unit": "commits",
+   "direction": "neutral",
+   "used_by": [
+    "codebase.git_churn"
+   ],
+   "definition": "The number of commits created.",
+   "why": "1. Identify potential bottlenecks that may affect output 2. Encourage R&D practices of small step submissions and develop excellent coding habits",
+   "calculation": "This metric is calculated by counting the number of commits in the given data range.",
+   "data_sources": [
+    "This metric relies on commits collected from GitHub, GitLab or BitBucket."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Identify the main reasons for the unusual number of commits and the possible impact on the number of commits through comparison",
+    "Evaluate whether the number of commits is reasonable in conjunction with more microscopic workload metrics (e.g. lines of code/code equivalents)"
+   ],
+   "sql_example": "SELECT\n  r.id,\n  c.*\nFROM \n  commits c\n  LEFT JOIN repo_commits rc ON c.sha = rc.commit_sha\n  LEFT JOIN repos r ON r.id = rc.repo_id\nWHERE\n  -- please replace the repo ids with your own, or create a '$repo_id' variable in Grafana\n  r.id in ('repo-1','repo-2')\n  and message not like '%Merge%'\n  and $__timeFilter(c.authored_date)\n  -- the following condition will remove the month with incomplete data\n  and c.authored_date >= DATE_ADD(DATE_ADD($__timeFrom(), INTERVAL -DAY($__timeFrom())+1 DAY), INTERVAL +1 MONTH)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/CommitCount",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/CommitCount.md"
+  },
+  {
+   "id": "cq_duplicated_blocks",
+   "name": "Code Quality Duplicated Blocks",
+   "source": "devlake",
+   "group": "code_quality",
+   "unit": "blocks",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "This metric is the number of duplicated blocks of lines. This metric is collected from SonarQube, check this doc for detailed definition.",
+   "why": "Duplicated Blocks is a code metric that measures the amount of duplicated code in a project. Duplicated blocks are sequences of code that are identical or nearly identical to each other, and can occur within a single file or across multiple files. Duplicated code can make the codebase harder to maintain, increase the risk of bugs and errors, and make it more difficult to understand and modify the code. Identifying and removing duplicated code can improve the maintainability, reliability, and readability of the codebase, and reduce the risk of introducing bugs or errors in the future.",
+   "calculation": "This metric is calculated by counting the total number of duplicated_blocks.",
+   "data_sources": [
+    "This metric relies on file metrics collected from SonarQube."
+   ],
+   "benchmarks": [],
+   "improve": [],
+   "sql_example": "SELECT\n  sum(duplicated_blocks)\nFROM cq_file_metrics\nWHERE\n  project_key in ('project1', 'project2')",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/CQDuplicatedBlocks",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/CQDuplicatedBlocks.md"
+  },
+  {
+   "id": "cq_duplicated_lines",
+   "name": "Code Quality Duplicated Lines",
+   "source": "devlake",
+   "group": "code_quality",
+   "unit": "lines",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "This metric is the number of lines involved in duplications. This metric is collected from SonarQube, check this doc for detailed definition.",
+   "why": "Duplicated lines are individual lines of code that are identical or nearly identical to each other, and can occur within a single file or across multiple files. Duplicated code can make the codebase harder to maintain, increase the risk of bugs and errors, and make it more difficult to understand and modify the code. Identifying and removing duplicated code can improve the maintainability, reliability, and readability of the codebase, and reduce the risk of introducing bugs or errors in the future.",
+   "calculation": "This SQL query calculates the percentage of duplicated lines in a project, as well as the total number of lines in the project. The sum(duplicated_lines) represents the total number of duplicated lines in the project, while sum(num_of_lines) represents the total number of lines of code. These two values are divided and multiplied by 100 to get the percentage of duplicated lines in the project.",
+   "data_sources": [
+    "This metric relies on file metrics collected from SonarQube."
+   ],
+   "benchmarks": [],
+   "improve": [],
+   "sql_example": "SELECT\n  CONCAT(ROUND(sum(duplicated_lines) / sum(num_of_lines) * 100, 1), '% ', 'Duplications on ', ROUND(sum(ncloc) / 1000, 0),'k Lines')\nFROM cq_file_metrics\nWHERE\n  project_key in ('project1', 'project2')",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/CQDuplicatedLines",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/CQDuplicatedLines.md"
+  },
+  {
+   "id": "cq_issue_count",
+   "name": "Code Quality Issue Count",
+   "source": "devlake",
+   "group": "code_quality",
+   "unit": "issues",
+   "direction": "lower",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "This metric is a the total number of issues found in a project by SonarQube. It includes various types of issues such as bugs, vulnerabilities, code smells, and security hotspots. This metric is collected from SonarQube, check this doc for detailed definition.",
+   "why": "Issue provides information about potential problems or issues in the code. Issues can include bugs, vulnerabilities, and code smells, which can all affect the maintainability, reliability, and security of the codebase. By identifying and addressing issues, developers can improve the quality of their code and reduce technical debt. Additionally, tracking issues over time can help to identify trends and measure progress in improving code quality.",
+   "calculation": "This metric is calculated by counting the total number of cq_issues.",
+   "data_sources": [
+    "This metric relies on issues collected from SonarQube."
+   ],
+   "benchmarks": [],
+   "improve": [],
+   "sql_example": "SELECT\n  count(*) as 'Bugs'\nFROM cq_issues\nWHERE\n  $__timeFilter(created_date)\n  and  project_key in ('project1', 'project2')\n  and `type` = 'BUG'\nORDER BY created_date",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/CQIssueCount",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/CQIssueCount.md"
+  },
+  {
+   "id": "cq_maintainability_debt",
+   "name": "Code Quality Maintainability-Debt",
+   "source": "devlake",
+   "group": "code_quality",
+   "unit": "days",
+   "direction": "lower",
+   "used_by": [
+    "codebase.file_complexity"
+   ],
+   "definition": "This metric is a measure of effort to fix all code smells. This metric is collected from SonarQube, check this doc for detailed definition.",
+   "why": "It helps developers and project managers understand the costs and risks associated with maintaining the codebase. High levels of technical debt can lead to more bugs, slower development cycles, and higher maintenance costs over time. By monitoring technical debt and working to reduce it, developers can ensure that their code is easier to maintain, more reliable, and more scalable.",
+   "calculation": "This SQL query calculates the total technical debt in days for all issues in the SonarQube instance. check this doc for detailed info.",
+   "data_sources": [
+    "This metric relies on issues collected from SonarQube."
+   ],
+   "benchmarks": [],
+   "improve": [],
+   "sql_example": "SELECT\n  CONCAT(ROUND(SUM(debt) / (8 * 60), 0), ' days') AS 'Debt'\nFROM cq_issues\nWHERE\n  $__timeFilter(created_date)\n  project_key in ('project1', 'project2')",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/CQMaintainability-Debt",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/CQMaintainability-Debt.md"
+  },
+  {
+   "id": "cq_test",
+   "name": "Code Quality Test",
+   "source": "devlake",
+   "group": "code_quality",
+   "unit": "share",
+   "direction": "higher",
+   "used_by": [],
+   "definition": "This metric is the number of unit tests that have been executed against the code. This metric is collected from SonarQube, check this doc for detailed definition.",
+   "why": "Test is an indicator used to indicate the test coverage of the code. This means that SonarQube checks that your code contains enough test cases to cover the various paths and branches in your code. This metric can help you understand the extent of your code test coverage, thereby determining your code quality and stability.",
+   "calculation": "This SQL query retrieves the test coverage percentage for the lines to cover in a project from the cq_file_metrics table in SonarQube. The query calculates the percentage by subtracting the number of uncovered lines from the total number of lines to cover, then dividing the result by the total number of lines to cover, and multiplying by 100. The result is rounded to one decimal point and displayed as a percentage. Additionally, the query also includes a message that shows the total number of lines to cover in thousands.",
+   "data_sources": [
+    "This metric relies on file_metrics collected from SonarQube."
+   ],
+   "benchmarks": [],
+   "improve": [],
+   "sql_example": "SELECT\n  CONCAT(ROUND((sum(lines_to_cover) - sum(uncovered_lines)) / sum(lines_to_cover) * 100, 1), '% ', 'Coverage on ', ROUND(sum(lines_to_cover) / 1000, 0),'k Lines to cover')\nFROM cq_file_metrics\nWHERE\n  project_key in ('project1', 'project2')",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/CQTest",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/CQTest.md"
+  },
+  {
+   "id": "deleted_loc",
+   "name": "Deleted Lines of Code",
+   "source": "devlake",
+   "group": "code",
+   "unit": "lines",
+   "direction": "neutral",
+   "used_by": [
+    "codebase.git_churn"
+   ],
+   "definition": "The accumulated number of deleted lines of code.",
+   "why": "1. identify potential bottlenecks that may affect the output 2. Encourage the team to implement a development model that matches the business requirements; develop excellent coding habits",
+   "calculation": "This metric is calculated by summing the deletions of commits in the given data range.",
+   "data_sources": [
+    "This metric relies on `commits` collected from GitHub, GitLab or BitBucket."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the project/team dimension, observe the accumulated change in Added lines to assess the team activity and code growth rate",
+    "From version cycle dimension, observe the active time distribution of code changes, and evaluate the effectiveness of project development model.",
+    "From the member dimension, observe the trend and stability of code output of each member, and identify the key points that affect code output by comparison."
+   ],
+   "sql_example": "SELECT\n  sum(c.deletions) as deleted_lines_of_code\nFROM \n  commits c\n  LEFT JOIN repo_commits rc ON c.sha = rc.commit_sha\n  LEFT JOIN repos r ON r.id = rc.repo_id\nWHERE\n  -- please replace the repo ids with your own, or create a '$repo_id' variable in Grafana\n  r.id in ('repo-1','repo-2')\n  and message not like '%Merge%'\n  and $__timeFilter(c.authored_date)\n  -- the following condition will remove the month with incomplete data\n  and c.authored_date >= DATE_ADD(DATE_ADD($__timeFrom(), INTERVAL -DAY($__timeFrom())+1 DAY), INTERVAL +1 MONTH)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/DeletedLinesOfCode",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/DeletedLinesOfCode.md"
+  },
+  {
+   "id": "dora_deployment_frequency",
+   "name": "DORA - Deployment Frequency",
+   "source": "devlake",
+   "group": "dora",
+   "unit": "deployments/period",
+   "direction": "higher",
+   "used_by": [
+    "delivery_model"
+   ],
+   "definition": "How often an organization deploys code to production or release it to end users. Below is a picture showing the definition of DevLake `deployments`.",
+   "why": "Deployment frequency reflects the efficiency of a team's deployment. A team that deploys more frequently can deliver the product faster and users' feature requirements can be met faster.",
+   "calculation": "Deployment frequency is calculated based on the number of `deployment days`, not the number of deployments, e.g., daily, weekly, monthly, yearly. When there are multiple deployments triggered by one pipeline, tools like GitLab and BitBucket will generate more than one deployment. In these cases, DevLake will consider these deployments as ONE deployment and use the last deployment's finished date as the deployment finished date. Below are the 2023 DORA benchmarks for different development teams from Google's report. However, it's difficult to tell which group a team falls into when the team's deployment frequency is `between once per week and once per month`. Therefore, DevLake provides its own benchmarks to address this problem:",
+   "data_sources": [
+    "`Deployments` from Jenkins, GitLab CI, GitHub Action, BitBucket Pipelines, Webhook, etc."
+   ],
+   "benchmarks": [
+    {
+     "group": "Elite performers",
+     "dora": "On-demand (multiple deploys per day)",
+     "devlake": "On-demand",
+     "criteria": "Median Number of Deployment Days per Week >= 5"
+    },
+    {
+     "group": "High performers",
+     "dora": "Between once per day and once per week",
+     "devlake": "Between once per day and once per week",
+     "criteria": "Median Number of Deployment Days per Week >= 1"
+    },
+    {
+     "group": "Medium performers",
+     "dora": "Between once per week and once per month",
+     "devlake": "Between once per week and once per month",
+     "criteria": "Median Number of Deployment Days per Month >= 1"
+    },
+    {
+     "group": "Low performers",
+     "dora": "Between once per week and once per month",
+     "devlake": "Fewer than once per month",
+     "criteria": "Median Number of Deployment Days per Month < 1"
+    }
+   ],
+   "improve": [
+    "Trunk development. Work in small batches and often merge their work into shared trunks.",
+    "Integrate CI/CD tools for automated deployment",
+    "Improve automated test coverage"
+   ],
+   "sql_example": "-- Metric 1: Number of deployments per month\nwith _deployments as(\n-- When deploying multiple commits in one pipeline, GitLab and BitBucket may generate more than one deployment. However, DevLake consider these deployments as ONE production deployment and use the last one's finished_date as the finished date.\n\tSELECT \n\t\tdate_format(deployment_finished_date,'%y/%m') as month,\n\t\tcount(cicd_deployment_id) as deployment_count\n\tFROM (\n\t\tSELECT\n\t\t\tcdc.cicd_deployment_id,\n\t\t\tmax(cdc.finished_date) as deployment_finished_date\n\t\tFROM cicd_deployment_commits cdc\n\t\tJOIN project_mapping pm on cdc.cicd_scope_id = pm.row_id and pm.`table` = 'cicd_scopes'\n\t\tWHERE\n\t\t\tpm.project_name in (${project:sqlstring}+'')\n\t\t\tand cdc.result = 'SUCCESS'\n\t\t\tand cdc.environment = 'PRODUCTION'\n\t\tGROUP BY 1\n\t\tHAVING $__timeFilter(max(cdc.finished_date))\n\t) _production_deployments\n\tGROUP BY 1\n)\n\nSELECT \n\tcm.month, \n\tcase when d.deployment_count is null then 0 else d.deployment_count end as deployment_count\nFROM \n\tcalendar_months cm\n\tLEFT JOIN _deployments d on cm.month = d.month\n\tWHERE $__timeFilter(cm.month_timestamp)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/DeploymentFrequency",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/DeploymentFrequency.md",
+   "see_also": [
+    "https://dora.dev/guides/dora-metrics-four-keys/"
+   ]
+  },
+  {
+   "id": "dora_failed_deployment_recovery_time",
+   "name": "DORA - Failed Deployment Recovery Time",
+   "source": "devlake",
+   "group": "dora",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [
+    "company_model"
+   ],
+   "definition": "The time of changes that were made to a code that then resulted in incidents, rollbacks, or any type of production failure.",
+   "why": "This metric is crucial in evaluating the resilience and efficiency of a team's deployment process. A shorter recovery time indicates a team's ability to swiftly detect issues, troubleshoot them, and restore the system to a functional state, minimizing downtime and impact on end-users.",
+   "calculation": "The time from deployment to the incident corresponding to deployment is resolved. For example, if a deployment finishes at 10:00 AM and causes an incident at 10:20. Then, the incident gets resolved at 11:00 AM. The failed deployment recovery time is one hour. Below are the 2023 DORA benchmarks for different development teams from Google's report. However, it's difficult to tell which group a team falls into when the team's failed deployment recovery time is `between one week and six months`. Therefore, DevLake provides its own benchmarks to address this problem:",
+   "data_sources": [
+    "`Deployments` from Jenkins, GitLab CI, GitHub Action, BitBucket Pipelines, Webhook, etc.",
+    "`Incidents` from Jira issues, GitHub issues, TAPD issues, PagerDuty Incidents, Webhook, etc."
+   ],
+   "benchmarks": [
+    {
+     "group": "Elite performers",
+     "dora": "Less than one hour",
+     "devlake": "Less than one hour"
+    },
+    {
+     "group": "High performers",
+     "dora": "Less than one day",
+     "devlake": "Less than one day"
+    },
+    {
+     "group": "Medium performers",
+     "dora": "Between one day and one week",
+     "devlake": "Between one day and one week"
+    },
+    {
+     "group": "Low performers",
+     "dora": "More than six months",
+     "devlake": "More than one week"
+    }
+   ],
+   "improve": [
+    "Add unit tests for all new feature",
+    "\"Shift left\", start QA early and introduce more automated tests",
+    "Enforce code review if it is not strictly executed",
+    "Improve your user support workflow to cope with incidents more efficiently"
+   ],
+   "sql_example": "--  ***** 2023 report ***** --\n--  Metric 4: Failed deployment recovery time\nwith _deployments as (\n    SELECT\n        cdc.cicd_deployment_id as deployment_id,\n        max(cdc.finished_date) as deployment_finished_date\n    FROM \n        cicd_deployment_commits cdc\n        JOIN project_mapping pm on cdc.cicd_scope_id = pm.row_id and pm.`table` = 'cicd_scopes'\n    WHERE\n        pm.project_name in ($project)\n        and cdc.result = 'SUCCESS'\n        and cdc.environment = 'PRODUCTION'\n    GROUP BY 1\n    HAVING $__timeFilter(max(cdc.finished_date))\n),\n\n_incidents_for_deployments as (\n    SELECT\n        i.id as incident_id,\n        i.created_date as incident_create_date,\n        i.resolution_date as incident_resolution_date,\n        fd.deployment_id as caused_by_deployment,\n        fd.deployment_finished_date,\n        date_format(fd.deployment_finished_date,'%y/%m') as deployment_finished_month\n    FROM\n        issues i\n        left join project_issue_metrics pim on i.id = pim.id\n        join _deployments fd on pim.deployment_id = fd.deployment_id\n    WHERE\n        i.type = 'INCIDENT'\n    and $__timeFilter(i.resolution_date)\n),\n\n_recovery_time_ranks as (\n    SELECT *, percent_rank() over(PARTITION BY deployment_finished_month order by TIMESTAMPDIFF(MINUTE, deployment_finished_date, incident_resolution_date)) as ranks\n    FROM _incidents_for_deployments\n),\n\n_median_recovery_time as (\n    SELECT deployment_finished_month, max(TIMESTAMPDIFF(MINUTE, deployment_finished_date, incident_resolution_date)) as median_recovery_time\n    FROM _recovery_time_ranks\n    WHERE ranks <= 0.5\n    GROUP BY deployment_finished_month\n),\n\n_metric_recovery_time_2023_report as (\n    SELECT \n    cm.month,\n    case \n        when m.median_recovery_time is null then 0 \n        else m.median_recovery_time/60 \n        end as median_recovery_time_in_hour\n    FROM \n    calendar_months cm\n    LEFT JOIN _median_recovery_time m on cm.month = m.deployment_finished_month\n    WHERE $__timeFilter(cm.month_timestamp)\n)\n\nSELECT \n  cm.month,\n  CASE \n    WHEN '${dora_report}' = '2023' THEN mrt.median_recovery_time_in_hour\n  END AS '${title_value} In Hours'\nFROM \n  calendar_months cm\n  LEFT JOIN _metric_recovery_time_2023_report mrt ON cm.month = mrt.month\nWHERE \n  $__timeFilter(cm.month_timestamp)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/FailedDeploymentRecoveryTime",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/FailedDeploymentRecoveryTime.md",
+   "see_also": [
+    "https://dora.dev/guides/dora-metrics-four-keys/"
+   ]
+  },
+  {
+   "id": "incident_age",
+   "name": "Incident Age",
+   "source": "devlake",
+   "group": "bugs_incidents",
+   "unit": "days",
+   "direction": "lower",
+   "used_by": [
+    "company_model"
+   ],
+   "definition": "The amount of time it takes an incident to fix.",
+   "why": "1. Help the team to establish an effective hierarchical response mechanism for incidents. Focus on the resolution of important problems in the backlog. 2. Improve team's and individual's incident fixing efficiency. Identify good/to-be-improved practices that affect incident age",
+   "calculation": "Similar to requirement lead time, this metric equals `resolution_date - created_date` of issues in type \"INCIDENT\".",
+   "data_sources": [
+    "This metric relies on `issues` collected from Jira, GitHub, TAPD, or PagerDuty."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Observe the trend of incident age and locate the key reasons.",
+    "Compare the age of incidents by severity levels, types (business, functional classification), affected components, etc."
+   ],
+   "sql_example": "-- lead_time_minutes is a pre-calculated field whose value equals 'resolution_date - created_date'\nSELECT\n  lead_time_minutes/1440 as incident_age_in_days\nFROM\n  issues\nWHERE\n  type = 'INCIDENT'",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/IncidentAge",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/IncidentAge.md"
+  },
+  {
+   "id": "incident_count_per_1k_loc",
+   "name": "Incident Count per 1k Lines of Code",
+   "source": "devlake",
+   "group": "bugs_incidents",
+   "unit": "incidents/kLOC",
+   "direction": "lower",
+   "used_by": [
+    "company_model"
+   ],
+   "definition": "Amount of incidents per 1,000 lines of code.",
+   "why": "1. Defect drill-down analysis to inform the development of design and code review strategies and to improve the internal QA process 2. Assist teams to locate projects/modules with higher defect severity and density, and clean up technical debts 3. Identify good/to-be-improved practices that affect defect count or defect rate, to reduce the number of future defects",
+   "calculation": "The number of incidents divided by total accumulated lines of code (additions + deletions) in the given data range.",
+   "data_sources": [
+    "`issues` collected from Jira, GitHub, TAPD or PagerDuty.",
+    "`commits` collected from GitHub, GitLab or BitBucket."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the project or team dimension, observe the statistics on the total number of defects, the distribution of the number of defects in each severity level/type/owner, the cumulative trend of defects, and the change trend of the defect rate in thousands of lines, etc.",
+    "From version cycle dimension, observe the statistics on the cumulative trend of the number of defects/defect rate, which can be used to determine whether the growth rate of defects is slowing down, showing a flat convergence trend, and is an important reference for judging the stability of software version quality",
+    "From the time dimension, analyze the trend of the number of test defects, defect rate to locate the key items/key points",
+    "Evaluate whether the software quality and test plan are reasonable by referring to CMMI standard values"
+   ],
+   "sql_example": "with _line_of_code as (\n\tselect \n\t  DATE_ADD(date(authored_date), INTERVAL -DAY(date(authored_date))+1 DAY) as time,\n\t  sum(additions + deletions) as line_count\n\tfrom \n\t  commits\n\twhere \n\t  message not like 'Merge%'\n\t  and $__timeFilter(authored_date)\n\tgroup by 1\n),\n\n\n_incident_count as(\n  select \n    DATE_ADD(date(created_date), INTERVAL -DAY(date(created_date))+1 DAY) as time,\n    count(*) as incident_count\n  from issues i\n  where \n    type = 'INCIDENT'\n    and $__timeFilter(created_date)\n  group by 1\n),\n\n\n_incident_count_per_1k_loc as(\n  select \n    loc.time,\n    1.0 * ic.incident_count / loc.line_count * 1000 as incident_count_per_1k_loc\n  from \n    _line_of_code loc\n    left join _incident_count ic on ic.time = loc.time\n  where\n    ic.incident_count is not null \n    and loc.line_count is not null \n    and loc.line_count != 0\n)\n\nselect \n  date_format(time,'%M %Y') as month,\n  incident_count_per_1k_loc as 'Incident Count per 1000 Lines of Code'\nfrom _incident_count_per_1k_loc \norder by time;",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/IncidentCountPer1kLinesOfCode",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/IncidentCountPer1kLinesOfCode.md"
+  },
+  {
+   "id": "dora_lead_time_for_changes",
+   "name": "DORA - Median Lead Time for Changes",
+   "source": "devlake",
+   "group": "dora",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [
+    "delivery_model"
+   ],
+   "definition": "The median amount of time for a code change to be deployed into production.",
+   "why": "This metric measures the time it takes to a code change to the production environment and reflects the speed of software delivery. A lower average change preparation time means that your team is efficient at coding and deploying your project.",
+   "calculation": "This metric is quite similar to PR Cycle Time. The difference is that 'Lead Time for Changes' uses a different method to filter PRs. 1. Find the PRs' associated deployment commits whose finished_date falls into the time range that users select. 2. Find the associated pull requests of the commits diff between two consecutive successful `deployment commits` in the production environment. 3. Calculate the PRs' median cycle time. This will be the Median Lead Time for Changes. By default, every merged PR counts. To count only PRs from certain source branches, see Choose which pull requests count. PR cycle time is pre-calculated by the `dora` plugin during every data collection. You can find it in `pr_cycle_time` in table.project_pr_metrics of DevLake's database. Below are the 2023 DORA benchmarks for different development teams from Google's report. However, it's difficult to tell which group a team falls into when the team's median lead time for changes is `between one week and one month`. Therefore, DevLake provides its own benchmarks to address this problem:",
+   "data_sources": [
+    "`Deployments` from Jenkins, GitLab CI, GitHub Action, BitBucket Pipelines, Webhook, etc.",
+    "`Pull Requests` from GitHub PRs, GitLab MRs, BitBucket PRs, Azure DevOps PRs, etc."
+   ],
+   "benchmarks": [
+    {
+     "group": "Elite performers",
+     "dora": "Less than one day",
+     "devlake": "Less than one day"
+    },
+    {
+     "group": "High performers",
+     "dora": "Between one day and one week",
+     "devlake": "Between one day and one week"
+    },
+    {
+     "group": "Medium performers",
+     "dora": "Between one week and one month",
+     "devlake": "Between one week and one month"
+    },
+    {
+     "group": "Low performers",
+     "dora": "Between one week and one month",
+     "devlake": "More than one month"
+    }
+   ],
+   "improve": [
+    "Break requirements into smaller, more manageable deliverables",
+    "Optimize the code review process",
+    "\"Shift left\", start QA early and introduce more automated tests",
+    "Integrate CI/CD tools to automate the deployment process"
+   ],
+   "sql_example": "-- Metric 2: median change lead time per month\nwith _pr_stats as (\n-- get the cycle time of PRs deployed by the deployments finished each month\n\tSELECT\n\t\tdistinct pr.id,\n\t\tdate_format(cdc.finished_date,'%y/%m') as month,\n\t\tppm.pr_cycle_time\n\tFROM\n\t\tpull_requests pr\n\t\tjoin project_pr_metrics ppm on ppm.id = pr.id\n\t\tjoin project_mapping pm on pr.base_repo_id = pm.row_id and pm.`table` = 'repos'\n\t\tjoin cicd_deployment_commits cdc on ppm.deployment_commit_id = cdc.id\n\tWHERE\n\t\tpm.project_name in (${project:sqlstring}+'') \n\t\tand pr.merged_date is not null\n\t\tand ppm.pr_cycle_time is not null\n\t\tand $__timeFilter(cdc.finished_date)\n),\n\n_find_median_clt_each_month_ranks as(\n\tSELECT *, percent_rank() over(PARTITION BY month order by pr_cycle_time) as ranks\n\tFROM _pr_stats\n),\n\n_clt as(\n\tSELECT month, max(pr_cycle_time) as median_change_lead_time\n\tFROM _find_median_clt_each_month_ranks\n\tWHERE ranks <= 0.5\n\tgroup by month\n)\n\nSELECT \n\tcm.month,\n\tcase \n\t\twhen _clt.median_change_lead_time is null then 0 \n\t\telse _clt.median_change_lead_time/60 end as median_change_lead_time_in_hour\nFROM \n\tcalendar_months cm\n\tLEFT JOIN _clt on cm.month = _clt.month\n  WHERE $__timeFilter(cm.month_timestamp)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/LeadTimeForChanges",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/LeadTimeForChanges.md",
+   "see_also": [
+    "https://dora.dev/guides/dora-metrics-four-keys/"
+   ]
+  },
+  {
+   "id": "dora_time_to_restore_service",
+   "name": "DORA - Median Time to Restore Service",
+   "source": "devlake",
+   "group": "dora",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [
+    "company_model"
+   ],
+   "definition": "The time to restore service after service incidents, rollbacks, or any type of production failure happened.",
+   "why": "This metric is essential to measure the disaster control capability of your team and the robustness of the software.",
+   "calculation": "MTTR = The median incident age of all incidents. If you have three incidents that happened in the given data range, one lasting 1 hour, one lasting 3 hours and one lasting 4 hours. Your MTTR will be: median(1, 3, 4) = 3 hours. Below are the 2023 DORA benchmarks for different development teams from Google's report. However, it's difficult to tell which group a team falls into when the team's median time to restore service is `between one week and six months`. Therefore, DevLake provides its own benchmarks to address this problem:",
+   "data_sources": [
+    "`Incidents` from Jira issues, GitHub issues, TAPD issues, PagerDuty Incidents, etc."
+   ],
+   "benchmarks": [
+    {
+     "group": "Elite performers",
+     "dora": "Less than one hour",
+     "devlake": "Less than one hour"
+    },
+    {
+     "group": "High performers",
+     "dora": "Less than one day",
+     "devlake": "Less than one day"
+    },
+    {
+     "group": "Medium performers",
+     "dora": "Between one day and one week",
+     "devlake": "Between one day and one week"
+    },
+    {
+     "group": "Low performers",
+     "dora": "More than six months",
+     "devlake": "More than one week"
+    }
+   ],
+   "improve": [
+    "Use automated tools to quickly report failure",
+    "Prioritize recovery when a failure happens",
+    "Establish a go-to action plan to respond to failures immediately",
+    "Reduce the deployment time for failure-fixing"
+   ],
+   "sql_example": "-- Metric 3: median time to restore service - MTTR\n-- Metric 3: median time to restore service - MTTR\nwith _incidents as (\n-- get the number of incidents created each month\n\tSELECT\n\t  distinct i.id,\n\t\tdate_format(i.created_date,'%y/%m') as month,\n\t\tcast(lead_time_minutes as signed) as lead_time_minutes\n\tFROM\n\t\tissues i\n\t  join board_issues bi on i.id = bi.issue_id\n\t  join boards b on bi.board_id = b.id\n\t  join project_mapping pm on b.id = pm.row_id and pm.`table` = 'boards'\n\tWHERE\n\t  pm.project_name in (${project:sqlstring}+'')\n\t\tand i.type = 'INCIDENT'\n\t\tand i.lead_time_minutes is not null\n),\n\n_find_median_mttr_each_month_ranks as(\n\tSELECT *, percent_rank() over(PARTITION BY month order by lead_time_minutes) as ranks\n\tFROM _incidents\n),\n\n_mttr as(\n\tSELECT month, max(lead_time_minutes) as median_time_to_resolve\n\tFROM _find_median_mttr_each_month_ranks\n\tWHERE ranks <= 0.5\n\tGROUP BY month\n)\n\nSELECT \n\tcm.month,\n\tcase \n\t\twhen m.median_time_to_resolve is null then 0 \n\t\telse m.median_time_to_resolve/60 end as median_time_to_resolve_in_hour\nFROM \n\tcalendar_months cm\n\tLEFT JOIN _mttr m on cm.month = m.month\n  WHERE $__timeFilter(cm.month_timestamp)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/MTTR",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/MTTR.md",
+   "see_also": [
+    "https://dora.dev/guides/dora-metrics-four-keys/"
+   ]
+  },
+  {
+   "id": "pr_coding_time",
+   "name": "PR Coding Time",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The time it takes from the first commit until a PR is issued.",
+   "why": "It is recommended that you keep every task on a workable and manageable scale for a reasonably short amount of coding time. The average coding time of most engineering teams is around 3-4 days.",
+   "calculation": "",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [],
+   "sql_example": "SELECT\n  pr_coding_time/60 as 'PR Coding Time(h)'\nFROM\n  project_pr_metrics",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRCodingTime",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRCodingTime.md"
+  },
+  {
+   "id": "pr_count",
+   "name": "PR Count",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "PRs",
+   "direction": "neutral",
+   "used_by": [],
+   "definition": "The number of pull requests (eg. GitHub PRs, Bitbucket PRs, GitLab MRs) created.",
+   "why": "1. Code review metrics are process indicators to provide quick feedback on developers' code quality 2. Promote the team to establish a unified coding specification and standardize the code review criteria 3. Identify modules with low-quality risks in advance, optimize practices, and precipitate into reusable knowledge and tools to avoid technical debt accumulation",
+   "calculation": "This metric is calculated by counting the number of PRs in the given data range.",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the developer dimension, we evaluate the code quality of developers by combining the task complexity with the metrics related to the number of review passes and review rounds.",
+    "From the reviewer dimension, we observe the reviewer's review style by taking into account the task complexity, the number of passes and the number of review rounds.",
+    "From the project/team dimension, we combine the project phase and team task complexity to aggregate the metrics related to the number of review passes and review rounds, and identify the modules with abnormal code review process and possible quality risks."
+   ],
+   "sql_example": "select\n\tcount(*) as pull_request_count\nfrom \n\tpull_requests pr\nwhere\n  -- $__timeFilter will take Grafana's time range\n  $__timeFilter(created_date)\n  -- please replace the repo ids with your own, or create a '$repo_id' variable in Grafana\n\tand base_repo_id in ('repo_1', 'repo_2')\n  -- remove PRs submitted by bots, comment it out if you don't need it\n  and author_name not rlike  '^robot-|-robot$|\\\\[bot\\\\]|-bot$|-ci$|-testing$'",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRCount",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRCount.md"
+  },
+  {
+   "id": "pr_cycle_time",
+   "name": "PR Cycle Time",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [
+    "delivery_model.productivity"
+   ],
+   "definition": "PR Cycle Time is the sum of PR Coding Time, PR Time-to-Merge and PR Deploy Time. It is the total time from the first commit to when the PR is deployed. The reason why we use PR Time-to-Merge rather than PR Pickup Time + PR Review Time is that a merged PR may not have any review. In this case, PR Pickup Time and PR Review Time will be NULL, while PR Time-to-Merge is not.",
+   "why": "PR Cycle Time indicates the overall velocity of the delivery progress in terms of PR.",
+   "calculation": "You can define `deployment` based on your actual practice. For a full list of `deployment`'s definitions that DevLake support, please refer to Deployment Frequency. If the project sets a DORA source branch pattern, only PRs whose source branch matches it are measured. See Choose which pull requests count.",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Divide coding tasks into workable and manageable pieces;",
+    "Use DevLake's dashboards to monitor your delivery progress;",
+    "Have a habit to check for hanging PRs regularly;",
+    "Set up alerts for your communication tools (e.g. Slack, Lark) when new PRs are issued;",
+    "Use automated tests for the initial work;",
+    "Reduce PR size;",
+    "Analyze the causes for long reviews."
+   ],
+   "sql_example": "SELECT\n  pr_cycle_time/60 as 'PR Cycle Time(h)'\nFROM\n  project_pr_metrics",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRCycleTime",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRCycleTime.md"
+  },
+  {
+   "id": "pr_deploy_time",
+   "name": "PR Deploy Time",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The time it takes from when a PR is merged to when it is deployed.",
+   "why": "1. Based on historical data, establish a baseline of the delivery capacity of a single iteration to improve the organization and planning of R&D resources. 2. Evaluate whether the delivery capacity matches the business phase and demand scale. Identify key bottlenecks and reasonably allocate resources.",
+   "calculation": "`PR deploy time` is calculated by subtracting a PR's deployed_date and merged_date. Hence, we should associate PR/MRs with deployments. Here are the detailed steps: 1. Find the commits diff between two consecutive deployments by deployments' commit_sha under the same scope and environment (in terms of TESTING/STAGING/PRODUCTION), for example, we will get commit-2 and commit-3 by calculating commits_diff between deployment-1 and deployment-2, which means commit-2 and commit-3 are deployed by deployment-2 2. Connect PR/MR and commits_diff through merge_commit or pr_commit, for example, we get pr-3 connected to commit-3 3. Now we can get pr-3's deploy time by finish_time of deployment-2 minus merge_time of pr-3. Data Transformation Required This metric relies on two sources: 1. PR/MRs collected from GitHub or GitLab by enabling \"Code Review\" under the Data Entities section. 2. Deployments collected in one of the following ways:: - Open APIs of Jenkins, GitLab, GitHub, etc by enabling \"CICD\" under the Data Entities section. - Webhook for general CI tools. - Releases and PR/MRs from GitHub, GitLab APIs, etc. SQL Queries The following SQL shows how to find the `deploy time` of a specific PR. DevLake pre-calculates the metric and stores it in table.project_pr_metrics. ``` SELECT pr_deploy_time/60 as 'PR Deploy Time(h)' FROM project_pr_metrics ``` If you want to measure the monthly trend of `PR deploy time` in the screenshot below, please run the following SQL in Grafana. ``` SELECT DATE_ADD(date(pr.created_date), INTERVAL -DAY(date(pr.created_date))+1 DAY) as time, avg(ppm.pr_deploy_time)/60 as 'PR Deploy Time(h)' FROM pull_requests pr JOIN project_pr_metrics ppm ON pr.id = ppm.id GROUP BY 1 ORDER BY 1 ```",
+   "data_sources": [
+    ""
+   ],
+   "benchmarks": [],
+   "improve": [],
+   "sql_example": "SELECT\n  pr_deploy_time/60 as 'PR Deploy Time(h)'\nFROM\n  project_pr_metrics",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRDeployTime",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRDeployTime.md"
+  },
+  {
+   "id": "pr_merge_rate",
+   "name": "PR Merge Rate",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "share",
+   "direction": "higher",
+   "used_by": [],
+   "definition": "The ratio of PRs/MRs that get merged.",
+   "why": "1. Code review metrics are process indicators to provide quick feedback on developers' code quality 2. Promote the team to establish a unified coding specification and standardize the code review criteria 3. Identify modules with low-quality risks in advance, optimize practices, and precipitate into reusable knowledge and tools to avoid technical debt accumulation",
+   "calculation": "The number of merged PRs divided by the number of all PRs in the given data range.",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "From the developer dimension, we evaluate the code quality of developers by combining the task complexity with the metrics related to the number of review passes and review rounds.",
+    "From the reviewer dimension, we observe the reviewer's review style by taking into account the task complexity, the number of passes and the number of review rounds.",
+    "From the project/team dimension, we combine the project phase and team task complexity to aggregate the metrics related to the number of review passes and review rounds, and identify the modules with abnormal code review process and possible quality risks."
+   ],
+   "sql_example": "select\n\tcount(distinct case when merged_date is not null then id else null end)/count(*) as pr_merged_rate\nfrom \n\tpull_requests pr\nwhere\n  -- $__timeFilter will take Grafana's time range\n  $__timeFilter(created_date)\n  -- please replace the repo ids with your own, or create a '$repo_id' variable in Grafana\n\tand base_repo_id in ('repo_1', 'repo_2')\n  -- remove PRs submitted by bots, comment it out if you don't need it\n  and author_name not rlike  '^robot-|-robot$|\\\\[bot\\\\]|-bot$|-ci$|-testing$'",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRMergeRate",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRMergeRate.md"
+  },
+  {
+   "id": "pr_pickup_time",
+   "name": "PR Pickup Time",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The time it takes from when a PR is issued until the first comment is added to that PR.",
+   "why": "PR Pickup Time shows how engaged your team is in collaborative work by identifying the delay in picking up PRs.",
+   "calculation": "",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Use DevLake's dashboard to monitor your delivery progress;",
+    "Have a habit to check for hanging PRs regularly;",
+    "Set up alerts for your communication tools (e.g. Slack, Lark) when new PRs are issued."
+   ],
+   "sql_example": "SELECT\n  pr_pickup_time/60 as 'PR Pickup Time(h)'\nFROM\n  project_pr_metrics",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRPickupTime",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRPickupTime.md"
+  },
+  {
+   "id": "pr_review_depth",
+   "name": "PR Review Depth",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "comments/PR",
+   "direction": "higher",
+   "used_by": [],
+   "definition": "The average number of comments of PRs in the selected time range.",
+   "why": "PR Review Depth (in Comments per RR) is related to the quality of code review, indicating how thorough your team reviews PRs.",
+   "calculation": "This metric is calculated by counting the total number of PR comments divided by the total number of PRs in the selected time range.",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Encourage multiple reviewers to review a PR;",
+    "Review Depth is an indicator for generally how thorough your PRs are reviewed, but it does not mean the deeper the better. In some cases, spending an excessive amount of resources on reviewing PRs is also not recommended."
+   ],
+   "sql_example": "SELECT\n  DATE_ADD(date(pr.created_date), INTERVAL -$interval(date(pr.created_date))+1 DAY) as time,\n  count(distinct prc.id)/count(pr.id) as \"PR Review Depth\"\nFROM \n  pull_requests pr\n  left join pull_request_comments prc on pr.id = prc.pull_request_id\nWHERE\n  $__timeFilter(pr.created_date)\n  and pr.base_repo_id in ($repo_id)\n  and pr.merged_date is not null\nGROUP BY 1",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRReviewDepth",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRReviewDepth.md"
+  },
+  {
+   "id": "pr_review_time",
+   "name": "PR Review Time",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The time it takes to complete a code review of a PR before it gets merged.",
+   "why": "Code review should be conducted almost in real-time and usually take less than two days. Abnormally long PR Review Time may indicate one or more of the following problems: 1. The PR size is too large that makes it difficult to review. 2. The team is too busy to review code.",
+   "calculation": "This metric is the time frame between when the first comment is added to a PR, to when the PR is merged.",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Use DevLake's dashboards to monitor your delivery progress;",
+    "Use automated tests for the initial work;",
+    "Reduce PR size;",
+    "Analyze the causes for long reviews."
+   ],
+   "sql_example": "SELECT\n  pr_review_time/60 as 'PR Review Time(h)'\nFROM\n  project_pr_metrics",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRReviewTime",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRReviewTime.md"
+  },
+  {
+   "id": "pr_size",
+   "name": "PR Size",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "lines/PR",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The average code changes (in Lines of Code) of PRs in the selected time range.",
+   "why": "Small PRs can reduce risks of introducing new bugs and increase code review quality, as problems may often be hidden in big chuncks of code and difficult to identify.",
+   "calculation": "This metric is calculated by counting the total number of code changes (in LOC) divided by the total number of PRs in the selected time range.",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Divide coding tasks into workable and manageable pieces;",
+    "Encourage developers to submit small PRs and only keep related changes in the same PR."
+   ],
+   "sql_example": "with _pr_commits_data as(\n  SELECT\n    DATE_ADD(date(pr.created_date), INTERVAL -$interval(date(pr.created_date))+1 DAY) as time,\n    pr.id as pr_id,\n    prc.commit_sha,\n    sum(c.additions)+sum(c.deletions) as loc\n  FROM \n    pull_requests pr\n    left join pull_request_commits prc on pr.id = prc.pull_request_id\n    left join commits c on prc.commit_sha = c.sha\n  WHERE\n    $__timeFilter(pr.created_date)\n    and pr.base_repo_id in ($repo_id)\n  group by 1,2,3\n)\n\nSELECT \n  time,\n  sum(loc)/count(distinct pr_id) as 'PR Size'\nFROM _pr_commits_data\nGROUP BY 1",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRSize",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRSize.md"
+  },
+  {
+   "id": "pr_time_to_merge",
+   "name": "PR Time To Merge",
+   "source": "devlake",
+   "group": "pull_requests",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The time it takes from when a PR is issued to when it is merged. Essentially, PR Time to Merge = PR Pickup Time + PR Review Time.",
+   "why": "The delay of reviewing and waiting to review PRs has large impact on delivery speed, while reasonably short PR Time to Merge can indicate frictionless teamwork. Improving on this metric is the key to reduce PR cycle time.",
+   "calculation": "",
+   "data_sources": [
+    "This metric relies on PRs/MRs collected from GitHub, GitLab, BitBucket, Gitee or other code review tools."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Use DevLake's dashboards to monitor your delivery progress;",
+    "Have a habit to check for hanging PRs regularly;",
+    "Set up alerts for your communication tools (e.g. Slack, Lark) when new PRs are issued;",
+    "Reduce PR size;",
+    "Analyze the causes for long reviews."
+   ],
+   "sql_example": "SELECT\n\tavg(TIMESTAMPDIFF(Minute,created_date,merged_date)/1440)\nFROM \n\tpull_requests\nWHERE \n  -- $__timeFilter will take Grafana's time range\n  $__timeFilter(created_date)\n  -- please replace the repo ids with your own, or create a '$repo_id' variable in Grafana\n\tand base_repo_id in ('repo_1', 'repo_2')\n\tand merged_date is not null",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/PRTimeToMerge",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/PRTimeToMerge.md"
+  },
+  {
+   "id": "requirement_count",
+   "name": "Requirement Count",
+   "source": "devlake",
+   "group": "requirements",
+   "unit": "issues",
+   "direction": "neutral",
+   "used_by": [
+    "jira_synth"
+   ],
+   "definition": "The number of delivered requirements or features.",
+   "why": "1. Based on historical data, establish a baseline of the delivery capacity of a single iteration to improve the organization and planning of R&D resources. 2. Evaluate whether the delivery capacity matches the business phase and demand scale. Identify key bottlenecks and reasonably allocate resources.",
+   "calculation": "This metric is calculated by counting the number of delivered issues in type \"REQUIREMENT\" in the given data range.",
+   "data_sources": [
+    "This metric relies on the `issues` collected from Jira, GitHub, or TAPD."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Analyze the number of requirements and delivery rate of different time cycles to find the stability and trend of the development process.",
+    "Analyze and compare the number of requirements delivered and delivery rate of each project/team, and compare the scale of requirements of different projects.",
+    "Based on historical data, establish a baseline of the delivery capacity of a single iteration (optimistic, probable and pessimistic values) to provide a reference for iteration estimation.",
+    "Drill down to analyze the number and percentage of requirements in different phases of SDLC. Analyze rationality and identify the requirements stuck in the backlog."
+   ],
+   "sql_example": "select \n  count(*) as \"Requirement Count\"\nfrom issues i\n  join board_issues bi on i.id = bi.issue_id\nwhere \n  i.type = 'REQUIREMENT'\n  and i.status = 'DONE'\n  -- please replace the board ids with your own, or create a '$board_id' variable in Grafana\n  and bi.board_id in ('board-1','board-2')\n  and $__timeFilter(i.created_date)",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/RequirementCount",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/RequirementCount.md"
+  },
+  {
+   "id": "requirement_delivery_rate",
+   "name": "Requirement Delivery Rate",
+   "source": "devlake",
+   "group": "requirements",
+   "unit": "share",
+   "direction": "higher",
+   "used_by": [
+    "estimation.release_forecast"
+   ],
+   "definition": "The ratio of delivered requirements to all requirements.",
+   "why": "1. Based on historical data, establish a baseline of the delivery capacity of a single iteration to improve the organization and planning of R&D resources. 2. Evaluate whether the delivery capacity matches the business phase and demand scale. Identify key bottlenecks and reasonably allocate resources.",
+   "calculation": "The number of delivered requirements divided by the total number of requirements in the given data range.",
+   "data_sources": [
+    "This metric relies on the `issues` collected from Jira, GitHub, or TAPD."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Analyze the number of requirements and delivery rate of different time cycles to find the stability and trend of the development process.",
+    "Analyze and compare the number of requirements delivered and delivery rate of each project/team, and compare the scale of requirements of different projects.",
+    "Based on historical data, establish a baseline of the delivery capacity of a single iteration (optimistic, probable and pessimistic values) to provide a reference for iteration estimation.",
+    "Drill down to analyze the number and percentage of requirements in different phases of SDLC. Analyze rationality and identify the requirements stuck in the backlog."
+   ],
+   "sql_example": "WITH _requirements as(\n  SELECT\n    count(distinct i.id) as total_count,\n    count(distinct case when i.status = 'DONE' then i.id else null end) as delivered_count\n  FROM issues i\n    join board_issues bi on i.id = bi.issue_id\n  WHERE \n    i.type = 'REQUIREMENT'\n    and $__timeFilter(i.created_date)\n    -- please replace the board ids with your own, or create a '$board_id' variable in Grafana\n    and bi.board_id in ('board_1', 'board_2')\n)\n\nSELECT \n  now() as time,\n  1.0 * delivered_count/total_count as requirement_delivery_rate\nFROM _requirements",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/RequirementDeliveryRate",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/RequirementDeliveryRate.md"
+  },
+  {
+   "id": "requirement_granularity",
+   "name": "Requirement Granularity",
+   "source": "devlake",
+   "group": "requirements",
+   "unit": "story points",
+   "direction": "lower",
+   "used_by": [
+    "estimation"
+   ],
+   "definition": "The average number of story points per requirement.",
+   "why": "1. Promote product teams to split requirements carefully, improve requirements quality, help developers understand requirements clearly, deliver efficiently and with high quality, and improve the project management capability of the team. 2. Establish a data-supported workload estimation model to help R&D teams calibrate their estimation methods and more accurately assess the granularity of requirements, which is useful to achieve better issue planning in project management.",
+   "calculation": "The average story points of issues in type \"REQUIREMENT\" in the given data range.",
+   "data_sources": [
+    "This metric relies on `issues` collected from Jira, GitHub, or TAPD."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Analyze the story points/requirement lead time of requirements to evaluate whether the ticket size, ie. requirement complexity is optimal.",
+    "Compare the estimated requirement granularity with the actual situation and evaluate whether the difference is reasonable by combining more microscopic workload metrics (e.g. lines of code/code equivalents)"
+   ],
+   "sql_example": "",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/RequirementGranularity",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/RequirementGranularity.md"
+  },
+  {
+   "id": "requirement_lead_time",
+   "name": "Requirement Lead Time",
+   "source": "devlake",
+   "group": "requirements",
+   "unit": "days",
+   "direction": "lower",
+   "used_by": [
+    "jira_synth",
+    "estimation"
+   ],
+   "definition": "The amount of time it takes a requirement to deliver.",
+   "why": "1. Analyze key projects and critical points, identify good/to-be-improved practices that affect requirement lead time, and reduce the risk of delays 2. Focus on the end-to-end velocity of value delivery process; coordinate different parts of R&D to avoid efficiency shafts; make targeted improvements to bottlenecks.",
+   "calculation": "This metric equals `resolution_date - created_date` of issues in type \"REQUIREMENT\".",
+   "data_sources": [
+    "This metric relies on issues collected from Jira, GitHub, or TAPD."
+   ],
+   "benchmarks": [],
+   "improve": [
+    "Analyze the trend of requirement lead time to observe if it has improved over time.",
+    "Compare the requirement lead time of each project/team to identify key projects with abnormal lead time.",
+    "Drill down to analyze a requirement's staying time in different phases of SDLC. Analyze the bottleneck of delivery velocity and improve the workflow."
+   ],
+   "sql_example": "-- lead_time_minutes is a pre-calculated field whose value equals 'resolution_date - created_date'\nSELECT\n  lead_time_minutes/1440 as requirement_lead_time_in_days\nFROM\n  issues\nWHERE\n  type = 'REQUIREMENT'",
+   "doc_url": "https://devlake.apache.org/docs/Metrics/RequirementLeadTime",
+   "source_url": "https://github.com/apache/incubator-devlake-website/blob/360b51c9b35dbd73d729ab267194affec055034b/docs/Metrics/RequirementLeadTime.md"
+  },
+  {
+   "id": "dora_deployment_rework_rate",
+   "name": "DORA - Deployment Rework Rate",
+   "group": "dora",
+   "unit": "share",
+   "direction": "lower",
+   "used_by": [
+    "delivery_model.rework_share"
+   ],
+   "definition": "The ratio of deployments that are unplanned but happen as a result of an incident in production.",
+   "source": "dora",
+   "doc_url": "https://dora.dev/guides/dora-metrics-four-keys/",
+   "source_url": "https://dora.dev/guides/dora-metrics-four-keys/"
+  },
+  {
+   "id": "scorecard_binary_artifacts",
+   "name": "Scorecard - Binary-Artifacts",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "high",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Is the project free of checked-in binaries?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#binary-artifacts",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#binary-artifacts"
+  },
+  {
+   "id": "scorecard_branch_protection",
+   "name": "Scorecard - Branch-Protection",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "high",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project use branch protection?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#branch-protection"
+  },
+  {
+   "id": "scorecard_ci_tests",
+   "name": "Scorecard - CI-Tests",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "low",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project run tests in CI?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#ci-tests",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#ci-tests"
+  },
+  {
+   "id": "scorecard_cii_best_practices",
+   "name": "Scorecard - CII-Best-Practices",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "low",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Has the project earned an OpenSSF Best Practices Badge?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#cii-best-practices",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#cii-best-practices"
+  },
+  {
+   "id": "scorecard_code_review",
+   "name": "Scorecard - Code-Review",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "high",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project practice code review before merging?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#code-review",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#code-review"
+  },
+  {
+   "id": "scorecard_contributors",
+   "name": "Scorecard - Contributors",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "low",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project have contributors from at least two organizations?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#contributors",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#contributors"
+  },
+  {
+   "id": "scorecard_dangerous_workflow",
+   "name": "Scorecard - Dangerous-Workflow",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "critical",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project avoid dangerous patterns in GitHub Action workflows?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#dangerous-workflow",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#dangerous-workflow"
+  },
+  {
+   "id": "scorecard_dependency_update_tool",
+   "name": "Scorecard - Dependency-Update-Tool",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "high",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project use tools to update its dependencies?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#dependency-update-tool",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#dependency-update-tool"
+  },
+  {
+   "id": "scorecard_fuzzing",
+   "name": "Scorecard - Fuzzing",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "medium",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project use fuzzing tools?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#fuzzing",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#fuzzing"
+  },
+  {
+   "id": "scorecard_license",
+   "name": "Scorecard - License",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "low",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project declare a license?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#license",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#license"
+  },
+  {
+   "id": "scorecard_maintained",
+   "name": "Scorecard - Maintained",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "high",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Is the project at least 90 days old and maintained?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#maintained",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#maintained"
+  },
+  {
+   "id": "scorecard_pinned_dependencies",
+   "name": "Scorecard - Pinned-Dependencies",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "medium",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project declare and pin its dependencies?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#pinned-dependencies",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#pinned-dependencies"
+  },
+  {
+   "id": "scorecard_packaging",
+   "name": "Scorecard - Packaging",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "medium",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project build and publish packages from CI/CD?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#packaging",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#packaging"
+  },
+  {
+   "id": "scorecard_sast",
+   "name": "Scorecard - SAST",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "medium",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project use static code analysis tools?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#sast",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#sast"
+  },
+  {
+   "id": "scorecard_security_policy",
+   "name": "Scorecard - Security-Policy",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "medium",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project contain a security policy?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#security-policy",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#security-policy"
+  },
+  {
+   "id": "scorecard_signed_releases",
+   "name": "Scorecard - Signed-Releases",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "high",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project cryptographically sign releases?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#signed-releases",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#signed-releases"
+  },
+  {
+   "id": "scorecard_token_permissions",
+   "name": "Scorecard - Token-Permissions",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "high",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project declare GitHub workflow tokens as read-only?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#token-permissions",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#token-permissions"
+  },
+  {
+   "id": "scorecard_vulnerabilities",
+   "name": "Scorecard - Vulnerabilities",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "high",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the project have unfixed vulnerabilities?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#vulnerabilities",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#vulnerabilities"
+  },
+  {
+   "id": "scorecard_webhooks",
+   "name": "Scorecard - Webhooks",
+   "source": "scorecard",
+   "group": "security",
+   "unit": "score 0-10",
+   "direction": "higher",
+   "risk": "critical",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "Does the webhook of the repository have a token to authenticate request origins?",
+   "doc_url": "https://github.com/ossf/scorecard/blob/main/docs/checks.md#webhooks",
+   "source_url": "https://github.com/ossf/scorecard/blob/83b2069eee6e3c2fe7ae3b3eb745faa62224e618/docs/checks.md#webhooks"
+  },
+  {
+   "id": "chaoss_contributor_absence_factor",
+   "name": "Contributor Absence Factor (bus factor)",
+   "source": "chaoss",
+   "group": "people",
+   "unit": "contributors",
+   "direction": "higher",
+   "used_by": [
+    "company_model",
+    "delivery_model.ev_kp"
+   ],
+   "definition": "The smallest number of contributors that make 50% of the contributions.",
+   "doc_url": "https://www.chaoss.community/kb/metric-contributor-absence-factor/",
+   "source_url": "https://www.chaoss.community/kb/metric-contributor-absence-factor/"
+  },
+  {
+   "id": "chaoss_elephant_factor",
+   "name": "Elephant Factor",
+   "source": "chaoss",
+   "group": "people",
+   "unit": "organizations",
+   "direction": "higher",
+   "used_by": [
+    "company_model"
+   ],
+   "definition": "The smallest number of organizations that make 50% of the contributions.",
+   "doc_url": "https://www.chaoss.community/kb/metric-elephant-factor/",
+   "source_url": "https://www.chaoss.community/kb/metric-elephant-factor/"
+  },
+  {
+   "id": "chaoss_contributors",
+   "name": "Contributors",
+   "source": "chaoss",
+   "group": "people",
+   "unit": "people",
+   "direction": "neutral",
+   "used_by": [],
+   "definition": "The number of people who contribute to the project.",
+   "doc_url": "https://www.chaoss.community/kb/metric-contributors/",
+   "source_url": "https://www.chaoss.community/kb/metric-contributors/"
+  },
+  {
+   "id": "chaoss_new_contributors",
+   "name": "New Contributors",
+   "source": "chaoss",
+   "group": "people",
+   "unit": "people",
+   "direction": "neutral",
+   "used_by": [
+    "company_model"
+   ],
+   "definition": "The number of contributors who make a first contribution in the period.",
+   "doc_url": "https://www.chaoss.community/kb/metric-new-contributors/",
+   "source_url": "https://www.chaoss.community/kb/metric-new-contributors/"
+  },
+  {
+   "id": "chaoss_inactive_contributors",
+   "name": "Inactive Contributors",
+   "source": "chaoss",
+   "group": "people",
+   "unit": "people",
+   "direction": "lower",
+   "used_by": [
+    "company_model"
+   ],
+   "definition": "The number of contributors who stop their activity in the period.",
+   "doc_url": "https://www.chaoss.community/kb/metric-inactive-contributors/",
+   "source_url": "https://www.chaoss.community/kb/metric-inactive-contributors/"
+  },
+  {
+   "id": "chaoss_time_to_first_response",
+   "name": "Time to First Response",
+   "source": "chaoss",
+   "group": "flow",
+   "unit": "hours",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The time from the creation of an issue or change request to the first response.",
+   "doc_url": "https://www.chaoss.community/kb/metric-time-to-first-response/",
+   "source_url": "https://www.chaoss.community/kb/metric-time-to-first-response/"
+  },
+  {
+   "id": "chaoss_change_request_closure_ratio",
+   "name": "Change Request Closure Ratio",
+   "source": "chaoss",
+   "group": "flow",
+   "unit": "share",
+   "direction": "higher",
+   "used_by": [],
+   "definition": "The ratio of closed change requests to opened change requests in the period.",
+   "doc_url": "https://www.chaoss.community/kb/metric-change-request-closure-ratio/",
+   "source_url": "https://www.chaoss.community/kb/metric-change-request-closure-ratio/"
+  },
+  {
+   "id": "chaoss_change_requests_duration",
+   "name": "Change Requests Duration",
+   "source": "chaoss",
+   "group": "flow",
+   "unit": "days",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The time from the start of a change request to its acceptance or closure.",
+   "doc_url": "https://www.chaoss.community/kb/metric-change-requests-duration/",
+   "source_url": "https://www.chaoss.community/kb/metric-change-requests-duration/"
+  },
+  {
+   "id": "chaoss_change_request_review_duration",
+   "name": "Change Request Review Duration",
+   "source": "chaoss",
+   "group": "flow",
+   "unit": "days",
+   "direction": "lower",
+   "used_by": [],
+   "definition": "The time from the start of the review of a change request to its acceptance.",
+   "doc_url": "https://www.chaoss.community/kb/metric-change-request-review-duration/",
+   "source_url": "https://www.chaoss.community/kb/metric-change-request-review-duration/"
+  },
+  {
+   "id": "chaoss_issue_resolution_duration",
+   "name": "Issue Resolution Duration",
+   "source": "chaoss",
+   "group": "flow",
+   "unit": "days",
+   "direction": "lower",
+   "used_by": [
+    "jira_synth"
+   ],
+   "definition": "The time from the creation of an issue to its closure.",
+   "doc_url": "https://www.chaoss.community/kb/metric-issue-resolution-duration/",
+   "source_url": "https://www.chaoss.community/kb/metric-issue-resolution-duration/"
+  },
+  {
+   "id": "chaoss_issue_age",
+   "name": "Issue Age",
+   "source": "chaoss",
+   "group": "flow",
+   "unit": "days",
+   "direction": "lower",
+   "used_by": [
+    "jira_synth"
+   ],
+   "definition": "The time for which open issues stay open.",
+   "doc_url": "https://www.chaoss.community/kb/metric-issue-age/",
+   "source_url": "https://www.chaoss.community/kb/metric-issue-age/"
+  },
+  {
+   "id": "chaoss_release_frequency",
+   "name": "Release Frequency",
+   "source": "chaoss",
+   "group": "flow",
+   "unit": "releases/period",
+   "direction": "higher",
+   "used_by": [],
+   "definition": "The number of new versions that the project releases in the period.",
+   "doc_url": "https://www.chaoss.community/kb/metric-release-frequency/",
+   "source_url": "https://www.chaoss.community/kb/metric-release-frequency/"
+  },
+  {
+   "id": "chaoss_libyears",
+   "name": "Libyears",
+   "source": "chaoss",
+   "group": "dependencies",
+   "unit": "years",
+   "direction": "lower",
+   "used_by": [
+    "containers.findings"
+   ],
+   "definition": "The sum of the age gaps between the used and the latest version of each dependency.",
+   "doc_url": "https://www.chaoss.community/kb/metric-libyears/",
+   "source_url": "https://www.chaoss.community/kb/metric-libyears/"
+  },
+  {
+   "id": "chaoss_upstream_code_dependencies",
+   "name": "Upstream Code Dependencies",
+   "source": "chaoss",
+   "group": "dependencies",
+   "unit": "dependencies",
+   "direction": "neutral",
+   "used_by": [],
+   "definition": "The other projects that the project depends on.",
+   "doc_url": "https://www.chaoss.community/kb/metric-upstream-code-dependencies/",
+   "source_url": "https://www.chaoss.community/kb/metric-upstream-code-dependencies/"
+  },
+  {
+   "id": "chaoss_test_coverage",
+   "name": "Test Coverage",
+   "source": "chaoss",
+   "group": "code_quality",
+   "unit": "share",
+   "direction": "higher",
+   "used_by": [],
+   "definition": "The share of the code that the tests execute.",
+   "doc_url": "https://www.chaoss.community/kb/metric-test-coverage/",
+   "source_url": "https://www.chaoss.community/kb/metric-test-coverage/"
+  },
+  {
+   "id": "code_nloc",
+   "name": "NLOC (lines of code without comments)",
+   "source": "classic",
+   "group": "code",
+   "unit": "lines",
+   "direction": "neutral",
+   "used_by": [
+    "codebase"
+   ],
+   "fields": [
+    "nloc"
+   ],
+   "definition": "Lines of code without comments and blank lines (lizard).",
+   "doc_url": "https://github.com/terryyin/lizard#readme",
+   "source_url": "https://github.com/terryyin/lizard#readme"
+  },
+  {
+   "id": "code_cyclomatic_complexity",
+   "name": "Cyclomatic complexity (CCN)",
+   "source": "classic",
+   "group": "code",
+   "unit": "paths",
+   "direction": "lower",
+   "used_by": [
+    "codebase"
+   ],
+   "fields": [
+    "ccn_avg",
+    "ccn_max"
+   ],
+   "definition": "The number of linearly independent paths through a function (McCabe, 1976); lizard counts it.",
+   "doc_url": "https://en.wikipedia.org/wiki/Cyclomatic_complexity",
+   "source_url": "https://en.wikipedia.org/wiki/Cyclomatic_complexity"
+  },
+  {
+   "id": "code_churn",
+   "name": "Code churn",
+   "source": "classic",
+   "group": "code",
+   "unit": "commits, lines",
+   "direction": "lower",
+   "used_by": [
+    "codebase"
+   ],
+   "fields": [
+    "commits",
+    "changed_lines"
+   ],
+   "definition": "Commits and added plus deleted lines per file in the period (git log --numstat).",
+   "doc_url": "https://git-scm.com/docs/git-log#Documentation/git-log.txt---numstat",
+   "source_url": "https://git-scm.com/docs/git-log#Documentation/git-log.txt---numstat"
+  },
+  {
+   "id": "code_fan_in",
+   "name": "Afferent coupling (Ca, fan-in)",
+   "source": "classic",
+   "group": "code",
+   "unit": "packages",
+   "direction": "neutral",
+   "used_by": [
+    "codebase"
+   ],
+   "fields": [
+    "fan_in"
+   ],
+   "definition": "The number of other packages that depend on this package (R. C. Martin).",
+   "doc_url": "https://en.wikipedia.org/wiki/Software_package_metrics",
+   "source_url": "https://en.wikipedia.org/wiki/Software_package_metrics"
+  },
+  {
+   "id": "code_fan_out",
+   "name": "Efferent coupling (Ce, fan-out)",
+   "source": "classic",
+   "group": "code",
+   "unit": "packages",
+   "direction": "lower",
+   "used_by": [
+    "codebase"
+   ],
+   "fields": [
+    "fan_out"
+   ],
+   "definition": "The number of other packages that this package depends on (R. C. Martin).",
+   "doc_url": "https://en.wikipedia.org/wiki/Software_package_metrics",
+   "source_url": "https://en.wikipedia.org/wiki/Software_package_metrics"
+  },
+  {
+   "id": "code_instability",
+   "name": "Instability I = Ce / (Ca + Ce)",
+   "source": "classic",
+   "group": "code",
+   "unit": "0-1",
+   "direction": "neutral",
+   "used_by": [
+    "codebase"
+   ],
+   "fields": [
+    "instability"
+   ],
+   "definition": "0 = stable (others depend on it), 1 = unstable (it depends on others) (R. C. Martin).",
+   "doc_url": "https://en.wikipedia.org/wiki/Software_package_metrics",
+   "source_url": "https://en.wikipedia.org/wiki/Software_package_metrics"
+  },
+  {
+   "id": "code_dependency_cycles",
+   "name": "Dependency cycles",
+   "source": "classic",
+   "group": "code",
+   "unit": "cycles",
+   "direction": "lower",
+   "used_by": [
+    "codebase"
+   ],
+   "fields": [
+    "cycles"
+   ],
+   "definition": "Groups of packages that import each other; they break the acyclic dependencies principle.",
+   "doc_url": "https://en.wikipedia.org/wiki/Acyclic_dependencies_principle",
+   "source_url": "https://en.wikipedia.org/wiki/Acyclic_dependencies_principle"
+  },
+  {
+   "id": "code_hot_spot",
+   "name": "Hot spot = churn x complexity",
+   "source": "classic",
+   "group": "code",
+   "unit": "score",
+   "direction": "lower",
+   "used_by": [
+    "codebase"
+   ],
+   "fields": [
+    "hot_spots"
+   ],
+   "definition": "Files that change often and are complex; the first candidates to refactor (A. Tornhill).",
+   "doc_url": "https://pragprog.com/titles/atcrime2/your-code-as-a-crime-scene-second-edition/",
+   "source_url": "https://pragprog.com/titles/atcrime2/your-code-as-a-crime-scene-second-edition/"
+  }
+ ]
+}

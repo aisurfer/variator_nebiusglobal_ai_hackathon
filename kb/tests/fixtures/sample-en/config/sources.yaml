@@ -1,0 +1,72 @@
+tenant:
+  id: wp3sample
+  name: WP3 Sample Co
+  timezone: Europe/Berlin
+  people_at: '2026-10-12T09:00:00+02:00'
+sources:
+- id: jira-wp3sample
+  provider: jira
+  name: Jira
+  base_url: https://wp3sample.atlassian.net
+  containers:
+    ENG:
+      name: Engineering
+      acl:
+      - grp:all-staff
+    HR:
+      name: People ops
+      acl:
+      - grp:management
+- id: gitlab-wp3sample
+  provider: gitlab
+  name: GitLab
+  base_url: https://git.wp3sample.example
+  jira_source: jira-wp3sample
+  jira_keys:
+  - ENG
+  containers:
+    wp3sample/api:
+      name: API
+      acl:
+      - grp:dev
+- id: mail-wp3sample
+  provider: email
+  name: Mail
+  mail_domain: wp3sample.example
+  group_mailboxes: {}
+- id: directory-wp3sample
+  provider: directory
+  name: Directory
+  containers:
+    people:
+      name: HR directory
+- id: sim
+  provider: sim
+  name: Organisation simulator
+  containers:
+    finance:
+      name: Finance
+      acl:
+      - grp:management
+    sales:
+      name: Sales
+      acl:
+      - grp:management
+      - grp:sales
+    people:
+      name: People
+      acl:
+      - grp:management
+    engineering:
+      name: Engineering
+      acl:
+      - grp:dev
+      - grp:management
+    support:
+      name: Support
+      acl:
+      - grp:all-staff
+    management:
+      name: Management
+      acl:
+      - grp:management

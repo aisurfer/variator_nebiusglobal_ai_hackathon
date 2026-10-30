@@ -1,0 +1,2 @@
+# demo CSVs are generated with CRLF (csv module default); keep bytes as-is
+*.csv -text

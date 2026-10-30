@@ -1,0 +1,1538 @@
+{
+ "schema": "variator-intake/1",
+ "title": "What decision are you weighing",
+ "subtitle": "Ask in your own words: VARIATOR asks a few short questions, then drafts the forks of a new case.",
+ "placeholder": "For example: what if we lose our biggest client?",
+ "examples": [
+  "What if we raise prices by 8% in January?",
+  "What if we lose our biggest client?",
+  "What if we outsource delivery to a vendor?",
+  "What if I fire all employees in 3 months?"
+ ],
+ "maxQuestions": 3,
+ "slots": {
+  "when": [
+   {
+    "re": "\\bin (\\d+) months?\\b",
+    "months": "$1"
+   },
+   {
+    "re": "\\bin (\\d+) weeks?\\b",
+    "weeks": "$1"
+   },
+   {
+    "re": "\\bnext month\\b",
+    "months": 1
+   },
+   {
+    "re": "\\bnext quarter\\b",
+    "months": 3
+   },
+   {
+    "re": "\\b(?:in half a year|in six months)\\b",
+    "months": 6
+   },
+   {
+    "re": "\\bnext year\\b",
+    "monthName": "january"
+   },
+   {
+    "re": "\\b(?:now|today|immediately|right away|at once)\\b",
+    "months": 0
+   },
+   {
+    "re": "\\b(?:in|from|by|on|at|starting) (january|february|march|april|may|june|july|august|september|october|november|december)\\b",
+    "monthName": "$1"
+   }
+  ],
+  "size": [
+   {
+    "re": "(\\d+(?:\\.\\d+)?)\\s?(?:%|percent|per cent|points?\\b)",
+    "share": "$1"
+   },
+   {
+    "re": "\\b(\\d+) (?:more |new |extra )?(?:engineers?|developers?|people|employees|staff|hires?|persons?)\\b",
+    "count": "$1"
+   }
+  ],
+  "goal": [
+   {
+    "re": "\\b(?:cut|save|reduce|lower) (?:our |the )?(?:costs?|money|spend|burn|payroll)\\b|\\bcost cut",
+    "value": "cost"
+   },
+   {
+    "re": "\\bwind (?:\\w+ )?down\\b|\\bclose (?:the |our )?(?:company|business)\\b|\\bshut (?:it |us |the company )?down\\b",
+    "value": "wind_down"
+   },
+   {
+    "re": "\\brebuild\\b|\\bcontractors?\\b|\\bfreelanc",
+    "value": "rebuild"
+   },
+   {
+    "re": "\\bgrow(?:th)?\\b|\\bscale\\b",
+    "value": "growth"
+   },
+   {
+    "re": "\\bmargins?\\b|\\bprofit",
+    "value": "margin"
+   }
+  ],
+  "compare": [
+   {
+    "re": "\\b(?:only )?keep(?:ing)? (?:it |things )?as is\\b|\\bstatus quo\\b|\\bnothing else\\b",
+    "value": "keep"
+   },
+   {
+    "re": "\\bpartial\\b|\\bsome of\\b|\\bhalf of\\b",
+    "value": "partial"
+   },
+   {
+    "re": "\\bvendor\\b|\\boutsourc",
+    "value": "vendor"
+   }
+  ],
+  "priority": [
+   {
+    "re": "\\bcash\\b|\\bmoney\\b|\\brunway\\b",
+    "value": "cash"
+   },
+   {
+    "re": "\\bclients?\\b|\\bchurn\\b|\\bcustomers?\\b",
+    "value": "churn"
+   },
+   {
+    "re": "\\bdelivery\\b|\\bdeadlines?\\b|\\bon time\\b|\\bsla\\b",
+    "value": "delivery"
+   },
+   {
+    "re": "\\bteam\\b|\\bpeople\\b|\\bmorale\\b",
+    "value": "team"
+   },
+   {
+    "re": "\\bmargins?\\b|\\bprofit",
+    "value": "margin"
+   }
+  ]
+ },
+ "criteria": {
+  "cash": "Cash at the horizon",
+  "churn": "Client churn",
+  "sla": "Availability (SLA)",
+  "delivery": "Delivery on time",
+  "team": "Team capacity",
+  "margin": "Margin"
+ },
+ "goalText": {
+  "cost": ", to cut costs",
+  "wind_down": ", to wind the company down",
+  "rebuild": ", to rebuild the team with contractors",
+  "growth": ", to grow",
+  "margin": ", to raise the margin",
+  "retain": ", to keep people from leaving"
+ },
+ "intents": [
+  {
+   "id": "layoff",
+   "area": "people",
+   "label": "Cut the team",
+   "patterns": [
+    "\\bfir(?:e|ing)\\b",
+    "\\blay ?offs?\\b|\\blaid off\\b",
+    "\\blet (?:\\w+ ){0,4}go\\b",
+    "\\bdismiss",
+    "\\bredundan",
+    "\\bcut (?:the |our )?(?:team|staff|headcount|jobs)\\b"
+   ],
+   "scope": [
+    {
+     "re": "\\b(?:all|every(?:one|body)|entire|whole)\\b(?! (?:but|except))",
+     "value": "all",
+     "ambiguous": true
+    },
+    {
+     "re": "\\bexcept (?:the )?(?:leaders|leadership|management)\\b|\\bnon-?leadership\\b",
+     "value": "non_leadership"
+    },
+    {
+     "re": "\\bengineer(?:s|ing)?\\b|\\bdevelopers?\\b",
+     "value": "dept:engineering"
+    },
+    {
+     "re": "\\bsupport\\b",
+     "value": "dept:support"
+    },
+    {
+     "re": "\\bsales\\b",
+     "value": "dept:sales"
+    },
+    {
+     "re": "\\bdelivery team\\b",
+     "value": "dept:delivery"
+    }
+   ],
+   "scopeText": {
+    "all": "all {headcount} people (you included)",
+    "non_leadership": "everyone except the leadership ({nonLeadershipCount} people)",
+    "dept:engineering": "the engineering team ({dept:engineering} people)",
+    "dept:support": "the support team ({dept:support} people)",
+    "dept:sales": "the sales team ({dept:sales} people)",
+    "dept:delivery": "the delivery team ({dept:delivery} people)"
+   },
+   "ask": [
+    "scope",
+    "goal",
+    "compare",
+    "when"
+   ],
+   "questions": {
+    "scope": {
+     "text": "{company} has {headcount} people: {departmentsLine}. The leadership is {leadershipCount} people: {leadershipLine}. Do you mean all {headcount}, including yourself, or everyone except the leadership?",
+     "chips": [
+      {
+       "label": "All {headcount}, including me",
+       "value": "all"
+      },
+      {
+       "label": "Everyone except the leadership ({nonLeadershipCount})",
+       "value": "non_leadership"
+      },
+      {
+       "label": "Only engineering ({dept:engineering})",
+       "value": "dept:engineering"
+      }
+     ]
+    },
+    "goal": {
+     "text": "What is the goal: cut costs, wind the company down, or rebuild the team with contractors?",
+     "chips": [
+      {
+       "label": "Cut costs",
+       "value": "cost"
+      },
+      {
+       "label": "Wind the company down",
+       "value": "wind_down"
+      },
+      {
+       "label": "Rebuild with contractors",
+       "value": "rebuild"
+      }
+     ]
+    },
+    "compare": {
+     "text": "Compare it with what? «Keep as is» is always in the case.",
+     "chips": [
+      {
+       "label": "Only keep as is",
+       "value": "keep"
+      },
+      {
+       "label": "A partial layoff",
+       "value": "partial"
+      },
+      {
+       "label": "Replace delivery with a vendor",
+       "value": "vendor"
+      }
+     ]
+    },
+    "when": {
+     "text": "When would it happen? The notice periods run from that month.",
+     "chips": [
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next month",
+       "value": "months:1"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      },
+      {
+       "label": "In half a year",
+       "value": "months:6"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {company} lets {scope} go{when}{goal}?",
+    "forks": [
+     "Let {scope} go{when}"
+    ],
+    "compareForks": {
+     "partial": "A partial layoff: only engineering ({dept:engineering} people)",
+     "vendor": "Replace delivery with a vendor: {vendor:nearshore} or {vendor:offshore}"
+    },
+    "hypotheses": [
+     "Key accounts give notice when delivery stops",
+     "Severance and notice cost more than planned",
+     "A vendor cannot take over in time",
+     "Sales stall while the team changes"
+    ],
+    "criteria": [
+     "cash",
+     "churn",
+     "sla",
+     "delivery"
+    ],
+    "shows": [
+     "When delivery stops for each client, and which contracts and SLAs are at risk",
+     "How churn follows, starting with {keyClient:1} and the other key accounts",
+     "Severance, notice and the cash left in each month",
+     "The month in which each risk is most likely to fire"
+    ]
+   }
+  },
+  {
+   "id": "hire",
+   "area": "people",
+   "label": "Hire people",
+   "patterns": [
+    "\\bhir(?:e|ing)\\b",
+    "\\brecruit",
+    "\\badd (?:\\d+ )?(?:more )?(?:engineers|people|developers)\\b"
+   ],
+   "scope": [
+    {
+     "re": "\\bengineers?\\b|\\bdevelopers?\\b",
+     "value": "role:engineers"
+    },
+    {
+     "re": "\\bsupport\\b",
+     "value": "role:support engineers"
+    },
+    {
+     "re": "\\bsales\\b|\\baccount managers?\\b",
+     "value": "role:account managers"
+    }
+   ],
+   "scopeText": {
+    "role:engineers": "engineers",
+    "role:support engineers": "support engineers",
+    "role:account managers": "account managers"
+   },
+   "ask": [
+    "size",
+    "when",
+    "priority"
+   ],
+   "questions": {
+    "size": {
+     "text": "How many people? Engineering has {dept:engineering} people under {head:engineering} today.",
+     "chips": []
+    },
+    "when": {
+     "text": "When would hiring start? The case adds the time to hire and onboard them.",
+     "chips": [
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next month",
+       "value": "months:1"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      },
+      {
+       "label": "In half a year",
+       "value": "months:6"
+      }
+     ]
+    },
+    "priority": {
+     "text": "What matters most when you compare them?",
+     "chips": [
+      {
+       "label": "Cash",
+       "value": "cash"
+      },
+      {
+       "label": "Keeping clients",
+       "value": "churn"
+      },
+      {
+       "label": "Delivery on time",
+       "value": "delivery"
+      },
+      {
+       "label": "The team",
+       "value": "team"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {company} hires {size} {scope}{when}?",
+    "forks": [
+     "Hire {size} {scope}{when}"
+    ],
+    "compareForks": {
+     "vendor": "Bring the same capacity in from {vendor:nearshore}",
+     "partial": "Hire half as many and rebalance the team"
+    },
+    "defaultCompare": "vendor",
+    "hypotheses": [
+     "Hiring takes longer than planned",
+     "New hires need months to be productive",
+     "Clients bring more work than expected"
+    ],
+    "criteria": [
+     "team",
+     "delivery",
+     "cash",
+     "churn"
+    ],
+    "shows": [
+     "When the new people are productive, and the load on the team until then",
+     "The cost from the start date against the extra delivery capacity",
+     "Whether late implementations and incidents fall",
+     "Cash and runway in each month"
+    ]
+   }
+  },
+  {
+   "id": "lose_client",
+   "area": "clients",
+   "label": "Lose a client",
+   "patterns": [
+    "\\blos(?:e|es|ing|t)\\b (?:\\w+ ){0,3}(?:clients?|customers?|accounts?)\\b",
+    "\\b(?:clients?|customers?|accounts?) (?:\\w+ ){0,2}(?:leaves?|leaving|churns?|walks?)\\b",
+    "\\bchurn\\b"
+   ],
+   "scope": [
+    {
+     "re": "\\b(?:biggest|largest|top|main|best)\\b",
+     "value": "client:1"
+    },
+    {
+     "entity": "client"
+    },
+    {
+     "re": "\\b(?:a |one )?(?:small|smaller|typical)\\b",
+     "value": "small"
+    }
+   ],
+   "scopeText": {
+    "small": "a typical smaller client"
+   },
+   "ask": [
+    "scope",
+    "when",
+    "compare"
+   ],
+   "questions": {
+    "scope": {
+     "text": "Which client? Your key accounts by contract value: {keyClientsLine}.",
+     "chips": [
+      {
+       "label": "{client:1}",
+       "value": "client:1"
+      },
+      {
+       "label": "{client:2}",
+       "value": "client:2"
+      },
+      {
+       "label": "{client:3}",
+       "value": "client:3"
+      },
+      {
+       "label": "A typical smaller client",
+       "value": "small"
+      }
+     ]
+    },
+    "when": {
+     "text": "When could it happen? {scopeRenewal}",
+     "chips": [
+      {
+       "label": "At the renewal",
+       "value": "renewal"
+      },
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      }
+     ]
+    },
+    "compare": {
+     "text": "What would you compare against keeping as is?",
+     "chips": [
+      {
+       "label": "Win new clients faster",
+       "value": "growth"
+      },
+      {
+       "label": "Cut costs to protect cash",
+       "value": "cost"
+      },
+      {
+       "label": "Offer them a better price",
+       "value": "price"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {company} loses {scope}{when}?",
+    "forks": [
+     "{scope} leaves{when}, nothing else changes"
+    ],
+    "compareForks": {
+     "growth": "Push sales to replace the revenue",
+     "cost": "Cut costs to protect cash",
+     "price": "Offer {scopeName} a better price to stay"
+    },
+    "defaultCompare": "cost",
+    "hypotheses": [
+     "Other key accounts follow",
+     "The team is idle until new work comes",
+     "A competitor wins the account"
+    ],
+    "criteria": [
+     "cash",
+     "churn",
+     "margin"
+    ],
+    "shows": [
+     "Revenue and cash from the month the client leaves",
+     "The team load without that work",
+     "Whether the other key accounts stay",
+     "Runway against your cash"
+    ]
+   }
+  },
+  {
+   "id": "new_client",
+   "area": "clients",
+   "label": "Win a client",
+   "patterns": [
+    "\\b(?:win|sign|land|get) (?:a |an |one )?(?:big |large |new |major )*(?:clients?|customers?|accounts?|deals?)\\b",
+    "\\bnew (?:big |large )?(?:client|customer|account)\\b"
+   ],
+   "scope": [
+    {
+     "re": "\\b(?:big|large|major|key)\\b",
+     "value": "key"
+    },
+    {
+     "re": "\\bsmall\\b|\\btypical\\b",
+     "value": "small"
+    }
+   ],
+   "scopeText": {
+    "key": "a client the size of a key account",
+    "small": "a typical smaller client"
+   },
+   "ask": [
+    "scope",
+    "when",
+    "priority"
+   ],
+   "questions": {
+    "scope": {
+     "text": "How big a client? Your key accounts pay from {keyClientMinAcv} to {keyClientMaxAcv} a year.",
+     "chips": [
+      {
+       "label": "Like a key account",
+       "value": "key"
+      },
+      {
+       "label": "A typical smaller client",
+       "value": "small"
+      }
+     ]
+    },
+    "when": {
+     "text": "When would the work start?",
+     "chips": [
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next month",
+       "value": "months:1"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      },
+      {
+       "label": "In half a year",
+       "value": "months:6"
+      }
+     ]
+    },
+    "priority": {
+     "text": "What matters most when you compare them?",
+     "chips": [
+      {
+       "label": "Cash",
+       "value": "cash"
+      },
+      {
+       "label": "Keeping clients",
+       "value": "churn"
+      },
+      {
+       "label": "Delivery on time",
+       "value": "delivery"
+      },
+      {
+       "label": "The team",
+       "value": "team"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {company} wins {scope}{when}?",
+    "forks": [
+     "Win {scope}{when}"
+    ],
+    "compareForks": {
+     "partial": "Win it and hire for it"
+    },
+    "defaultCompare": "partial",
+    "hypotheses": [
+     "The onboarding takes longer than planned",
+     "The team is overloaded"
+    ],
+    "criteria": [
+     "delivery",
+     "cash",
+     "sla"
+    ],
+    "shows": [
+     "Revenue from the start month",
+     "Team load and late implementations",
+     "Incidents and the SLA for the other clients"
+    ]
+   }
+  },
+  {
+   "id": "leave",
+   "area": "people",
+   "label": "A key person leaves",
+   "patterns": [
+    "\\b(?:leaves?|leaving|quits?|resigns?|walks? out)\\b"
+   ],
+   "scope": [
+    {
+     "entity": "person"
+    }
+   ],
+   "ask": [
+    "scope",
+    "when",
+    "compare"
+   ],
+   "questions": {
+    "scope": {
+     "text": "Who leaves? The people the delivery depends on most: {keyPeopleLine}.",
+     "chips": [
+      {
+       "label": "{person:LW-E06}",
+       "value": "person:LW-E06"
+      },
+      {
+       "label": "{person:LW-E22}",
+       "value": "person:LW-E22"
+      },
+      {
+       "label": "{person:LW-E03}",
+       "value": "person:LW-E03"
+      }
+     ]
+    },
+    "when": {
+     "text": "When would they leave?",
+     "chips": [
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next month",
+       "value": "months:1"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      },
+      {
+       "label": "In half a year",
+       "value": "months:6"
+      }
+     ]
+    },
+    "compare": {
+     "text": "What would you compare against keeping as is?",
+     "chips": [
+      {
+       "label": "Hire a replacement",
+       "value": "replace"
+      },
+      {
+       "label": "Bring in a vendor",
+       "value": "vendor"
+      },
+      {
+       "label": "Promote from the team",
+       "value": "promote"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {scope} leaves {company}{when}?",
+    "forks": [
+     "{scope} leaves{when}, nothing else changes"
+    ],
+    "compareForks": {
+     "replace": "Hire a replacement for {scope}",
+     "vendor": "Cover the work with {vendor:nearshore}",
+     "promote": "Promote from the team and backfill"
+    },
+    "defaultCompare": "replace",
+    "hypotheses": [
+     "Others follow and leave too",
+     "The replacement takes longer than planned",
+     "Knowledge is lost with the person"
+    ],
+    "criteria": [
+     "delivery",
+     "sla",
+     "team",
+     "cash"
+    ],
+    "shows": [
+     "How the delivery slows from the month the person leaves",
+     "Incidents and time to restore without them",
+     "The cost and the time of a replacement",
+     "Which clients feel it first"
+    ]
+   }
+  },
+  {
+   "id": "salary",
+   "area": "people",
+   "label": "Change salaries",
+   "patterns": [
+    "\\bsalar(?:y|ies)\\b",
+    "\\bpay (?:rise|raise|cut)\\b",
+    "\\b(?:raise|cut) (?:the )?pay\\b",
+    "\\bwages?\\b",
+    "\\bbonus(?:es)?\\b"
+   ],
+   "scope": [
+    {
+     "re": "\\b(?:all|every(?:one|body))\\b",
+     "value": "all"
+    },
+    {
+     "re": "\\bengineer(?:s|ing)?\\b",
+     "value": "dept:engineering"
+    }
+   ],
+   "scopeText": {
+    "all": "everyone ({headcount} people)",
+    "dept:engineering": "the engineering team ({dept:engineering} people)"
+   },
+   "ask": [
+    "scope",
+    "size",
+    "goal"
+   ],
+   "questions": {
+    "scope": {
+     "text": "For whom: all {headcount} people or one team?",
+     "chips": [
+      {
+       "label": "Everyone",
+       "value": "all"
+      },
+      {
+       "label": "Engineering ({dept:engineering})",
+       "value": "dept:engineering"
+      }
+     ]
+    },
+    "size": {
+     "text": "By how much? Type the change, for example as a percentage.",
+     "chips": []
+    },
+    "goal": {
+     "text": "What is the goal?",
+     "chips": [
+      {
+       "label": "Keep people from leaving",
+       "value": "retain"
+      },
+      {
+       "label": "Cut costs",
+       "value": "cost"
+      },
+      {
+       "label": "Hire more easily",
+       "value": "growth"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {company} changes the pay of {scope} by {size}{when}?",
+    "forks": [
+     "Change the pay of {scope} by {size}{when}"
+    ],
+    "compareForks": {
+     "partial": "Change the pay of engineering only"
+    },
+    "defaultCompare": "partial",
+    "hypotheses": [
+     "People leave more when pay falls behind the market",
+     "Hiring gets harder"
+    ],
+    "criteria": [
+     "cash",
+     "team",
+     "delivery"
+    ],
+    "shows": [
+     "Payroll and cash in each month",
+     "Attrition and the load on the rest of the team",
+     "Delivery capacity over the horizon"
+    ]
+   }
+  },
+  {
+   "id": "price",
+   "area": "clients",
+   "label": "Change prices",
+   "patterns": [
+    "\\b(?:raise|increase|lift|put up|cut|lower|reduce|drop)\\b (?:\\w+ ){0,2}prices?\\b",
+    "\\bprices? (?:rise|increase|cut|change)\\b",
+    "\\bprices? by\\b",
+    "\\bpricing\\b"
+   ],
+   "scope": [
+    {
+     "re": "\\bnew clients?\\b|\\bnew deals?\\b",
+     "value": "new"
+    },
+    {
+     "re": "\\b(?:all|every) clients?\\b|\\bat renewal\\b",
+     "value": "all"
+    }
+   ],
+   "scopeText": {
+    "all": "for all clients at renewal",
+    "new": "for new clients only"
+   },
+   "ask": [
+    "size",
+    "scope",
+    "priority"
+   ],
+   "questions": {
+    "size": {
+     "text": "By how much would prices change? Type it as a percentage.",
+     "chips": []
+    },
+    "scope": {
+     "text": "For whom? You have {keyClientCount} key accounts and {otherClients} other clients.",
+     "chips": [
+      {
+       "label": "All clients at renewal",
+       "value": "all"
+      },
+      {
+       "label": "New clients only",
+       "value": "new"
+      }
+     ]
+    },
+    "priority": {
+     "text": "What matters most when you compare them?",
+     "chips": [
+      {
+       "label": "Cash",
+       "value": "cash"
+      },
+      {
+       "label": "Keeping clients",
+       "value": "churn"
+      },
+      {
+       "label": "Delivery on time",
+       "value": "delivery"
+      },
+      {
+       "label": "The team",
+       "value": "team"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {company} raises its prices by {size}{when}, {scope}?",
+    "forks": [
+     "Raise prices by {size}{when}, {scope}"
+    ],
+    "compareForks": {
+     "partial": "Raise prices for new clients only"
+    },
+    "defaultCompare": "partial",
+    "hypotheses": [
+     "A competitor starts a price war",
+     "Key accounts push back at renewal",
+     "Win rates fall on new deals"
+    ],
+    "criteria": [
+     "margin",
+     "churn",
+     "cash"
+    ],
+    "shows": [
+     "Revenue after the contract notice periods",
+     "Churn at each renewal, key accounts first",
+     "Win rate on new deals",
+     "Cash at the horizon"
+    ]
+   }
+  },
+  {
+   "id": "outsource",
+   "area": "vendors",
+   "label": "Outsource work",
+   "patterns": [
+    "\\boutsourc",
+    "\\bnearshore\\b",
+    "\\boffshore\\b",
+    "\\b(?:to|with|through) a vendor\\b",
+    "\\breplace (?:\\w+ ){0,3}with (?:a )?vendor"
+   ],
+   "scope": [
+    {
+     "re": "\\bdelivery\\b",
+     "value": "delivery"
+    },
+    {
+     "re": "\\bengineering\\b|\\bdevelopment\\b",
+     "value": "engineering"
+    },
+    {
+     "re": "\\bsupport\\b",
+     "value": "support"
+    },
+    {
+     "re": "\\btesting\\b|\\bqa\\b",
+     "value": "qa"
+    }
+   ],
+   "scopeText": {
+    "delivery": "delivery",
+    "engineering": "engineering",
+    "support": "support",
+    "qa": "testing"
+   },
+   "ask": [
+    "scope",
+    "compare",
+    "goal"
+   ],
+   "questions": {
+    "scope": {
+     "text": "Which work would go to the vendor?",
+     "chips": [
+      {
+       "label": "Delivery",
+       "value": "delivery"
+      },
+      {
+       "label": "Support",
+       "value": "support"
+      },
+      {
+       "label": "Testing",
+       "value": "qa"
+      }
+     ]
+    },
+    "compare": {
+     "text": "Which vendors would you compare? {vendor:nearshore} works nearshore on time and materials, {vendor:offshore} offshore at a fixed price.",
+     "chips": [
+      {
+       "label": "Both",
+       "value": "both"
+      },
+      {
+       "label": "{vendor:nearshore}",
+       "value": "nearshore"
+      },
+      {
+       "label": "{vendor:offshore}",
+       "value": "offshore"
+      }
+     ]
+    },
+    "goal": {
+     "text": "What is the goal?",
+     "chips": [
+      {
+       "label": "Cut costs",
+       "value": "cost"
+      },
+      {
+       "label": "Deliver faster",
+       "value": "growth"
+      },
+      {
+       "label": "Free the team for other work",
+       "value": "rebuild"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {company} outsources {scope}{goal}?",
+    "forks": [
+     "Outsource {scope} to {vendor:nearshore} (nearshore, time and materials)",
+     "Outsource {scope} to {vendor:offshore} (offshore, fixed price)"
+    ],
+    "compareFilter": {
+     "nearshore": [
+      0
+     ],
+     "offshore": [
+      1
+     ],
+     "both": [
+      0,
+      1
+     ]
+    },
+    "hypotheses": [
+     "The vendor rotates its team",
+     "Requirements change often",
+     "Vendor rates rise"
+    ],
+    "criteria": [
+     "cash",
+     "delivery",
+     "margin"
+    ],
+    "shows": [
+     "The cost of each way against the delivery time",
+     "Rework and change requests over the horizon",
+     "The management effort it takes from your team",
+     "The month when a late go-live is most likely"
+    ]
+   }
+  },
+  {
+   "id": "vendor_price",
+   "area": "vendors",
+   "label": "A vendor raises prices",
+   "patterns": [
+    "\\b(?:vendor|supplier|cloud|landlord|nimbus|rent)\\b(?:\\s+\\w+){0,4}\\s+(?:price|prices|rates?|costs?|fees?)\\b",
+    "\\b(?:raises?|increases?) (?:its |their )?(?:prices|rates|fees)\\b"
+   ],
+   "scope": [
+    {
+     "entity": "vendor"
+    }
+   ],
+   "ask": [
+    "scope",
+    "size",
+    "compare"
+   ],
+   "questions": {
+    "scope": {
+     "text": "Which vendor? {vendorsLine}.",
+     "chips": [
+      {
+       "label": "{vendor:cloud}",
+       "value": "vendor:VN-03"
+      },
+      {
+       "label": "{vendor:nearshore}",
+       "value": "vendor:VN-01"
+      },
+      {
+       "label": "{vendor:offshore}",
+       "value": "vendor:VN-02"
+      }
+     ]
+    },
+    "size": {
+     "text": "By how much? Type it as a percentage.",
+     "chips": []
+    },
+    "compare": {
+     "text": "What would you compare against keeping as is?",
+     "chips": [
+      {
+       "label": "Switch vendor",
+       "value": "switch"
+      },
+      {
+       "label": "Pass it on to clients",
+       "value": "price"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {scope} raises its prices by {size}{when}?",
+    "forks": [
+     "{scope} raises prices by {size}{when}"
+    ],
+    "compareForks": {
+     "switch": "Switch away from {scopeName}",
+     "price": "Pass the cost on to clients"
+    },
+    "defaultCompare": "switch",
+    "hypotheses": [
+     "Other vendors follow",
+     "Switching takes longer than planned"
+    ],
+    "criteria": [
+     "cash",
+     "margin",
+     "sla"
+    ],
+    "shows": [
+     "Cost and cash in each month",
+     "The margin on each client",
+     "The risk to the service during a switch"
+    ]
+   }
+  },
+  {
+   "id": "tax",
+   "area": "factors",
+   "label": "A tax changes",
+   "patterns": [
+    "\\btax(?:es)?\\b",
+    "\\bvat\\b",
+    "\\bnational insurance\\b"
+   ],
+   "scope": [
+    {
+     "re": "\\bpayroll\\b|\\bemployer\\b|\\bnational insurance\\b",
+     "value": "payroll"
+    },
+    {
+     "re": "\\bcorporate\\b|\\bprofit\\b",
+     "value": "corporate"
+    },
+    {
+     "re": "\\bvat\\b|\\bsales tax\\b",
+     "value": "vat"
+    }
+   ],
+   "scopeText": {
+    "payroll": "the payroll tax",
+    "corporate": "the corporate tax",
+    "vat": "VAT"
+   },
+   "ask": [
+    "scope",
+    "size",
+    "when"
+   ],
+   "questions": {
+    "scope": {
+     "text": "Which tax?",
+     "chips": [
+      {
+       "label": "Payroll tax",
+       "value": "payroll"
+      },
+      {
+       "label": "Corporate tax",
+       "value": "corporate"
+      },
+      {
+       "label": "VAT",
+       "value": "vat"
+      }
+     ]
+    },
+    "size": {
+     "text": "By how much? Type the change, for example in percentage points.",
+     "chips": []
+    },
+    "when": {
+     "text": "From when?",
+     "chips": [
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next month",
+       "value": "months:1"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      },
+      {
+       "label": "In half a year",
+       "value": "months:6"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {scope} rises by {size}{when}?",
+    "forks": [
+     "{scope} rises by {size}{when}"
+    ],
+    "compareForks": {
+     "price": "Pass it on: raise prices",
+     "cost": "Absorb it: slow down hiring"
+    },
+    "defaultCompare": "price",
+    "hypotheses": [
+     "Clients refuse a price rise",
+     "Competitors absorb the tax"
+    ],
+    "criteria": [
+     "cash",
+     "margin",
+     "team"
+    ],
+    "shows": [
+     "Payroll cost and cash in each month",
+     "The margin after the tax",
+     "What it does to hiring and the team"
+    ]
+   }
+  },
+  {
+   "id": "fx",
+   "area": "factors",
+   "label": "Exchange rates move",
+   "patterns": [
+    "\\bfx\\b",
+    "\\bexchange rates?\\b",
+    "\\bcurrenc(?:y|ies)\\b",
+    "\\b(?:dollar|pound|euro|sterling)\\b"
+   ],
+   "scope": [],
+   "ask": [
+    "size",
+    "when",
+    "compare"
+   ],
+   "questions": {
+    "size": {
+     "text": "How far would the rate move? Type it as a percentage.",
+     "chips": []
+    },
+    "when": {
+     "text": "From when?",
+     "chips": [
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next month",
+       "value": "months:1"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      },
+      {
+       "label": "In half a year",
+       "value": "months:6"
+      }
+     ]
+    },
+    "compare": {
+     "text": "What would you compare?",
+     "chips": [
+      {
+       "label": "Hedge the rate",
+       "value": "hedge"
+      },
+      {
+       "label": "Reprice contracts",
+       "value": "price"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if the exchange rate moves by {size}{when}?",
+    "forks": [
+     "The exchange rate moves by {size}{when}"
+    ],
+    "compareForks": {
+     "hedge": "Hedge the rate",
+     "price": "Reprice the contracts"
+    },
+    "defaultCompare": "hedge",
+    "hypotheses": [
+     "The move lasts the whole horizon"
+    ],
+    "criteria": [
+     "cash",
+     "margin"
+    ],
+    "shows": [
+     "Costs and revenue in each currency",
+     "Cash at the horizon"
+    ]
+   }
+  },
+  {
+   "id": "gpu",
+   "area": "factors",
+   "label": "GPU shortage",
+   "patterns": [
+    "\\bgpus?\\b",
+    "\\bcompute shortage\\b"
+   ],
+   "scope": [
+    {
+     "re": "\\bshortage\\b|\\bnot available\\b|\\bsupply\\b",
+     "value": "shortage"
+    },
+    {
+     "re": "\\b(?:price|cost|expensive)\\b",
+     "value": "price"
+    }
+   ],
+   "scopeText": {
+    "shortage": "a GPU shortage at {vendor:cloud}",
+    "price": "a GPU price rise at {vendor:cloud}"
+   },
+   "ask": [
+    "scope",
+    "when",
+    "compare"
+   ],
+   "questions": {
+    "scope": {
+     "text": "What happens with the GPUs? Your inference runs on {vendor:cloud}.",
+     "chips": [
+      {
+       "label": "Short supply",
+       "value": "shortage"
+      },
+      {
+       "label": "They cost more",
+       "value": "price"
+      }
+     ]
+    },
+    "when": {
+     "text": "When would it start?",
+     "chips": [
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next month",
+       "value": "months:1"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      },
+      {
+       "label": "In half a year",
+       "value": "months:6"
+      }
+     ]
+    },
+    "compare": {
+     "text": "What would you compare against keeping as is?",
+     "chips": [
+      {
+       "label": "Reserve GPU capacity on a second cloud",
+       "value": "reserve"
+      },
+      {
+       "label": "Only keep as is",
+       "value": "keep"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if there is {scope}{when}?",
+    "forks": [
+     "{scope}{when}, nothing else changes"
+    ],
+    "compareForks": {
+     "reserve": "Reserve GPU capacity on a second cloud"
+    },
+    "defaultCompare": "reserve",
+    "hypotheses": [
+     "The shortage lasts longer than planned",
+     "Clients notice the slower service"
+    ],
+    "criteria": [
+     "sla",
+     "churn",
+     "cash"
+    ],
+    "shows": [
+     "Infrastructure cost and latency from the month it starts",
+     "Availability against the SLA",
+     "Churn that follows the slower service",
+     "Cash at the horizon"
+    ]
+   }
+  },
+  {
+   "id": "rules",
+   "area": "rules",
+   "label": "A rule or regulation",
+   "patterns": [
+    "\\brules?\\b",
+    "\\bregulat",
+    "\\bcomplian",
+    "\\bgdpr\\b",
+    "\\bpolicy\\b",
+    "\\blaw\\b"
+   ],
+   "scope": [],
+   "ask": [
+    "scope",
+    "when",
+    "compare"
+   ],
+   "questions": {
+    "scope": {
+     "text": "Which rule, and what does it change for you? Type it in a few words.",
+     "chips": []
+    },
+    "when": {
+     "text": "From when does it apply?",
+     "chips": [
+      {
+       "label": "Right away",
+       "value": "months:0"
+      },
+      {
+       "label": "Next month",
+       "value": "months:1"
+      },
+      {
+       "label": "Next quarter",
+       "value": "months:3"
+      },
+      {
+       "label": "In half a year",
+       "value": "months:6"
+      }
+     ]
+    },
+    "compare": {
+     "text": "What would you compare?",
+     "chips": [
+      {
+       "label": "Comply with our own team",
+       "value": "inhouse"
+      },
+      {
+       "label": "Comply with a vendor",
+       "value": "vendor"
+      }
+     ]
+    }
+   },
+   "draft": {
+    "question": "What if {scope} applies{when}?",
+    "forks": [
+     "{scope} applies{when}"
+    ],
+    "compareForks": {
+     "inhouse": "Comply with our own team",
+     "vendor": "Comply with a vendor"
+    },
+    "defaultCompare": "inhouse",
+    "hypotheses": [
+     "The work to comply is bigger than planned"
+    ],
+    "criteria": [
+     "cash",
+     "delivery",
+     "sla"
+    ],
+    "shows": [
+     "The cost and the work to comply",
+     "What the work takes from delivery",
+     "Penalty and contract risks by month"
+    ]
+   }
+  }
+ ],
+ "unknown": {
+  "text": "I could not tell what decision this is about. What is it closest to?",
+  "again": "I still could not place it. Pick the closest kind of decision, or ask it another way.",
+  "chips": [
+   "layoff",
+   "hire",
+   "price",
+   "lose_client",
+   "outsource",
+   "vendor_price",
+   "tax",
+   "gpu"
+  ]
+ },
+ "draftIntro": "Here is the case I would draft. You review it before anything runs.",
+ "final": {
+  "baseline": "Keep as is",
+  "next": [
+   {
+    "title": "Connect your LLM API key",
+    "text": "It stays in this browser only. The month recompute needs no key."
+   },
+   {
+    "title": "Draft and review the forks",
+    "text": "Edit the numbers and dates, switch hypotheses, then freeze the forks."
+   },
+   {
+    "title": "Month",
+    "text": "Every fork over thousands of scenarios, in seconds."
+   },
+   {
+    "title": "Week",
+    "text": "A tree of weekly paths for the forks you keep."
+   },
+   {
+    "title": "Day",
+    "text": "Three example days, with why answers from the knowledge graph."
+   }
+  ],
+  "notice": "Running a new case is not available in this version. Explore the ready cases to see how a case works.",
+  "links": [
+   "company_best_year",
+   "delivery_best_way"
+  ]
+ }
+}

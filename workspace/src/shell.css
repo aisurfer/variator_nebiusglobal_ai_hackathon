@@ -1,0 +1,33 @@
+/* "Know more": secondary texts in a popover behind a small Info button, and disclosures closed by default. */
+.know-more{position:relative;display:inline-flex;vertical-align:middle;margin-left:6px;font-size:13px;font-weight:400;letter-spacing:0;text-transform:none;line-height:1.4}
+h1>.know-more{vertical-align:.35em}
+.know-more-button{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;color:#8c979e}
+.know-more-button:hover,.know-more-button[aria-expanded=true]{color:#4f6b33;background:#eef5e2}
+.know-more-pop{position:absolute;top:calc(100% + 6px);left:-8px;z-index:60;width:max-content;max-width:min(340px,calc(100vw - 40px));padding:11px 13px;border:1px solid #dfe8d5;border-radius:8px;background:#fff;box-shadow:0 8px 24px #15251f1f;color:#4d5a61;font-size:12px;line-height:1.55;white-space:normal;text-align:left}
+.know-more.is-end .know-more-pop{left:auto;right:-8px}
+.know-more-pop p+p{margin-top:6px}
+.know-more-title{display:flex;align-items:center;gap:0}
+.know-more-details>summary{display:flex;align-items:center;gap:6px;cursor:pointer;list-style:none}
+.know-more-details>summary::-webkit-details-marker{display:none}
+.know-more-details>summary>svg:first-child{color:#8c979e;transition:transform .15s;transform:rotate(-90deg)}
+.know-more-details[open]>summary>svg:first-child{transform:none}
+.know-more-details>summary h3{margin:0;font-size:15px;font-weight:600;letter-spacing:-.15px;color:var(--ink,#263138)}
+.know-more-details[open]>summary{margin-bottom:12px}
+.detail-section>h3.know-more-title{display:flex;align-items:center}
+/* A simulated future (URL parameter branch): a banner over every knowledge-base page, never mistaken for history. */
+.branch-banner{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 20px;padding:10px 14px;border:1px solid #e6d9b8;border-radius:8px;background:#fbf6ea;color:#6d5525;font-size:13px;line-height:1.4}
+.branch-banner>svg{color:#a07a2c}
+.branch-chip{font-size:10px;font-weight:600;letter-spacing:1.2px;color:#fff;background:#9a7a32;border-radius:4px;padding:3px 7px}
+.branch-banner strong{font-weight:600;color:#4f3f1c}
+.branch-warning{color:#8e6e27}
+.branch-back{display:inline-flex;align-items:center;gap:5px;margin-left:auto;font-size:12px;font-weight:500;color:#5d4a20;white-space:nowrap}
+.branch-back:hover{color:#2f2610;text-decoration:underline}
+.tiny-dot.amber{background:#c6a555}
+@media(max-width:760px){.branch-banner{font-size:12px;padding:9px 11px}.branch-back{margin-left:0}}
+/* Shell additions: the profile block of the one user (the CEO). */
+.profile>div:nth-child(2){min-width:0}.profile small{overflow-wrap:anywhere;line-height:1.5}.profile strong{overflow-wrap:anywhere}.profile-avatar{flex-shrink:0}
+/* The VARIATOR wordmark is wider than the old one: a little smaller where the sidebar is narrow, and clear of the close button on phones. */
+@media (max-width:1200px){.brand{font-size:30px;letter-spacing:-1.5px}}
+@media (max-width:760px){.brand{font-size:28px;letter-spacing:-1.4px}}
+/* «Know more»: wider, with readable text */
+.know-more-pop{max-width:min(624px,calc(100vw - 40px));font-size:14.5px;line-height:1.55;padding:13px 16px}

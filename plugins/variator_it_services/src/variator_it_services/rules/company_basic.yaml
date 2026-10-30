@@ -1,0 +1,39 @@
+pack: company_basic
+description: Rules for the company_model template
+templates: [company_model]
+rules:
+  # the load after the hires (derived `load`): hiring removes the burnout
+  - id: burnout
+    kind: effect
+    description: A team over capacity after the hires loses more people
+    if: load > burnout_load
+    then: {set: {attrition: "attrition + burnout_attrition"}}
+
+  - id: runway_low
+    kind: check
+    description: Less cash than for 6 months (the runway red limit) is not acceptable
+    if: runway < runway_red
+    then: {fail: "Runway is below its red limit (6 months by default)"}
+
+  - id: sla_breach
+    kind: flag
+    if: sla < sla_target
+    then: {flag: red, criterion: sla}
+    elif:
+      - if: sla < sla_target + 0.002
+        then: {flag: amber, criterion: sla}
+
+  - id: over_budget
+    kind: flag
+    description: Total cost above the annual budget
+    if: cost > budget
+    then: {flag: amber, criterion: cash}
+
+  # one churn limit (g_churn, 20% by default): the goal, this red flag and the risk-calendar row
+  - id: churn_high
+    kind: flag
+    if: churn > g_churn
+    then: {flag: red, criterion: churn}
+    elif:
+      - if: churn > 0.75 * g_churn
+        then: {flag: amber, criterion: churn}

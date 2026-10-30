@@ -1,0 +1,9 @@
+.secrets/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.data/
+
+# simulator output (kbsim writes worlds, rounds and deliveries here): generated, large
+sim/out/

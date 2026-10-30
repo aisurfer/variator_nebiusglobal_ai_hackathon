@@ -1,0 +1,7 @@
+change_id,effective_month,category,price_change_pct,orders_3m_before,baseline_orders_3m_after,actual_orders_3m_after,volume_change_vs_baseline_pct,implied_elasticity,churn_rate_before,churn_rate_after,competitor_response
+PC-01,2024-03,pet,0.05,16566,17176,16703,-0.0275,-0.572,0.0335,0.0342,none observed
+PC-02,2024-09,kitchen,0.06,22025,25791,23700,-0.0811,-1.451,0.0348,0.0338,two competitors matched within 2 months
+PC-03,2025-02,home,0.05,28968,25977,24359,-0.0623,-1.318,0.0355,0.0343,none observed
+PC-04,2025-06,garden,0.05,25162,23083,21704,-0.0597,-1.262,0.0349,0.0338,main competitor ran a 10% promotion
+PC-05,2025-10,all,0.04,91791,101926,97369,-0.0447,-1.166,0.0338,0.0386,partially matched by the market leader
+PC-06,2026-04,pet,0.06,21549,23639,22058,-0.0669,-1.188,0.035,0.0347,none observed

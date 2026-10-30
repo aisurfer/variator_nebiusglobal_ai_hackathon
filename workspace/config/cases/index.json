@@ -1,0 +1,31 @@
+{
+ "schema": "variator-cases/1",
+ "cases": [
+  {
+   "id": "company_best_year",
+   "letter": "B",
+   "title": "Best year",
+   "question": "Which lever gives Larchwood Systems the best year: keep the plan, pay down technical debt, hire, reserve GPU capacity, or raise prices?",
+   "template": "company_model",
+   "status": "ready",
+   "config": "company_best_year.json",
+   "preview": "company_best_year.preview.json",
+   "owner": "Avery Collins",
+   "forks": 5,
+   "hypotheses": 8
+  },
+  {
+   "id": "delivery_best_way",
+   "letter": "A",
+   "title": "Best way to deliver",
+   "question": "How should Larchwood Systems deliver the new platform: an in-house team, the nearshore vendor on time and materials, or the offshore vendor at a fixed price?",
+   "template": "delivery_model",
+   "status": "ready",
+   "config": "delivery_best_way.json",
+   "preview": "delivery_best_way.preview.json",
+   "owner": "Jordan Patel",
+   "forks": 3,
+   "hypotheses": 6
+  }
+ ]
+}

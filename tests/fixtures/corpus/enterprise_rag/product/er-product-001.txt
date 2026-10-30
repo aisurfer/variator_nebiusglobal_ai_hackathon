@@ -1,0 +1,2 @@
+Inference API latency is 42 ms at the current load and the security risk review is open.
+The product review records the Redwood technical baseline.

@@ -1,0 +1,5 @@
+Which lever gives Larchwood Systems the best year: keep the plan, pay down technical debt, hire, reserve GPU capacity, or raise prices?
+We have a year ahead. Should we stick to the plan, spend engineering time on tech debt, hire more engineers, reserve GPU capacity, or put prices up?
+As CEO of Larchwood Systems I need one move for the next 12 months. Options: no change, tech-debt work, hiring, a GPU reserve, a price increase. Which one is best?
+What should we do next year to get the best result: raise prices, hire engineers, pay down technical debt, reserve GPU capacity, or nothing new?
+Pick the best option for Larchwood's next year: keep the current plan, invest in reducing technical debt, add engineers, secure extra GPU capacity, or increase prices.

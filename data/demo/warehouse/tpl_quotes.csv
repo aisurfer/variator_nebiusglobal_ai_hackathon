@@ -1,0 +1,5 @@
+vendor,quote_date,region_coverage,fee_per_order,setup_fee,minimum_monthly_orders,contract_months,annual_escalator_pct,peak_surcharge_per_order,on_time_sla_pct
+Quillfield Logistics,2026-08-12,national,3.62,49000,8900,24,0.0297,0.25,0.9842
+Tarnwick Fulfilment,2026-09-15,"south, east",3.83,50000,5600,24,0.02,0.44,0.9787
+Orrin Bay 3PL,2026-10-06,national,3.91,55000,8700,12,0.0234,0.39,0.9798
+Velmont Commerce Services,2026-08-06,south,4.35,23000,9300,12,0.0455,0.37,0.9876

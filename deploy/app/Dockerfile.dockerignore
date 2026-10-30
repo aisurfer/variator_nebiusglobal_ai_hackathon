@@ -1,0 +1,8 @@
+# BuildKit reads <Dockerfile>.dockerignore next to the Dockerfile; paths are relative to the
+# build context (the repository root). Allow-list only what the image needs.
+*
+!pyproject.toml
+!README.md
+!src/
+**/__pycache__
+**/*.pyc

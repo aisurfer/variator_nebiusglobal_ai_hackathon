@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.env
+.env.*
+!.env.example
+.cache/
+artifacts/
+reports/
+.variator/
+data/external/
+data/corpus/
+
+# deploy target with the SSH login (deploy/mvp/deploy.local.env.example is the template)
+deploy/mvp/deploy.local.env
+workspace/data/

@@ -1,0 +1,5 @@
+region,orders_last_12m,revenue_last_12m,gross_margin_last_12m,margin_per_order,orders_yoy_growth,avg_delivery_days,households_k,orders_per_1k_households_month
+north,112409,4148109.94,1024574.7,9.11,0.0619,2.1,520.0,18.01
+south,105086,3866349.91,953387.85,9.07,0.2521,3.2,470.0,18.63
+east,107900,3969225.59,973767.18,9.02,0.0821,2.4,480.0,18.73
+west,76218,2802604.78,686508.87,9.01,0.0936,2.9,390.0,16.29

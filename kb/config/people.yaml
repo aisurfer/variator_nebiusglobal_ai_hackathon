@@ -1,0 +1,266 @@
+# People directory of the tenant (HR roster). Names, roles and ids come from the Vector Forge demo organisation
+# (data/organizations/vectorforge). Accounts are the confirmed source identities used for deterministic identity
+# mapping (02 §8.1): an account id found in a payload resolves to the person entity without guessing by name.
+admins: [user:admin]
+groups:
+  grp:all-staff: {name: All staff}
+  grp:exec: {name: Executive team}
+  grp:product: {name: Product}
+  grp:engineering: {name: Engineering}
+  grp:flowpilot: {name: FlowPilot team}
+  grp:atlas: {name: Atlas Ledger team}
+  grp:commercial: {name: Commercial}
+  grp:hr: {name: People operations}
+people:
+  - id: VF-E001
+    name: Mara Voss
+    role: Chief Executive Officer
+    department: Executive
+    email: mara.voss@vectorforge.io
+    principal: user:mara.voss
+    groups: [grp:all-staff, grp:exec]
+    accounts:
+      jira-vf: "712020:mara.voss"
+      confluence-vf: "712020:mara.voss"
+      gitlab-vf: mvoss
+      xwiki-vf: XWiki.MaraVoss
+      liferay-vf: mara.voss
+      mail-vf: mara.voss@vectorforge.io
+  - id: VF-E002
+    name: Joel Mercer
+    role: Director of Delivery
+    department: Executive
+    email: joel.mercer@vectorforge.io
+    principal: user:joel.mercer
+    groups: [grp:all-staff, grp:exec]
+    accounts:
+      jira-vf: "712020:joel.mercer"
+      confluence-vf: "712020:joel.mercer"
+      gitlab-vf: jmercer
+      xwiki-vf: XWiki.JoelMercer
+      liferay-vf: joel.mercer
+      mail-vf: joel.mercer@vectorforge.io
+  - id: VF-E003
+    name: Priya Nand
+    role: Director of Product
+    department: Executive
+    email: priya.nand@vectorforge.io
+    principal: user:priya.nand
+    groups: [grp:all-staff, grp:exec, grp:product]
+    accounts:
+      jira-vf: "712020:priya.nand"
+      confluence-vf: "712020:priya.nand"
+      gitlab-vf: pnand
+      xwiki-vf: XWiki.PriyaNand
+      liferay-vf: priya.nand
+      mail-vf: priya.nand@vectorforge.io
+  - id: VF-E005
+    name: Daniel Sato
+    role: Chief Financial Officer
+    department: Executive
+    email: daniel.sato@vectorforge.io
+    principal: user:daniel.sato
+    groups: [grp:all-staff, grp:exec]
+    accounts:
+      jira-vf: "712020:daniel.sato"
+      confluence-vf: "712020:daniel.sato"
+      gitlab-vf: dsato
+      xwiki-vf: XWiki.DanielSato
+      liferay-vf: daniel.sato
+      mail-vf: daniel.sato@vectorforge.io
+  - id: VF-E006
+    name: Sofia Lind
+    role: Group Product Manager
+    department: Product
+    email: sofia.lind@vectorforge.io
+    principal: user:sofia.lind
+    groups: [grp:all-staff, grp:product, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:sofia.lind"
+      confluence-vf: "712020:sofia.lind"
+      gitlab-vf: slind
+      xwiki-vf: XWiki.SofiaLind
+      liferay-vf: sofia.lind
+      mail-vf: sofia.lind@vectorforge.io
+  - id: VF-E010
+    name: Jordan Baird
+    role: Product Manager
+    department: Product
+    email: jordan.baird@vectorforge.io
+    principal: user:jordan.baird
+    groups: [grp:all-staff, grp:product, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:jordan.baird"
+      confluence-vf: "712020:jordan.baird"
+      gitlab-vf: jbaird
+      xwiki-vf: XWiki.JordanBaird
+      liferay-vf: jordan.baird
+      mail-vf: jordan.baird@vectorforge.io
+  - id: VF-E011
+    name: Kiran Bishop
+    role: Product Analyst
+    department: Product
+    email: kiran.bishop@vectorforge.io
+    principal: user:kiran.bishop
+    groups: [grp:all-staff, grp:product, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:kiran.bishop"
+      confluence-vf: "712020:kiran.bishop"
+      gitlab-vf: kbishop
+      xwiki-vf: XWiki.KiranBishop
+      liferay-vf: kiran.bishop
+      mail-vf: kiran.bishop@vectorforge.io
+  - id: VF-E008
+    name: Harper Vale
+    role: Product Designer
+    department: Product
+    email: harper.vale@vectorforge.io
+    principal: user:harper.vale
+    groups: [grp:all-staff, grp:product, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:harper.vale"
+      confluence-vf: "712020:harper.vale"
+      gitlab-vf: hvale
+      xwiki-vf: XWiki.HarperVale
+      liferay-vf: harper.vale
+      mail-vf: harper.vale@vectorforge.io
+  - id: VF-E025
+    name: Farah Ortega
+    role: Engineering Manager
+    department: Engineering
+    email: farah.ortega@vectorforge.io
+    principal: user:farah.ortega
+    groups: [grp:all-staff, grp:engineering, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:farah.ortega"
+      confluence-vf: "712020:farah.ortega"
+      gitlab-vf: fortega
+      xwiki-vf: XWiki.FarahOrtega
+      liferay-vf: farah.ortega
+      mail-vf: farah.ortega@vectorforge.io
+  - id: VF-E035
+    name: Ines Duarte
+    role: Staff Product Engineer
+    department: Engineering
+    email: ines.duarte@vectorforge.io
+    principal: user:ines.duarte
+    groups: [grp:all-staff, grp:engineering, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:ines.duarte"
+      confluence-vf: "712020:ines.duarte"
+      gitlab-vf: iduarte
+      xwiki-vf: XWiki.InesDuarte
+      liferay-vf: ines.duarte
+      mail-vf: ines.duarte@vectorforge.io
+  - id: VF-E036
+    name: Caleb Wu
+    role: Senior Frontend Engineer
+    department: Engineering
+    email: caleb.wu@vectorforge.io
+    principal: user:caleb.wu
+    groups: [grp:all-staff, grp:engineering, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:caleb.wu"
+      confluence-vf: "712020:caleb.wu"
+      gitlab-vf: cwu
+      xwiki-vf: XWiki.CalebWu
+      liferay-vf: caleb.wu
+      mail-vf: caleb.wu@vectorforge.io
+  - id: VF-E059
+    name: Avery Carver
+    role: Senior Backend Engineer
+    department: Engineering
+    email: avery.carver@vectorforge.io
+    principal: user:avery.carver
+    groups: [grp:all-staff, grp:engineering, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:avery.carver"
+      confluence-vf: "712020:avery.carver"
+      gitlab-vf: acarver
+      xwiki-vf: XWiki.AveryCarver
+      liferay-vf: avery.carver
+      mail-vf: avery.carver@vectorforge.io
+  - id: VF-E058
+    name: Jules Baird
+    role: Software Engineer
+    department: Engineering
+    email: jules.baird@vectorforge.io
+    principal: user:jules.baird
+    groups: [grp:all-staff, grp:engineering, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:jules.baird"
+      confluence-vf: "712020:jules.baird"
+      gitlab-vf: julesb
+      xwiki-vf: XWiki.JulesBaird
+      liferay-vf: jules.baird
+      mail-vf: jules.baird@vectorforge.io
+  - id: VF-E103
+    name: Sage Turner
+    role: Quality Analyst
+    department: Quality Engineering
+    email: sage.turner@vectorforge.io
+    principal: user:sage.turner
+    groups: [grp:all-staff, grp:engineering, grp:flowpilot]
+    accounts:
+      jira-vf: "712020:sage.turner"
+      confluence-vf: "712020:sage.turner"
+      gitlab-vf: sturner
+      xwiki-vf: XWiki.SageTurner
+      liferay-vf: sage.turner
+      mail-vf: sage.turner@vectorforge.io
+  - id: VF-E122
+    name: Theo Mensah
+    role: Site Reliability Engineer
+    department: Cloud and Security
+    email: theo.mensah@vectorforge.io
+    principal: user:theo.mensah
+    groups: [grp:all-staff, grp:engineering]
+    accounts:
+      jira-vf: "712020:theo.mensah"
+      confluence-vf: "712020:theo.mensah"
+      gitlab-vf: tmensah
+      xwiki-vf: XWiki.TheoMensah
+      liferay-vf: theo.mensah
+      mail-vf: theo.mensah@vectorforge.io
+  - id: VF-E130
+    name: Zoe Bennett
+    role: Customer Success Lead
+    department: Commercial
+    email: zoe.bennett@vectorforge.io
+    principal: user:zoe.bennett
+    groups: [grp:all-staff, grp:commercial]
+    accounts:
+      jira-vf: "712020:zoe.bennett"
+      confluence-vf: "712020:zoe.bennett"
+      gitlab-vf: zbennett
+      xwiki-vf: XWiki.ZoeBennett
+      liferay-vf: zoe.bennett
+      mail-vf: zoe.bennett@vectorforge.io
+  - id: VF-E114
+    name: Hana Xu
+    role: Project Manager
+    department: Delivery and PMO
+    email: hana.xu@vectorforge.io
+    principal: user:hana.xu
+    groups: [grp:all-staff, grp:atlas]
+    accounts:
+      jira-vf: "712020:hana.xu"
+      confluence-vf: "712020:hana.xu"
+      gitlab-vf: hxu
+      xwiki-vf: XWiki.HanaXu
+      liferay-vf: hana.xu
+      mail-vf: hana.xu@vectorforge.io
+  - id: VF-E037
+    name: Amara Okoro
+    role: Integration Engineer
+    department: Engineering
+    email: amara.okoro@vectorforge.io
+    principal: user:amara.okoro
+    groups: [grp:all-staff, grp:engineering, grp:atlas]
+    accounts:
+      jira-vf: "712020:amara.okoro"
+      confluence-vf: "712020:amara.okoro"
+      gitlab-vf: aokoro
+      xwiki-vf: XWiki.AmaraOkoro
+      liferay-vf: amara.okoro
+      mail-vf: amara.okoro@vectorforge.io

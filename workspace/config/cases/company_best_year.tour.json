@@ -1,0 +1,136 @@
+{
+  "schema": "variator-tour/1",
+  "caseId": "company_best_year",
+  "minutes": 4,
+  "steps": [
+    {
+      "id": "request",
+      "anchor": "origin-button",
+      "title": "The question and where the forks come from",
+      "body": "Test a decision on a model of your own company before you make it: see which option wins, how sure that is, what can go wrong and what to do then. {author} described the decision in their own words. From that request VARIATOR drafted {drafted.forks} forks, {drafted.hypotheses} world hypotheses and {drafted.criteria} criteria, and {author} reviewed and froze them on {frozenOn}.",
+      "try": "In the request, the chip «forks» jumps to the fork cards.",
+      "action": {
+        "id": "origin.open",
+        "label": "Open «Your request»",
+        "then": {
+          "anchor": "origin-modal"
+        }
+      },
+      "help": []
+    },
+    {
+      "id": "world",
+      "anchor": "world",
+      "title": "World hypotheses",
+      "body": "What may happen around the decision, as layers you switch on. Show me turns on «{hyp.gpu_crunch}» and «{hyp.big_client_leaves}»: every fork is simulated again and a notice explains the change. Now {leader} leads, best in {pBest} of the scenarios ({pBestOf}).",
+      "try": "Read the notice: its Undo takes the hypotheses off again.",
+      "action": {
+        "id": "hypotheses.on",
+        "args": {
+          "ids": [
+            "gpu_crunch",
+            "big_client_leaves"
+          ]
+        },
+        "label": "Turn on «{hyp.gpu_crunch}» and «{hyp.big_client_leaves}»",
+        "then": {
+          "anchor": "forks",
+          "focus": "fork-cards"
+        }
+      },
+      "help": [
+        "hypotheses"
+      ]
+    },
+    {
+      "id": "timeline",
+      "anchor": "plan",
+      "focus": "plan-timeline",
+      "title": "The timeline",
+      "body": "The plan shows each milestone and goal with P(met): how often it is met. Show me moves «{item.hire_start}» of «{fork.hire_5}» from {from} to {to}. «{milestone.hires_ready}» is met in {pmet.hires_ready.hire_5} of the scenarios, the cash goal in {pmet.cash_goal.hire_5}.",
+      "try": "Drag a diamond (a target) or a circle (a start) yourself. Esc during a drag puts it back.",
+      "action": {
+        "id": "timeline.move",
+        "args": {
+          "item": "hire_start",
+          "by": 3
+        },
+        "label": "Move «{item.hire_start}» to {to}"
+      },
+      "help": [
+        "pmet"
+      ]
+    },
+    {
+      "id": "answer",
+      "anchor": "answer",
+      "focus": [
+        "answer-verdict",
+        "answer-decision"
+      ],
+      "title": "The answer",
+      "body": "{answer}. A risk has a date: the calendar shows the month each risk can fire.",
+      "try": "Show me applies «{preset.cash_first}» and reruns on your company's actors: see what wins when cash counts most.",
+      "see": {
+        "anchor": "overtime",
+        "focus": "risk-calendar",
+        "label": "See the risk calendar"
+      },
+      "help": [
+        "calendar"
+      ],
+      "action": {
+        "id": "priority.apply",
+        "args": {
+          "preset": "cash_first",
+          "rerunActors": true
+        },
+        "label": "Apply «{preset.cash_first}» and rerun on the actors"
+      },
+      "more": {
+        "label": "Lever by lever",
+        "text": "{levers}. Each result also comes with its spread: {crit.cash} from {stat.cash.p5} to {stat.cash.p95}."
+      }
+    },
+    {
+      "id": "week-day",
+      "anchor": "week",
+      "title": "Week and day",
+      "body": "Each fork you keep becomes a tree of weekly paths: a wider branch is a more common path. Then {examples} example days of {leader} show the future day by day, each event linked to the knowledge base: the people, the clients and the history behind their habits. Here you also act: on a split, set a warning sign or a backup plan; on a bad day, fix its cause or record a key-person risk.",
+      "try": "In the median future of «{fork.pay_tech_debt}», ask why incidents fell in February: the first chip under «Ask this future». Or open an event in the knowledge base.",
+      "action": {
+        "id": "forks.keep",
+        "label": "Keep the suggested forks for the week and the day"
+      },
+      "see": {
+        "anchor": "day",
+        "focus": "day-examples",
+        "label": "See the example days"
+      },
+      "help": [
+        "tree",
+        "examples"
+      ],
+      "focus": "week-tree"
+    },
+    {
+      "id": "decision",
+      "anchor": "decision",
+      "title": "Your decision: from analysis to action",
+      "body": "The tool does not stop at charts. Here you turn the analysis into a decision you can act on and check: commit the fork, keep the warning signs that tell you early that the future goes the bad way, the backup plans that are ready for that case, and the fixes with an owner. After the commit, the morning Brief checks each warning sign against the real numbers of the company.",
+      "try": "On a split of «Paths, week by week», click «Watch for this branch» or «If this happens, do…». On a bad day, click «Fix it». Then open «Your decision» and commit.",
+      "help": [],
+      "links": [
+        {
+          "label": "Same engine, another decision: how to deliver a new platform",
+          "to": "/cases/delivery_best_way",
+          "tour": true
+        },
+        {
+          "label": "Ask the knowledge base why",
+          "to": "/ask"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+/* WP23: the actor verdict, the source badge and the actor parts of Over time, Week and Day. Tokens of case.css. */
+.cs-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cs-badge.is-actors{background:#e9f3ef;color:#2f6f5d}
+
+/* ---------------------------------------------------------------- the verdict */
+.cs-av{display:flex;flex-direction:column;gap:10px;padding:14px 16px;margin-bottom:14px;border-left:3px solid #2f6f5d}
+.cs-av.is-outdated{border-left-color:var(--cs-warn-mark)}
+.cs-av.is-loading,.cs-av.is-missing{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 12px;border-left-color:#c9cfd3}
+.cs-av .cs-eyebrow{display:inline-flex;align-items:center;gap:6px}
+.cs-av .cs-muted{display:inline-flex;align-items:center;gap:6px;font-size:12.5px}
+.cs-av-quiet{flex:1 1 260px}
+.cs-av-state{font-size:11.5px;color:var(--cs-muted)}
+.cs-av-state.is-outdated{color:var(--cs-warn);font-weight:500}
+.cs-av-state.is-current{color:var(--cs-good)}
+.cs-av-rerun{display:inline-flex;align-items:center;gap:10px}
+/* why «Rerun on actors» cannot run now: in words beside it */
+.cs-av-why{font-size:12px;line-height:1.4;color:var(--cs-muted);max-width:360px;text-align:right}
+.cs-av-rerun .button{min-height:34px;padding:8px 12px}
+.cs-av-rerun .button[aria-disabled=true]{opacity:.45;cursor:not-allowed}
+.cs-av-main{display:flex;align-items:center;flex-wrap:wrap;gap:8px 22px}
+.cs-av-leader{display:flex;align-items:center;gap:9px;flex:1 1 300px;min-width:0}
+.cs-av-leader h3{font-size:18px;font-weight:600;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-av-p{font-size:13px;color:var(--cs-muted);white-space:nowrap}
+.cs-av-eq{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--cs-muted);white-space:nowrap}
+.cs-av-eq .cs-fork-name{color:var(--cs-ink);font-weight:600}
+.cs-av-p b{font-size:18px;color:var(--cs-ink);font-weight:600;font-variant-numeric:tabular-nums;margin-right:3px}
+.cs-av-bar{max-width:120px;flex:0 0 90px}
+.cs-av-runner{display:flex;align-items:center;gap:8px;font-size:13px;flex-wrap:wrap}
+.cs-av-runner>span:first-child{font-size:11px;color:var(--cs-muted)}
+.cs-av-trade{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;color:var(--cs-ink-2)}
+.cs-av-trade svg{margin-top:3px;color:var(--cs-faint)}
+.cs-av-close{display:flex;flex-direction:column;gap:6px;padding-top:8px;border-top:1px solid var(--cs-line-2)}
+.cs-av-close .cs-eyebrow{color:var(--cs-warn);display:inline-flex;align-items:center;gap:5px}
+.cs-av-close.is-equal .cs-eyebrow{color:var(--cs-ink-2)}
+.cs-av-close ul{margin:0;padding:0 0 0 16px;font-size:12.5px;line-height:1.5;color:var(--cs-ink-2)}
+.cs-av-run{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--cs-muted)}
+.cs-av-run.is-error{color:var(--cs-bad)}
+
+/* ---------------------------------------------------------------- Over time: the headline and the first-month marks */
+.cs-cal-headline{font-size:13px;line-height:1.5;color:var(--cs-ink-2);margin:2px 0 10px}
+.cs-cal-headline b{color:var(--cs-ink);font-weight:600}
+.cs-cell-first{position:absolute;left:3px;right:3px;bottom:2px;height:2px;border-radius:1px;background:#3e4c53;opacity:.55}
+.cs-metric-pick{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+
+/* ---------------------------------------------------------------- Week: the example paths */
+.cs-atree-node circle:first-child{stroke:none}
+.cs-atree-node:hover circle:first-child,.cs-atree-node:focus-visible circle:first-child,.cs-atree-node.is-selected circle:first-child{stroke:#263138;stroke-width:1.5}
+.cs-tree-key .cs-text-btn{display:inline-flex;align-items:center}
+.cs-tree-example{fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.cs-tree-leaf{cursor:pointer}
+.cs-tree-leaf text{font-size:10px;font-weight:600;fill:#fff;pointer-events:none}
+.cs-tree-key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--cs-muted);margin-top:6px}
+.cs-tree-key i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+/* ---------------------------------------------------------------- Week and Day: the week rerun */
+.cs-week-rerun{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cs-week-rerun .button[aria-disabled=true]{opacity:.6;cursor:progress}
+
+/* ---------------------------------------------------------------- Day: the branch link */
+.cs-branch-link[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.cs-branch-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+
+@media (max-width:640px){
+  .cs-av{padding:12px}
+  .cs-av-leader{flex-wrap:wrap}
+  .cs-av-leader h3{font-size:16px;white-space:normal}
+  .cs-av .cs-card-tools{margin-left:0;width:100%}
+  .cs-av-rerun{flex-direction:column;align-items:stretch;gap:6px}
+  .cs-av-rerun,.cs-av-rerun .button{width:100%}
+  .cs-av-why{max-width:none;text-align:left}
+  .cs-branch-row{margin-left:0;width:100%}
+  .cs-branch-row .button{width:100%}
+}
+
+/* ---------------------------------------------------------------- Week: the event tree */
+.cs-etree svg{display:block;font-family:inherit}
+.cs-enode{cursor:pointer;outline:none}
+.cs-enode-box{stroke:#fff;stroke-width:1}
+.cs-enode-band{opacity:.45}
+.cs-enode-mid{fill:none;stroke:#3e4c53;stroke-width:1.1;opacity:.8}
+.cs-enode-split{stroke:#fff;stroke-width:2}
+.cs-enode-label{font-size:10.5px;fill:#33424a;font-weight:500;pointer-events:none}
+.cs-enode-text.is-bad .cs-enode-label{fill:#8a3f32}.cs-enode-text.is-good .cs-enode-label{fill:#2f6f5d}
+/* the labels stand above the paths, each on a plate of its ribbon's colour (no line runs through a text) */
+.cs-enode-labels{pointer-events:none}
+.cs-enode-plate{stroke:none}
+.cs-enode:hover .cs-enode-box,.cs-enode:focus-visible .cs-enode-box,.cs-enode.is-selected .cs-enode-box{stroke:#263138;stroke-width:1.5}
+.cs-epath{cursor:pointer;outline:none}
+.cs-epath-hit{fill:none;stroke:transparent;stroke-width:12}
+.cs-epath-line{fill:none;stroke-width:2.2;stroke-linejoin:round;opacity:.9}
+.cs-epath:hover .cs-epath-line,.cs-epath:focus-visible .cs-epath-line{stroke-width:3.4}
+.cs-epath-mark{font-size:10px;font-weight:600;fill:#fff;pointer-events:none}
+.cs-eband{fill:#c7d9b0;opacity:.75}
+.cs-eband-mid{fill:none;stroke:#3e4c53;stroke-width:1.6}
+.cs-esplits{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.cs-esplits .cs-text-btn{display:inline-flex;align-items:center;gap:6px;text-align:left}
+.cs-esplits .is-bad{color:var(--cs-bad)}.cs-esplits .is-good{color:var(--cs-good)}
+.cs-elinks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0 10px}
+.cs-epath-actions{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
+.cs-epath-actions .button[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.cs-eweeks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.cs-eweeks>li{display:flex;flex-direction:column;gap:3px;padding-left:12px;border-left:2px solid var(--cs-line)}
+.cs-eweek{font-size:11px;color:var(--cs-faint);font-weight:500}
+.cs-eevent{display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--cs-ink-2)}
+.cs-eevent .cs-elinks{margin:0}
+.cs-week-missing{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:18px;border:1px dashed #dfe4e6;border-radius:10px;background:#fbfcfc;font-size:13px;color:var(--cs-muted)}
+.cs-week-missing strong{color:var(--cs-ink)}
+.cs-week-missing .cs-av-why{text-align:left;max-width:none}
+.cs-echart svg{display:block;margin-top:2px}
+.cs-echart-ticks{display:flex;justify-content:space-between;font-size:9.5px;color:var(--cs-faint)}
+.cs-echart{margin-bottom:8px}
+.cs-enode-end{font-size:10.5px;fill:#33424a;font-weight:600;font-variant-numeric:tabular-nums;pointer-events:none}
+.cs-kv small.cs-delta{display:block;font-size:11px;margin-top:2px}
+.cs-dpath{cursor:pointer;outline:none}
+.cs-dpath-line{fill:none;stroke:#5b6870;stroke-width:1;stroke-dasharray:3 3;opacity:.7}
+.cs-dpath:hover .cs-dpath-line,.cs-dpath:focus-visible .cs-dpath-line{stroke-width:2.2}
+.cs-dpath-mark{fill:#fff;stroke:#5b6870;stroke-width:1.5}
+.cs-tree-key>span{color:var(--cs-muted);flex-basis:100%}
+.cs-dpath-letter{font-size:8.5px;font-weight:600;fill:#5b6870;pointer-events:none}
+.cs-tree-key i.is-day{height:0;border-top:2px dashed #5b6870;background:none}
+.cs-epath-basis{font-size:12px;margin:-4px 0 10px}
+.cs-goals-draft{margin:0 0 8px}
+.cs-tree-key-one{gap:6px 18px;align-items:center}
+.cs-key-grp{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap}
+.cs-key-what{display:inline-flex;align-items:center;gap:6px;color:var(--cs-muted)}
+.cs-key-chip{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:600}
+.cs-key-chip.is-day{border-radius:4px;background:#fff;color:#5b6870;box-shadow:inset 0 0 0 1.5px #5b6870}
+.cs-key-chip:hover,.cs-key-chip:focus-visible{box-shadow:0 0 0 2px #fff,0 0 0 4px #9aa6ad}
+.cs-tree-key-one .cs-help{width:20px;height:20px}

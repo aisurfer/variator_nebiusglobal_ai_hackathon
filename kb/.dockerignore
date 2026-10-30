@@ -1,0 +1,6 @@
+.venv
+.secrets
+.pytest_cache
+**/__pycache__
+.data
+sim/out
